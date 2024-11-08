@@ -13,14 +13,17 @@ from utils.CallBack import CallBack
 
 
 class UI:
-    def __init__(self, data: UiData, tbkapi: TBKApi.TBKApi):
-        self._data = data
-        self._tbkdata = TBKData(tbkapi)
+    # def __init__(self, data: UiData, tbkapi: TBKApi.TBKApi, boxes: list):
+    def __init__(self, uidata: UiData, boxes: list):
+        self._uidata = uidata
 
+        # self._tbkdata = TBKData(tbkapi)
         # self._tbkapi = tbkapi
-        self._layout_manager = self._data.layout_manager
-        self._diycomponents = DiyComponents(self._data)
-        self._callback = CallBack(self._data, self._diycomponents)
+
+        self._boxes = boxes
+        self._layout_manager = self._uidata.layout_manager
+        self._diycomponents = DiyComponents(self._uidata)
+        self._callback = CallBack(self._uidata, self._diycomponents)
         self._theme = theme
         self.maxlen = 5
         self.table_change_list = deque(maxlen=self.maxlen)
@@ -48,9 +51,18 @@ class UI:
         else:
             dpg.start_dearpygui()
 
-    def create_param_window2(self):
-        self.t_pbox = ParamBox(self._data, self._tbkdata)
-        self.t_pbox.draw()
+    def draw(self):
+        for box in self._boxes:
+            box.draw()
+
+    def update(self):
+        for box in self._boxes:
+            box.update()
+
+
+    # def create_param_window2(self):
+    #     self.t_pbox = ParamBox(self._uidata, self._tbkdata)
+    #     self.t_pbox.draw()
 
     # def create_param_window(self):
     #     with dpg.window(
@@ -109,8 +121,8 @@ class UI:
     #                     else:
     #                         dpg.add_text(default_value=value[item], tag=param + "_" + item)
 
-    def update_param_data2(self):
-        self.t_pbox.update()
+    # def update_param_data2(self):
+    #     self.t_pbox.update()
 
     # def update_param_data(self):
     #     change_param_data = self._tbkdata.param_change_data
@@ -192,9 +204,9 @@ class UI:
         #     dpg.add_item_resize_handler(callback=self._callback.drawer_window_resize_callback)
         # dpg.bind_item_handler_registry("drawer_window", item_handler_registry)
 
-    def create_message_window2(self):
-        self.t_msgbox = MessageBox(self._data, self._tbkdata)
-        self.t_msgbox.draw()
+    # def create_message_window2(self):
+    #     self.t_msgbox = MessageBox(self._uidata, self._tbkdata)
+    #     self.t_msgbox.draw()
 
     # def create_message_window(self):
     #     with dpg.window(label="Message", tag="message_window"):
@@ -225,9 +237,8 @@ class UI:
 
     # puuid -> node_name -> name -> msg_name
 
-    def update_message_list2(self):
-        self.t_msgbox.update()
-        pass
+    # def update_message_list2(self):
+    #     self.t_msgbox.update()
 
     # def update_message_list(self):
     #     change_message_data = self._tbkapi.message_change_data
