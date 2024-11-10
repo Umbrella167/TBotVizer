@@ -20,8 +20,8 @@ class CallBack:
         def msg_callback(msg):
             if msg:
                 print(msg)
-                # dpg.set_value(text_tag,msg)
         if app_data :
-            suber = tbkpy.Subscriber("puber_test","test_int",msg_callback)
+            # suber = tbkpy.Subscriber("puber_test","test_int",msg_callback)
+            pass
         else:
             suber = None

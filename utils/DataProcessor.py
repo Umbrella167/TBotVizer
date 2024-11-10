@@ -34,7 +34,7 @@ class UiData:
         ]
         self.boolname = ["bool", "布尔", "布尔值"]
         self.enumname = ["enum", "枚举", "list", "列表"]
-
+        
 
 class TBKData:
     def __init__(self, tbkapi: TBKApi):
@@ -61,3 +61,5 @@ class TBKData:
 
     def put_param(self, param, value):
         self._TBKApi.put_param(param, value)
+    
+    
