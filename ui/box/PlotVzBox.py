@@ -67,6 +67,7 @@ class PlotVzBox(Box):
                     x=list(self.subscription_data[series_tag]['time']),
                     y=list(self.subscription_data[series_tag]['data'][i])
                 )
+        
     def plot_drop_callback(self, sender, app_data, user_data):
         _msg = app_data['msg']
         name = app_data['name']
