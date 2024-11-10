@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import argparse
 import etcd3
 import utils.Utils as uitls
 import tzcp.tbk.tbk_pb2 as tbkpb

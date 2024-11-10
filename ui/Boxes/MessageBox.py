@@ -1,12 +1,12 @@
 import dearpygui.dearpygui as dpg
-from ui.box import Box
+from ui.Boxes import Box
 import utils.Utils as utils
 
 
 class MessageBox(Box):
     def draw(self):
-        with dpg.window(label="Message", tag="message_window"):
-            message_data = self._tbkdata.message_data
+        with dpg.window(label="Message", tag=f"message_window"):
+            message_data = self._tbk_data.message_data
             pubs = message_data["pubs"]
             with dpg.collapsing_header(label="Message List", tag=f"{dpg.generate_uuid()}_treenode"):
                 item = []
@@ -21,14 +21,15 @@ class MessageBox(Box):
                                             uuid = f"{puuid}_{msg}_{msg_name}_group"
                                             user_data = {
                                                 'msg': msg,
-                                                'name':msg_name,
+                                                'name': msg_name,
                                                 'type': 'TBK_Message',
-                                                'uuid':uuid,
+                                                'uuid': uuid,
                                             }
                                             dpg.add_checkbox(label=msg_name, tag=f"{uuid}_checkbox",
-                                                             
+
                                                              user_data=(msg_name, uuid))
-                                            with dpg.drag_payload(parent=f"{uuid}_checkbox", payload_type="plot_data",drag_data=user_data):
+                                            with dpg.drag_payload(parent=f"{uuid}_checkbox", payload_type="plot_data",
+                                                                  drag_data=user_data):
                                                 dpg.add_text(f"{uuid}_payload")
                                             dpg.add_spacer(width=80)
                                             dpg.add_text(tag=f"{uuid}_text", default_value="")
@@ -37,14 +38,14 @@ class MessageBox(Box):
         pass
         # dpg.does_alias_exist()
 
-        # message_data = self._tbkdata.message_data
+        # message_data = self._tbk_data.message_data
         # pubs = message_data["pubs"]
         # message_tree = utils.build_message_tree(pubs)
         # for puuid, node_name in message_tree.items():
         #     dpg.configure_item(label=publisher,tag=f"{dpg.generate_uuid()}_treenode")
         #     # print(dpg.get_item_configuration(f"{puuid}_treenode"))
 
-        # message_data = self._tbkdata.message_data
+        # message_data = self._tbk_data.message_data
         # pubs = message_data["pubs"]
         # item = []
         # message_tree = utils.build_message_tree(pubs)
@@ -68,7 +69,7 @@ class MessageBox(Box):
 
         # exit(0)
 
-        # message_data = self._tbkdata.message_data
+        # message_data = self._tbk_data.message_data
         # pubs = message_data["pubs"]
         # with dpg.collapsing_header(label="Message List", tag=f"{dpg.generate_uuid()}_treenode"):
         #     item = []

@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-from ui.box import Box
+from ui.Boxes import Box
 import tbkpy._core as tbkpy
 import pickle
 import time
