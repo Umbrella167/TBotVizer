@@ -1,9 +1,17 @@
+import os
+os.system('export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python')
+
+from tbkpy import _core as tbkpy
+tbkpy.init("TBK-Client")
+
+
 import ui.Ui as ui
 import dearpygui.dearpygui as dpg
 from api import TBKApi
 from ui.Boxes.MessageBox import MessageBox
 from ui.Boxes.ParamBox import ParamBox
 from utils.DataProcessor import TBKData
+from ui.Boxes.PlotVzBox import PlotVzBox
 from ui.LayoutManager import LayoutManager
 
 
@@ -22,7 +30,9 @@ def main():
 
     t_pbox = ParamBox(layout_manager, tbk_data)
     t_msgbox = MessageBox(layout_manager, tbk_data)
-    boxes = [t_pbox, t_msgbox]
+    t_plotvzbox = PlotVzBox(layout_manager, tbk_data)
+
+    boxes = [t_pbox, t_msgbox, t_plotvzbox]
 
     UI = ui.UI(layout_manager, boxes)
 

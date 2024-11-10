@@ -67,4 +67,7 @@ class ParamBox(Box):
         for k, v in self._tbk_data.param_data.items():
             # print('k: ',k)
             # print('v: ',v)
-            dpg.set_value(k + '_value', v['value'])
+
+            # 这句暂时有点问题
+            # dpg.set_value(k + '_value', v['value'])
+            pass

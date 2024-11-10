@@ -14,14 +14,23 @@ class MessageBox(Box):
                 for puuid, node_name in message_tree.items():
                     for theme_name, node_msgs in node_name.items():
                         with dpg.tree_node(label=f"{theme_name}({puuid})", tag=f"{puuid}_treenode"):
-                            for publisher, messages in node_msgs.items():
-                                with dpg.tree_node(label=publisher, tag=f"{puuid}_{publisher}_treenode"):
-                                    for msg in messages:
-                                        with dpg.group(tag=f"{puuid}_{publisher}_{msg}_group", horizontal=True):
-                                            uuid = f"{puuid}_{publisher}_{msg}_group"
-                                            dpg.add_checkbox(label=msg, tag=f"{uuid}_checkbox",
-                                                             # callback=self._callback.check_message,
-                                                             user_data=(msg, uuid))
+                            for msg, messages in node_msgs.items():
+                                with dpg.tree_node(label=msg, tag=f"{puuid}_{msg}_treenode"):
+                                    for msg_name in messages:
+                                        with dpg.group(tag=f"{puuid}_{msg}_{msg_name}_group", horizontal=True):
+                                            uuid = f"{puuid}_{msg}_{msg_name}_group"
+                                            user_data = {
+                                                'msg': msg,
+                                                'name': msg_name,
+                                                'type': 'TBK_Message',
+                                                'uuid': uuid,
+                                            }
+                                            dpg.add_checkbox(label=msg_name, tag=f"{uuid}_checkbox",
+
+                                                             user_data=(msg_name, uuid))
+                                            with dpg.drag_payload(parent=f"{uuid}_checkbox", payload_type="plot_data",
+                                                                  drag_data=user_data):
+                                                dpg.add_text(f"{uuid}_payload")
                                             dpg.add_spacer(width=80)
                                             dpg.add_text(tag=f"{uuid}_text", default_value="")
 
