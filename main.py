@@ -25,7 +25,6 @@ def main():
     tbk_api = TBKApi.TBKApi()
     tbk_data = TBKData(tbk_api)
     layout_manager = LayoutManager(config.UI_LAYOUT_FILE)
-
     t_pbox = ParamBox(layout_manager, tbk_data)
     t_msgbox = MessageBox(layout_manager, tbk_data)
     t_plotvzbox = PlotVzBox(layout_manager, tbk_data)
@@ -36,12 +35,10 @@ def main():
     dpg.create_context()
     UI.Layout.set_theme("Dark")
     UI.Layout.set_font(20)
-
     UI.draw()
+
     # UI.show()
-
     UI.run_loop(lambda: loop(UI))
-
 
 if __name__ == "__main__":
     main()

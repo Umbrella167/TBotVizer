@@ -137,28 +137,12 @@ def compare_dicts(dict1, dict2):
 
 def build_message_tree(data):
     tree = {}
-
-    for item in data.values():
-        puuid = item.puuid
-        pid = item.pid
-        uuid = item.uuid
-        ep_info = item.ep_info
-
-        node_name = ep_info.node_name
-        name = ep_info.name
-        msg_name = ep_info.msg_name
-
+    for uuid in data:
+        puuid = f"{data[uuid].ep_info.node_name}_{data[uuid].puuid}"
         if puuid not in tree:
             tree[puuid] = {}
-        if node_name not in tree[puuid]:
-            tree[puuid] = {node_name: {}}
-        if name not in tree[puuid][node_name]:
-            tree[puuid][node_name][name] = []
-
-        tree[puuid][node_name][name].append(msg_name)
-
+        tree[puuid][uuid] = data[uuid]
     return tree
-
 
 def build_param_tree(flat_dict):
     tree = {}

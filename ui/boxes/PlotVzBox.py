@@ -61,13 +61,13 @@ class PlotVzBox:
 
     def subscriber_msg(self, msg, user_data):
         series_tag = user_data
+        print(msg)
         msg = pickle.loads(msg)
         if series_tag not in self.subscription_data:
             self.subscription_data[series_tag] = {
                 'time': TimedDeque(max_age_seconds=self.max_save_time),
                 'data': {}
             }
-
             if not isinstance(msg, (list, tuple)):
                 msg = [msg]
             for i in range(len(msg)):
@@ -89,15 +89,15 @@ class PlotVzBox:
                 )
 
     def plot_drop_callback(self, sender, app_data, user_data):
-        _msg = app_data['msg']
         name = app_data['name']
-        series_tag = f'{_msg}:{name}'
-
+        msg_name = app_data['msg_name']
+        msg_type = app_data['msg_type']
+        series_tag = f'{name}:{msg_name}'
+        
         if series_tag not in self.subscription_data:
             self.subscriber_func.append(tbkpy.Subscriber(
-                _msg, name, lambda msg: self.subscriber_msg(msg, series_tag)
+                name, msg_name, lambda msg: self.subscriber_msg(msg, series_tag)
             ))
-
     def update(self):
         self.now_time = time.time()
         if self.is_axis_move:
