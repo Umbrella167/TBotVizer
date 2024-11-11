@@ -140,9 +140,13 @@ def build_message_tree(data):
 
     for item in data.values():
         puuid = item.puuid
-        node_name = item.node_name
-        name = item.name
-        msg_name = item.msg_name
+        pid = item.pid
+        uuid = item.uuid
+        ep_info = item.ep_info
+
+        node_name = ep_info.node_name
+        name = ep_info.name
+        msg_name = ep_info.msg_name
 
         if puuid not in tree:
             tree[puuid] = {}
@@ -222,7 +226,7 @@ def set_input_color(change_item, color):
 # 这个不知道是啥也没用到
 def add_input(_type, tag, default_value, max_value, min_value, step):
     if _type == "int":
-        # dpg.add_drag_int(clamped = True,tag=self._tag,default_value=value,width=-1,max_value=int(self.max),min_value=int(self.min),speed=int(self.step),callback=self.change_param_input_callback)
+        # dpg.add_drag_int(clamped = True,tag=self._tag,default_value=value,_width=-1,max_value=int(self.max),min_value=int(self.min),speed=int(self.step),callback=self.change_param_input_callback)
         with dpg.group():
             dpg.add_drag_int(
                 tag=tag,

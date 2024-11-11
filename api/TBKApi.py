@@ -2,12 +2,18 @@
 # -*- coding: utf-8 -*-
 import os
 import etcd3
+
 import utils.Utils as uitls
 import tzcp.tbk.tbk_pb2 as tbkpb
+from tbkpy import _core as tbkpy
+
+from config.SystemConfig import config
 
 
 class TBKApi:
     def __init__(self):
+        tbkpy.init(config.TBK_NODE_NAME)
+
         self.MESSAGE_PREFIX = "/tbk/ps"
         self.PARAM_PREFIX = "/tbk/params"
         # self.param_data = {}

@@ -1,14 +1,15 @@
 import dearpygui.dearpygui as dpg
 
+from config import SystemConfig
 from ui.LayoutManager import LayoutManager
 from utils.CallBack import CallBack
 
 
 class UI:
     def __init__(self, layout: LayoutManager, boxes: list):
+        # self.config =
         self._boxes = boxes
         self._Layout = layout
-        # self._layout_config = layout_manager.config
         self._callback = CallBack(layout)
 
     def show(self):
@@ -16,7 +17,7 @@ class UI:
         dpg.configure_app(
             docking=True,
             docking_space=True,
-            init_file="dpg_layout.ini",
+            init_file=self._Layout.init_file,
             load_init_file=True,
         )
         dpg.create_viewport(title="TBK-ParamManager", width=1920, height=1080)

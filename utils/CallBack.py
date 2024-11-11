@@ -1,11 +1,12 @@
 from dearpygui import dearpygui as dpg
 
-from ui.LayoutManager import LayoutConfig, LayoutManager
+from static.Params import TypeParams
+from ui.LayoutManager import LayoutManager
 
 
 class CallBack:
     def __init__(self, layout: LayoutManager):
-        self._layout_config = layout.config
+        self._type_params = TypeParams()
         self._layout = layout
 
     def on_key_release(self, sender, app_data):

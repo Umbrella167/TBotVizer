@@ -1,4 +1,5 @@
 import dearpygui.dearpygui as dpg
+from ui.boxes import Box
 from collections import deque
 import tbkpy._core as tbkpy
 import pickle
@@ -8,18 +9,18 @@ class TimedDeque:
     def __init__(self, max_age_seconds):
         self.deque = deque()
         self.max_age_seconds = max_age_seconds
-    
+
     def append(self, item):
         # 添加元素和当前时间戳
         self.deque.append((item, time.time()))
         self._remove_old_items()
-    
+
     def _remove_old_items(self):
         # 移除超过时间限制的元素
         current_time = time.time()
         while self.deque and (current_time - self.deque[0][1]) > self.max_age_seconds:
             self.deque.popleft()
-    
+
     def __iter__(self):
         # 迭代元素，忽略时间戳
         return (item for item, _ in self.deque)
@@ -86,7 +87,7 @@ class PlotVzBox:
                     x=list(self.subscription_data[series_tag]['time']),
                     y=list(self.subscription_data[series_tag]['data'][i])
                 )
-        
+
     def plot_drop_callback(self, sender, app_data, user_data):
         _msg = app_data['msg']
         name = app_data['name']

@@ -1,8 +1,8 @@
 import dearpygui.dearpygui as dpg
 import re
 
-from ui.Components import component
-from ui.LayoutManager import LayoutConfig
+from ui.components import Component
+from static.Params import TypeParams
 from utils.DataProcessor import TBKData
 from utils.Utils import set_input_color
 
@@ -10,9 +10,9 @@ from utils.Utils import set_input_color
 有用到但是没做测试，需要进一步测试看看
 """
 
-class Input(component):
-    # def __init__(self, outer_instance, data: LayoutConfig, tbk_data: TBKData) -> None:
-    def __init__(self, data: LayoutConfig, tbkdata: TBKData) -> None:
+class Input(Component):
+    # def __init__(self, outer_instance, data: TypeParams, tbk_data: TBKData) -> None:
+    def __init__(self, data: TypeParams, tbkdata: TBKData) -> None:
 
         # self._outer_instance = outer_instance
         self._tag = None
@@ -68,19 +68,19 @@ class Input(component):
         self._init_input(tag=tag, value=value, type=type, info=info, parent=parent)
         self.get_limit()
         theme_id = self.create_theme()
-        # if self._type in self._layout_config.intname:
+        # if self._type in self._type_params.intname:
         if any(item in self._type for item in self._data.intname):
 
             self.create_input_int()
-        # elif self._type in self._layout_config.floatname:
+        # elif self._type in self._type_params.floatname:
         elif any(item in self._type for item in self._data.floatname):
 
             self.create_input_float()
-        # elif self._type in self._layout_config.boolname:
+        # elif self._type in self._type_params.boolname:
         elif any(item in self._type for item in self._data.boolname):
 
             self.create_check_box()
-        # elif self._type in self._layout_config.enumname:
+        # elif self._type in self._type_params.enumname:
         elif any(item in self._type for item in self._data.enumname):
             self.create_enum()
         else:
@@ -121,7 +121,7 @@ class Input(component):
             #     clamped=True,
             #     tag=self._tag,
             #     default_value=value,
-            #     width=-1,
+            #     _width=-1,
             #     max_value=int(self.max),
             #     min_value=int(self.min),
             #     speed=int(self.step),

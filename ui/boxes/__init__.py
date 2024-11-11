@@ -1,6 +1,7 @@
+from config.BoxConfig import BoxConfig
 from utils.CallBack import CallBack
 from utils.DataProcessor import TBKData
-from ui.LayoutManager import LayoutConfig, LayoutManager
+from ui.LayoutManager import LayoutManager
 from collections import deque
 
 
@@ -9,7 +10,7 @@ class Box(object):
         self._tbk_data = tbk_data
         self._layout_manager = layout_manager
         self._callback = CallBack(layout_manager)
-        # self._theme = theme
+        # self._theme = _theme
         self.maxlen = 5
         self.table_change_list = deque(maxlen=self.maxlen)
 
