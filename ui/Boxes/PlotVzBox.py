@@ -4,7 +4,6 @@ import tbkpy._core as tbkpy
 import pickle
 import time
 
-# 定义 TimedDeque 类
 class TimedDeque:
     def __init__(self, max_age_seconds):
         self.deque = deque()

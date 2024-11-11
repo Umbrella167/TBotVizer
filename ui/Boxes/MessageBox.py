@@ -2,7 +2,6 @@ import dearpygui.dearpygui as dpg
 from ui.Boxes import Box
 import utils.Utils as utils
 
-
 class MessageBox(Box):
     def draw(self):
         with dpg.window(label="Message", tag=f"message_window"):
@@ -33,6 +32,7 @@ class MessageBox(Box):
                                                 dpg.add_text(f"{uuid}_payload")
                                             dpg.add_spacer(width=80)
                                             dpg.add_text(tag=f"{uuid}_text", default_value="")
+
 
     def update(self):
         pass
