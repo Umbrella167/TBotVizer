@@ -30,7 +30,7 @@ class TimedDeque:
         return len(self.deque)
 
 class PlotVzBox:
-    def __init__(self, uidata, tbkdata):
+    def __init__(self):
         self.subscriber_func = []
         self.subscription_data = {}
         self.is_axis_move = True

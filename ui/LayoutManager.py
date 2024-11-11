@@ -1,18 +1,23 @@
 import json
 
 import dearpygui.dearpygui as dpg
+from dotenv import set_key
 
 from config.SystemConfig import config
 from static.Params import language
 
 
 class LayoutManager:
-    def __init__(self, _init_file, _settings_file="layout_settings.json"):
+    def __init__(self, theme="Dark", font_size=20, init_file="static/layout/ui_layout.ini", settings_file="layout_settings.json"):
         # 初始化布局管理器，设置保存布局的文件名
-        self.settings_file = _settings_file
-        self.init_file = _init_file
+        self.settings_file = settings_file
+        self.init_file = init_file
+        self.theme = theme
+        self.font_size = font_size
+        self.set_theme(self.theme)
+        self.set_font(self.font_size)
 
-    def save_layout(self):
+    def save(self):
         dpg.save_init_file(self.init_file)
         """
         # 保存当前布局设置到文件
@@ -54,7 +59,7 @@ class LayoutManager:
             json.dump(layout_data, file)
         """
 
-    def load_layout(self):
+    def load(self):
         # 从文件中加载布局设置
         # 这句在ui.show()里已经被用到了,这里暂时保留两个，但是没啥用
         dpg.configure_app(init_file=self.init_file)
@@ -103,8 +108,6 @@ class LayoutManager:
         except:
             pass
         return [0, 0]
-
-
 
     # 主题
     def set_theme(self, theme):
