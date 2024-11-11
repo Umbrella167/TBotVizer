@@ -1,4 +1,4 @@
-from ui.Components import component
+from ui.components import Component
 from dearpygui import dearpygui as dpg
 from contextlib import contextmanager
 from typing import Generator, Union
@@ -7,7 +7,7 @@ from typing import Generator, Union
 这个类还没用到，也没做测试
 """
 
-class TableTree(component):
+class TableTree(Component):
     def __init__(self):
         self.param_tag = ""
 

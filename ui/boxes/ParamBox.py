@@ -1,6 +1,8 @@
 import dearpygui.dearpygui as dpg
-from ui.Boxes import Box
-from ui.Components.Input import Input
+
+from static.Params import TypeParams
+from ui.boxes import Box
+from ui.components.Input import Input
 from utils.Utils import set_input_color
 
 
@@ -39,7 +41,7 @@ class ParamBox(Box):
                         for item in value:
                             if item == "value":
                                 tag = param + "_" + item
-                                Input(data=self._layout_manager.config, tbkdata=self._tbk_data).new_input(
+                                Input(data=TypeParams(), tbkdata=self._tbk_data).new_input(
                                     tag=tag,
                                     value=value[item],
                                     type=_type,
@@ -47,7 +49,7 @@ class ParamBox(Box):
                                     parent=param,
                                 )
 
-                                # self._diycomponents.Input(outer_instance=self._diycomponents, data=self._layout_config,
+                                # self._diycomponents.Input(outer_instance=self._diycomponents, data=self._type_params,
                                 #                           tbk_data=self._tbk_data).new_input(
                                 #     tag=tag,
                                 #     value=value[item],

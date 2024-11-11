@@ -1,54 +1,24 @@
-import dearpygui.dearpygui as dpg
 import json
 
 import dearpygui.dearpygui as dpg
-import ui.Language.Language as language
 
-class LayoutConfig:
-    def __init__(self):
-        self.intname = [
-            "int",
-            "int32",
-            "int64",
-            "int16",
-            "int8",
-            "uint",
-            "uint32",
-            "uint64",
-            "uint16",
-            "uint8",
-            "整形",
-            "整数形",
-        ]
-        self.floatname = [
-            "float",
-            "double",
-            "float32",
-            "float64",
-            "浮点",
-            "浮点数",
-            "浮点型",
-            "单浮点",
-            "双浮点",
-            "单精度",
-            "双精度",
-        ]
-        self.boolname = ["bool", "布尔", "布尔值"]
-        self.enumname = ["enum", "枚举", "list", "列表"]
+from config.SystemConfig import config
+from static.Params import language
 
 
 class LayoutManager:
-    def __init__(self, settings_file="layout_settings.json"):
-        self.config = LayoutConfig()
+    def __init__(self, _init_file, _settings_file="layout_settings.json"):
         # 初始化布局管理器，设置保存布局的文件名
-        self.settings_file = settings_file
+        self.settings_file = _settings_file
+        self.init_file = _init_file
 
     def save_layout(self):
+        dpg.save_init_file(self.init_file)
+        """
         # 保存当前布局设置到文件
         layout_data = {}
 
-        # 将当前布局保存到临时文件"dpg_layout.ini"
-        dpg.save_init_file("dpg_layout.ini")
+        将当前布局保存到临时文件"ui_layout.ini"
 
         # 遍历所有项目，获取其别名和类型
         for item in dpg.get_all_items():
@@ -76,36 +46,30 @@ class LayoutManager:
         viewport_height = dpg.get_viewport_height()
         viewport_width = dpg.get_viewport_width()
         layout_data["viewport"] = {
-            "height": viewport_height,
-            "width": viewport_width,
+            "_height": viewport_height,
+            "_width": viewport_width,
         }
-
         # 将布局数据保存到JSON文件中
         with open(self.settings_file, "w") as file:
             json.dump(layout_data, file)
-
-    def get_drawer_window_size(self):
-        try:
-            with open(self.settings_file, "r") as file:
-                layout_data = json.load(file)
-            for item, properties in layout_data.items():
-                if item == "drawer_window":
-                    return properties["size"]
-        except:
-            pass
-        return [0, 0]
+        """
 
     def load_layout(self):
         # 从文件中加载布局设置
+        # 这句在ui.show()里已经被用到了,这里暂时保留两个，但是没啥用
+        dpg.configure_app(init_file=self.init_file)
+        """
         try:
             with open(self.settings_file, "r") as file:
                 layout_data = json.load(file)
 
             for item, properties in layout_data.items():
+                if not dpg.does_item_exist(item):
+                    continue
                 # 设置视口的高度和宽度
                 if item == "viewport":
-                    dpg.set_viewport_height(properties["height"])
-                    dpg.set_viewport_width(properties["width"])
+                    dpg.set_viewport_height(properties["_height"])
+                    dpg.set_viewport_width(properties["_width"])
                 # 如果项目存在，设置其值
                 if dpg.does_item_exist(item):
                     # 如果项目是复选框类型，设置之前保存的值
@@ -127,6 +91,20 @@ class LayoutManager:
             print("LayoutManager loaded")
         except FileNotFoundError:
             print("No layout_manager settings found")
+        """
+
+    def get_drawer_window_size(self):
+        try:
+            with open(self.settings_file, "r") as file:
+                layout_data = json.load(file)
+            for item, properties in layout_data.items():
+                if item == "drawer_window":
+                    return properties["size"]
+        except:
+            pass
+        return [0, 0]
+
+
 
     # 主题
     def set_theme(self, theme):
@@ -173,7 +151,7 @@ class LayoutManager:
         with dpg.font_registry():
             # 加载字体，并设置字体大小为15
             with dpg.font(
-                    "./ui/Language/Font/BLACK-NORMAL.ttf", size, pixel_snapH=True
+                    config.FONT_FILE, size, pixel_snapH=True
             ) as chinese_font:
                 # 添加字体范围提示，指定字体应包含完整的中文字符集
                 dpg.add_font_range_hint(dpg.mvFontRangeHint_Chinese_Full)
@@ -191,7 +169,7 @@ class LayoutManager:
     # 语言
     def choose_lanuage(self, country):
         current_language = country
-        label = language.languages[current_language]
+        label = language[current_language]
         dpg.set_item_label("main_window", label["main_window"])
         dpg.set_item_label("view_menu", label["view_menu"])
         dpg.set_item_label("theme_menu", label["theme_menu"])

@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-from ui.Boxes import Box
+from ui.boxes import Box
 import utils.Utils as utils
 
 
@@ -64,7 +64,7 @@ class MessageBox(Box):
         #                 # print(uuid)
         #                 dpg.set_item_user_data(f"{uuid}_checkbox", (msg, uuid))
 
-        # dpg.add_spacer(width=80)
+        # dpg.add_spacer(_width=80)
         # dpg.add_text(tag=f"{uuid}_text", default_value="")
 
         # exit(0)
