@@ -40,7 +40,7 @@ class LanguageParams:
                 "theme_menu": "Themes",
                 "chineseS_menu": "中文简体",
                 "english_menu": "English",
-                "language_label": "_language",
+                "language_label": "language",
                 "view_menu": "View",
             },
             "zh": {

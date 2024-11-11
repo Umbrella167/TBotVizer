@@ -48,7 +48,6 @@ class ParamBox(Box):
                                     info=_info,
                                     parent=param,
                                 )
-
                                 # self._diycomponents.Input(outer_instance=self._diycomponents, data=self._type_params,
                                 #                           tbk_data=self._tbk_data).new_input(
                                 #     tag=tag,
