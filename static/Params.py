@@ -1,36 +1,92 @@
+from tzcp.ros.geometry_pb2 import (
+    Vector3,
+    Point,
+    Quaternion,
+    Pose2D,
+    Pose,
+    PoseStamped,
+    PoseWithCovariance,
+    Twist,
+    TwistWithCovariance,
+    Transform,
+    Accel,
+    Wrench,
+)
+from tzcp.ros.std_pb2 import (
+    Float64,
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+    String,
+    ColorRGBA,
+    Duration,
+    Empty,
+    Time,
+    Header,
+    MultiArrayDimension,
+    MultiArrayLayout,
+    ByteMultiArray,
+    UInt32MultiArray,
+    UInt64MultiArray,
+    Int32MultiArray,
+    Int64MultiArray,
+    Float32MultiArray,
+    Float64MultiArray,
+)
+from tzcp.ros.ackermann_pb2 import AckermannDrive, AckermannDriveStamped
+from tzcp.ros.sensor_pb2 import LaserScan,RegionOfInterest,CameraInfo,Image,IMU
 class TypeParams:
-    def __init__(self):
-        self.intname = [
-            "int",
-            "int32",
-            "int64",
-            "int16",
-            "int8",
-            "uint",
-            "uint32",
-            "uint64",
-            "uint16",
-            "uint8",
-            "整形",
-            "整数形",
-        ]
-        self.floatname = [
-            "float",
-            "double",
-            "float32",
-            "float64",
-            "浮点",
-            "浮点数",
-            "浮点型",
-            "单浮点",
-            "双浮点",
-            "单精度",
-            "双精度",
-        ]
-        self.boolname = ["bool", "布尔", "布尔值"]
-        self.enumname = ["enum", "枚举", "list", "列表"]
-
-
+    TBK_TYPES = {
+        'Vector3': Vector3(),
+        'Point': Point(),
+        'Quaternion': Quaternion(),
+        'Pose2D': Pose2D(),
+        'Pose': Pose(),
+        'PoseStamped': PoseStamped(),
+        'PoseWithCovariance': PoseWithCovariance(),
+        'Twist': Twist(),
+        'TwistWithCovariance': TwistWithCovariance(),
+        'Transform': Transform(),
+        'Accel': Accel(),
+        'Wrench': Wrench(),
+        'Float64': Float64(),
+        'Int8': Int8(),
+        'Int16': Int16(),
+        'Int32': Int32(),
+        'Int64': Int64(),
+        'UInt8': UInt8(),
+        'UInt16': UInt16(),
+        'UInt32': UInt32(),
+        'UInt64': UInt64(),
+        'String': String(),
+        'ColorRGBA': ColorRGBA(),
+        'Duration': Duration(),
+        'Empty': Empty(),
+        'Time': Time(),
+        'Header': Header(),
+        'MultiArrayDimension': MultiArrayDimension(),
+        'MultiArrayLayout': MultiArrayLayout(),
+        'ByteMultiArray': ByteMultiArray(),
+        'UInt32MultiArray': UInt32MultiArray(),
+        'UInt64MultiArray': UInt64MultiArray(),
+        'Int32MultiArray': Int32MultiArray(),
+        'Int64MultiArray': Int64MultiArray(),
+        'Float32MultiArray': Float32MultiArray(),
+        'Float64MultiArray': Float64MultiArray(),
+        'AckermannDrive': AckermannDrive(),
+        'AckermannDriveStamped': AckermannDriveStamped(),
+        'LaserScan': LaserScan(),
+        'RegionOfInterest': RegionOfInterest(),
+        'CameraInfo': CameraInfo(),
+        'Image': Image(),
+        'IMU': IMU(),
+    }
+    
 class LanguageParams:
     def __init__(self):
         self._language_settings = {
@@ -58,5 +114,3 @@ class LanguageParams:
         return self._language_settings.get(lang)
 
 language = LanguageParams()
-
-

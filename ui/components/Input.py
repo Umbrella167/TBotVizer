@@ -69,19 +69,17 @@ class Input(Component):
         self.get_limit()
         theme_id = self.create_theme()
         # if self._type in self._type_params.intname:
-        if any(item in self._type for item in self._data.intname):
-
+        if self._type.lower() == "int":
             self.create_input_int()
         # elif self._type in self._type_params.floatname:
-        elif any(item in self._type for item in self._data.floatname):
-
+        elif self._type.lower() == 'float':
             self.create_input_float()
         # elif self._type in self._type_params.boolname:
-        elif any(item in self._type for item in self._data.boolname):
+        elif self._type.lower() == 'bool':
 
             self.create_check_box()
         # elif self._type in self._type_params.enumname:
-        elif any(item in self._type for item in self._data.enumname):
+        elif self._type.lower() == 'enum':
             self.create_enum()
         else:
             self.create_input_text()

@@ -1,7 +1,6 @@
 import json
 
 import dearpygui.dearpygui as dpg
-from dotenv import set_key
 
 from config.SystemConfig import config
 from static.Params import language

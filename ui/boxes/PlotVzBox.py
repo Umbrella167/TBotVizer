@@ -2,8 +2,9 @@ import dearpygui.dearpygui as dpg
 from ui.boxes import Box
 from collections import deque
 import tbkpy._core as tbkpy
-import pickle
 import time
+from static.Params import TypeParams
+from tzcp.ros.geometry_pb2 import Vector3
 
 class TimedDeque:
     def __init__(self, max_age_seconds):
@@ -29,19 +30,21 @@ class TimedDeque:
         # 返回元素数量
         return len(self.deque)
 
+
 class PlotVzBox:
     def __init__(self):
-        self.subscriber_func = []
+        self.subscriber_func = {}
         self.subscription_data = {}
         self.is_axis_move = True
         self.data_start_time = time.time()
         self.now_time = time.time()
         self.max_save_time = 10  # 数据保存的最大时间限制
+
     def toggle_axis_move(self):
         self.is_axis_move = not self.is_axis_move
 
     def draw(self):
-        with dpg.window(label='Plot Visualizer', tag="plotvz_window"):
+        with dpg.window(label="Plot Visualizer", tag="plotvz_window"):
             dpg.add_text("Plot Visualizer")
 
             with dpg.plot(
@@ -53,51 +56,83 @@ class PlotVzBox:
                 drop_callback=self.plot_drop_callback,
             ):
                 dpg.add_plot_legend()
-                dpg.add_plot_axis(dpg.mvXAxis, label='Time', tag="plotvz_xaxis")
-                dpg.add_plot_axis(dpg.mvYAxis, label='Data', tag="plotvz_yaxis")
+                dpg.add_plot_axis(dpg.mvXAxis, label="Time", tag="plotvz_xaxis")
+                dpg.add_plot_axis(dpg.mvYAxis, label="Data", tag="plotvz_yaxis")
 
         with dpg.handler_registry():
-            dpg.add_key_release_handler(key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move)
+            dpg.add_key_release_handler(
+                key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move
+            )
 
     def subscriber_msg(self, msg, user_data):
-        series_tag = user_data
-        print(msg)
-        msg = pickle.loads(msg)
+        series_tag, msg_type, puuid = user_data
+
+        # 错误检查
+        if msg_type not in TypeParams.TBK_TYPES:
+            print(f"Unknown msg_type: {msg_type}")
+            del self.subscriber_func[f"{series_tag}_{puuid}"]
+            return
+        real_msg = TypeParams.TBK_TYPES[msg_type]
+        try:
+            real_msg.ParseFromString(msg)
+        except Exception as e:
+            print(f"ERROR: Deserialization failed,please check data type")
+            del self.subscriber_func[f"{series_tag}_{puuid}"]
+            return
+
+        
         if series_tag not in self.subscription_data:
             self.subscription_data[series_tag] = {
-                'time': TimedDeque(max_age_seconds=self.max_save_time),
-                'data': {}
+                "time": TimedDeque(max_age_seconds=self.max_save_time),
+                "data": {},
             }
             if not isinstance(msg, (list, tuple)):
                 msg = [msg]
             for i in range(len(msg)):
-                self.subscription_data[series_tag]['data'][i] = TimedDeque(max_age_seconds=self.max_save_time)
-                dpg.add_line_series(x=[0], y=[0], label=f"{series_tag}_{i}", tag=f"{series_tag}_{i}_line", parent="plotvz_xaxis")
+                self.subscription_data[series_tag]["data"][i] = TimedDeque(
+                    max_age_seconds=self.max_save_time
+                )
+                dpg.add_line_series(
+                    x=[0],
+                    y=[0],
+                    label=f"{series_tag}_{i}",
+                    tag=f"{series_tag}_{i}_line",
+                    parent="plotvz_xaxis",
+                )
 
-        self.subscription_data[series_tag]['time'].append(self.now_time - self.data_start_time)
+        self.subscription_data[series_tag]["time"].append(
+            self.now_time - self.data_start_time
+        )
+        msg = [msg] if not isinstance(msg, (list, tuple)) else msg
 
-        if not isinstance(msg, (list, tuple)):
-            msg = [msg]
-        
         for i, value in enumerate(msg):
-            self.subscription_data[series_tag]['data'][i].append(value)
+            self.subscription_data[series_tag]["data"][i].append(value)
             if self.is_axis_move:
                 dpg.configure_item(
                     item=f"{series_tag}_{i}_line",
-                    x=list(self.subscription_data[series_tag]['time']),
-                    y=list(self.subscription_data[series_tag]['data'][i])
+                    x=list(self.subscription_data[series_tag]["time"]),
+                    y=list(self.subscription_data[series_tag]["data"][i]),
                 )
 
+
     def plot_drop_callback(self, sender, app_data, user_data):
-        name = app_data['name']
-        msg_name = app_data['msg_name']
-        msg_type = app_data['msg_type']
-        series_tag = f'{name}:{msg_name}'
-        
+        name = app_data["name"]
+        msg_name = app_data["msg_name"]
+        msg_type = app_data["msg_type"]
+        puuid = app_data["puuid"]
+        series_tag = f"{name}:{msg_name}"
+
         if series_tag not in self.subscription_data:
-            self.subscriber_func.append(tbkpy.Subscriber(
-                name, msg_name, lambda msg: self.subscriber_msg(msg, series_tag)
-            ))
+            self.subscriber_func[f"{series_tag}_{puuid}"] = tbkpy.Subscriber(
+                name,
+                msg_name,
+                lambda msg: self.subscriber_msg(msg, (series_tag, msg_type, puuid)),
+            )
+
+            # self.subscriber_func.append(tbkpy.Subscriber(
+            #     name, msg_name, lambda msg: self.subscriber_msg(msg, (series_tag,msg_type))
+            # ))
+
     def update(self):
         self.now_time = time.time()
         if self.is_axis_move:
@@ -105,8 +140,8 @@ class PlotVzBox:
             dpg.fit_axis_data("plotvz_xaxis")
             dpg.set_axis_limits(
                 axis="plotvz_xaxis",
-                ymin= self.now_time - self.data_start_time - self.max_save_time,
-                ymax= self.now_time - self.data_start_time
+                ymin=self.now_time - self.data_start_time - self.max_save_time,
+                ymax=self.now_time - self.data_start_time,
             )
         else:
             dpg.set_axis_limits_auto("plotvz_xaxis")
