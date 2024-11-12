@@ -1,6 +1,5 @@
 import dearpygui.dearpygui as dpg
 
-from config.SystemConfig import config
 from config.UiConfig import UiConfig
 
 
@@ -28,8 +27,8 @@ class UI:
 
     def on_key_release(self, sender, app_data):
         if dpg.is_key_down(dpg.mvKey_LControl) and app_data == dpg.mvKey_S:
-            print("布局保存成功")
             self.config.layout.save()
+            print("布局保存成功")
 
     def run_loop(self, func=None):
         if func is not None:

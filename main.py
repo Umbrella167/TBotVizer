@@ -4,6 +4,7 @@ import dearpygui.dearpygui as dpg
 import ui.Ui as ui
 from api import TBKApi
 from config.UiConfig import UiConfig
+from ui.boxes.ComboBoxDemo import ComboBoxDemo
 from ui.boxes.MessageBox import MessageBox
 from ui.boxes.ParamBox import ParamBox
 from utils.DataProcessor import TBKData
@@ -23,10 +24,14 @@ def main():
     tbk_api = TBKApi.TBKApi()
     tbk_data = TBKData(tbk_api)
 
-    t_pbox = ParamBox(tbk_data)
-    t_msgbox = MessageBox(tbk_data)
+    t_pbox = ParamBox(tbk_data=tbk_data)
+    t_msgbox = MessageBox(tbk_data=tbk_data)
     t_plotvzbox = PlotVzBox()
-    boxes = [t_pbox, t_msgbox, t_plotvzbox]
+
+    l = ["Option 1", "Option 2", "Option 3", "Option 4"]
+    t_cbd = ComboBoxDemo(data=l)
+
+    boxes = [t_pbox, t_msgbox, t_plotvzbox, t_cbd]
 
 
     ui_config = UiConfig(boxes=boxes)
