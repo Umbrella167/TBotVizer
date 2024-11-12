@@ -5,8 +5,8 @@ import utils.Utils as utils
 
 class MessageBox(Box):
     def draw(self):
-        with dpg.window(label="Message", tag=f"message_window"):
-            message_data = utils.build_message_tree(self._tbk_data.message_data["pubs"])
+        with dpg.window(label="Message", tag=f"message_window") as window:
+            message_data = utils.build_message_tree(self.tbk_data.message_data["pubs"])
             message_list_collapsing_header = dpg.add_collapsing_header(
                 label="Message List"
             )
@@ -19,7 +19,7 @@ class MessageBox(Box):
                     msg_name = msg_info.msg_name
                     msg_type = msg_info.msg_type
                     msg_type_url = msg_info.msg_type_url
-                    
+
                     msg_name_checkbox = dpg.add_checkbox(
                         label=f"{msg_name}({name})", parent=node_name_tree_node
                     )
@@ -42,7 +42,7 @@ class MessageBox(Box):
 
 
         # with dpg.window(label="Message", tag=f"message_window"):
-        #     message_data = self._tbk_data.message_data
+        #     message_data = self.tbk_data.message_data
         #     pubs = message_data["pubs"]
         # with dpg.collapsing_header(label="Message List", tag=f"{dpg.generate_uuid()}_treenode"):
         #     item = []
@@ -74,14 +74,14 @@ class MessageBox(Box):
         pass
         # dpg.does_alias_exist()
 
-        # message_data = self._tbk_data.message_data
+        # message_data = self.tbk_data.message_data
         # pubs = message_data["pubs"]
         # message_tree = utils.build_message_tree(pubs)
         # for puuid, node_name in message_tree.items():
         #     dpg.configure_item(label=publisher,tag=f"{dpg.generate_uuid()}_treenode")
         #     # print(dpg.get_item_configuration(f"{puuid}_treenode"))
 
-        # message_data = self._tbk_data.message_data
+        # message_data = self.tbk_data.message_data
         # pubs = message_data["pubs"]
         # item = []
         # message_tree = utils.build_message_tree(pubs)
@@ -105,7 +105,7 @@ class MessageBox(Box):
 
         # exit(0)
 
-        # message_data = self._tbk_data.message_data
+        # message_data = self.tbk_data.message_data
         # pubs = message_data["pubs"]
         # with dpg.collapsing_header(label="Message List", tag=f"{dpg.generate_uuid()}_treenode"):
         #     item = []
