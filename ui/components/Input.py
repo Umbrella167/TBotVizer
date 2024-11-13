@@ -11,7 +11,7 @@ from utils.Utils import set_input_color
 """
 
 class Input(Component):
-    # def __init__(self, outer_instance, data: TypeParams, tbk_data: TBKData) -> None:
+    # def __init__(self, outer_instance, tbk_data: TypeParams, tbk_data: TBKData) -> None:
     def __init__(self, data: TypeParams, tbkdata: TBKData) -> None:
 
         # self._outer_instance = outer_instance

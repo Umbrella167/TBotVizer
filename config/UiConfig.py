@@ -1,7 +1,6 @@
 from typing import List
 
 from config import BaseConfig
-from config.SystemConfig import config
 from ui.LayoutManager import LayoutManager
 from ui.boxes import Box
 

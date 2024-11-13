@@ -6,8 +6,9 @@ from config.UiConfig import UiConfig
 class UI:
     def __init__(self, config: UiConfig):
         self.config = config
+        self.is_created =  False
 
-    def show(self):
+    def create(self):
         self.create_global_handler()
         dpg.create_viewport(title=self.config.title, width=1920, height=1080)
         dpg.configure_app(
@@ -16,10 +17,12 @@ class UI:
             init_file=self.config.layout.init_file,
             load_init_file=True,
         )
+
         # 原show_ui部分
         # self.config.layout.load()
         dpg.setup_dearpygui()
         dpg.show_viewport()
+        self.is_created = True
 
     def create_global_handler(self):
         with dpg.handler_registry() as global_hander:
@@ -38,9 +41,11 @@ class UI:
         else:
             dpg.start_dearpygui()
 
-    def draw(self):
+    def show(self):
+        if not self.is_created:
+            self.create()
         for box in self.config.boxes:
-            box.draw()
+            box.show()
 
     def update(self):
         for box in self.config.boxes:

@@ -41,9 +41,10 @@ class PlotVzBox:
         self.max_save_time = 10  # 数据保存的最大时间限制
 
     def toggle_axis_move(self):
-        self.is_axis_move = not self.is_axis_move
+        if dpg.is_item_focused("plotvz_window"):
+            self.is_axis_move = not self.is_axis_move
 
-    def draw(self):
+    def show(self):
         with dpg.window(label="Plot Visualizer", tag="plotvz_window"):
             dpg.add_text("Plot Visualizer")
 
@@ -76,7 +77,7 @@ class PlotVzBox:
         try:
             real_msg.ParseFromString(msg)
         except Exception as e:
-            print(f"ERROR: Deserialization failed,please check data type")
+            print(f"ERROR: Deserialization failed,please check tbk_data type")
             del self.subscriber_func[f"{series_tag}_{puuid}"]
             return
 
@@ -84,12 +85,12 @@ class PlotVzBox:
         if series_tag not in self.subscription_data:
             self.subscription_data[series_tag] = {
                 "time": TimedDeque(max_age_seconds=self.max_save_time),
-                "data": {},
+                "tbk_data": {},
             }
             if not isinstance(msg, (list, tuple)):
                 msg = [msg]
             for i in range(len(msg)):
-                self.subscription_data[series_tag]["data"][i] = TimedDeque(
+                self.subscription_data[series_tag]["tbk_data"][i] = TimedDeque(
                     max_age_seconds=self.max_save_time
                 )
                 dpg.add_line_series(
@@ -106,12 +107,12 @@ class PlotVzBox:
         msg = [msg] if not isinstance(msg, (list, tuple)) else msg
 
         for i, value in enumerate(msg):
-            self.subscription_data[series_tag]["data"][i].append(value)
+            self.subscription_data[series_tag]["tbk_data"][i].append(value)
             if self.is_axis_move:
                 dpg.configure_item(
                     item=f"{series_tag}_{i}_line",
                     x=list(self.subscription_data[series_tag]["time"]),
-                    y=list(self.subscription_data[series_tag]["data"][i]),
+                    y=list(self.subscription_data[series_tag]["tbk_data"][i]),
                 )
 
 

@@ -2,7 +2,7 @@ run:
 	python main.py
 
 test:
-	pytest
+	pytest -s
 
 test_run:
 	(python utils/testUtils.py & sleep 2) && python main.py
