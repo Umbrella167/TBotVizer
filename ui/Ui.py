@@ -4,8 +4,9 @@ from config.UiConfig import UiConfig
 
 
 class UI:
-    def __init__(self, config: UiConfig):
-        self.config = config
+    def __init__(self, boxes):
+        self.boxes = boxes
+        self.config = UiConfig()
         self.is_created =  False
 
     def create(self):
@@ -19,7 +20,6 @@ class UI:
         )
 
         # 原show_ui部分
-        # self.config.layout.load()
         dpg.setup_dearpygui()
         dpg.show_viewport()
         self.is_created = True
@@ -44,9 +44,9 @@ class UI:
     def show(self):
         if not self.is_created:
             self.create()
-        for box in self.config.boxes:
+        for box in self.boxes:
             box.show()
 
     def update(self):
-        for box in self.config.boxes:
+        for box in self.boxes:
             box.update()

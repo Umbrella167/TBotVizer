@@ -35,12 +35,8 @@ def main():
 
     boxes = [t_pbox, t_msgbox, t_plotvzbox, t_cbd]
 
+    UI = ui.UI(boxes=boxes)
 
-    ui_config = UiConfig(boxes=boxes)
-    UI = ui.UI(ui_config)
-
-    # UI.config.layout.set_theme("Dark")
-    # UI.config.layout.set_font(20)
 
     UI.show()
     # UI.create()

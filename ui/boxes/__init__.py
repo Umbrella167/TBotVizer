@@ -22,10 +22,7 @@ class Box(object):
             self.create()
         # raise f"{self.__name__} does not implement draw()"
 
-    def draw(self):
-        # # 创建并显示
-        # self.create()
-        # self.show()
+    def hide(self):
         pass
 
     def update(self):

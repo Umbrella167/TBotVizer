@@ -6,10 +6,9 @@ from ui.boxes import Box
 
 
 class UiConfig(BaseConfig):
-    def __init__(self, title="TBK-ParamManager", boxes: List[Box]=None):
+    def __init__(self, title="TBK-ParamManager"):
         # TODO: 长宽应该根据系统长宽设定
         super().__init__()
-        self.boxes = boxes
         self.layout = LayoutManager()
         self.title = title
 

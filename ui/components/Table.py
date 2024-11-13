@@ -2,7 +2,6 @@ import dearpygui.dearpygui as dpg
 from docutils.nodes import label
 
 from ui.components import Component
-from utils.Utils import check_is_created
 
 
 class Table(Component):
@@ -15,7 +14,6 @@ class Table(Component):
         self.tag_table = []
         self.cols_title = cols_title
 
-    @check_is_created
     def create(self):
         self.tag = dpg.add_table(
             header_row=True,
