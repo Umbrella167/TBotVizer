@@ -2,7 +2,6 @@ import dearpygui.dearpygui as dpg
 
 from config.UiConfig import UiConfig
 
-
 class UI:
     def __init__(self, config: UiConfig):
         self.config = config

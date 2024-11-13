@@ -9,10 +9,10 @@ from ui.boxes.MessageBox import MessageBox
 from ui.boxes.ParamBox import ParamBox
 from utils.DataProcessor import TBKData
 from ui.boxes.PlotVzBox import PlotVzBox
-
 def loop(UI):
     try:
         UI.update()
+        print(dpg.get_frame_rate())
     except Exception as e:
         print(e)
         print("loop failed")

@@ -33,6 +33,7 @@ class ParamBox(Box):
                 # table_tree = self._diycomponents.TableTree()
                 # table_tree.build_dpg_tree(self.tbk_data.param_tree)
                 # 添加表格行和内容
+                print(self.tbk_data.param_data)
                 for row_index, (param, value) in enumerate(self.tbk_data.param_data.items()):
                     with dpg.table_row(parent=table_tag, tag=param):
                         dpg.add_text(default_value=param, tag=param + "_param")

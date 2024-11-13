@@ -10,6 +10,7 @@ class CheckBoxList(Component):
             dpg.add_window(popup=True, show=False, tag=self.tag)
         else:
             self.tag = dpg.add_window(popup=True, show=False)
+        print(self.tag)
         self.create_checkbox_list()
 
     def create(self):

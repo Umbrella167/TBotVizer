@@ -86,7 +86,27 @@ class TypeParams:
         'Image': Image(),
         'IMU': IMU(),
     }
-    
+    PLOT_SUPPORT_TYPES = [
+        'Vector3',
+        'Point',
+        'Quaternion',
+        'Float64',
+        'Int8',
+        'Int16',
+        'Int32',
+        'Int64',
+        'UInt8',
+        'UInt16',
+        'UInt32',
+        'UInt64',
+        'float',
+        'int',
+        'list',
+        'dict',
+        'tuple',
+        'array',
+    ]
+    PYTHON_TYPES = ['int', 'float', 'list', 'tuple', 'dict']
 class LanguageParams:
     def __init__(self):
         self._language_settings = {

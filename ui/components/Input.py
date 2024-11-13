@@ -114,17 +114,7 @@ class Input(Component):
             value = 0
         if self.max and self.min:
             print(self.max, self.min)
-            # self._outer_instance.add_input( "int",self._tag,50,100,0,10)
-            # dpg.add_drag_int(
-            #     clamped=True,
-            #     tag=self._tag,
-            #     default_value=value,
-            #     _width=-1,
-            #     max_value=int(self.max),
-            #     min_value=int(self.min),
-            #     speed=int(self.step),
-            #     callback=self.change_param_input_callback,
-            # )
+
             dpg.add_slider_int(
                 clamped=True,
                 tag=self._tag,
