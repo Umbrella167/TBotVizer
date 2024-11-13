@@ -84,6 +84,13 @@ def swap_elements(lst, element1, element2):
     except ValueError:
         print("其中一个元素不在列表中")
 
+def check_is_created(func):
+    def wrapper(self, *args, **kwargs):
+        if self.is_created:
+            print(f"{self.__class__.__name__} is already created.")
+            return
+        return func(self, *args, **kwargs)
+    return wrapper
 
 # def compare_dicts(dict1, dict2):
 #     keys1 = set(dict1.keys())

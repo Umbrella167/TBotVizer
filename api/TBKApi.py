@@ -13,19 +13,9 @@ from config.SystemConfig import config
 class TBKApi:
     def __init__(self):
         tbkpy.init(config.TBK_NODE_NAME)
-
         self.MESSAGE_PREFIX = "/tbk/ps"
         self.PARAM_PREFIX = "/tbk/params"
-        # self.param_data = {}
-        # self.param_data_last = {}
-        # self.param_tree = {}
-        # self.param_is_change = False
-        # self.message_data = {}
-        # self.message_data_last = {}
-        # self.message_is_change = False
         self.etcd = self._client()
-        # self.update_param()
-        # self.update_message()
 
     def _client(self):
         pkipath = os.path.join(os.path.expanduser("~"), ".tbk/etcdadm/pki")
@@ -37,8 +27,19 @@ class TBKApi:
             cert_cert=os.path.join(pkipath, "etcdctl-etcd-client.crt"),
         )
 
+    def get_original_param(self, _prefix=None):
+        prefix = self.PARAM_PREFIX + (_prefix if _prefix else "")
+        raw_data = self.etcd.get_prefix(prefix)
+        data = dict(
+            [
+                (r[1].key.decode('utf-8', errors='ignore')[12:], r[0].decode('utf-8', errors='ignore'))
+                for r in raw_data
+            ]
+        )
+        return data
+
+
     def get_param(self, _prefix=None):
-        # self.etcd = self.__client()
         prefix = self.PARAM_PREFIX + (_prefix if _prefix else "")
         raw_data = self.etcd.get_prefix(prefix)
         data = dict(
@@ -78,6 +79,7 @@ class TBKApi:
         else:
             self.param_change_data = {"added": {}, "removed": {}, "modified": {}}
             self.param_is_change = False
+
 
     def get_message(self):
         processes = {}

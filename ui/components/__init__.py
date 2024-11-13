@@ -1,6 +1,12 @@
 from ui.boxes import Box
 
+
+
 class Component(Box):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
     # def __init__(self, parent=None, tag=None, sons=None):
     #     super().__init__(tag, sons)
     #     if sons is None:
@@ -21,5 +27,4 @@ class Component(Box):
     #
     # def on_row_clicked(self):
     #     pass
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+

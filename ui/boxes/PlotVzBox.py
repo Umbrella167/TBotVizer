@@ -97,7 +97,8 @@ class PlotVzBox:
 
     def toggle_axis_move(self):
         self.is_axis_move = not self.is_axis_move
-    def draw(self):
+
+    def show(self):
         with dpg.window(label="Plot Visualizer", tag="plotvz_window"):
             dpg.add_text("Plot Visualizer")
 
@@ -141,8 +142,6 @@ class PlotVzBox:
         real_msg = self.type_check(series_tag, msg_type, puuid,msg)
         real_msg = PlotUitls.tbkdata2plotdata(real_msg, msg_type)
 
-
-
         if series_tag not in self.subscription_data:
             self.subscription_data[series_tag] = {
                 "time": TimedDeque(max_age_seconds=self.max_save_time),
@@ -170,11 +169,8 @@ class PlotVzBox:
         for key, value in real_msg.items():
             self.subscription_data[series_tag]["data"][key].append(value)
             if self.is_axis_move:
-                # print(self.subscription_data[series_tag]["time"])
                 dpg.configure_item(
                     item=f"{series_tag}_{key}_line",
-                    # x=list(self.subscription_data[series_tag]["time"]),
-                    # y=list(self.subscription_data[series_tag]["data"][key]),
                     x = self.subscription_data[series_tag]["time"].get_items(),
                     y = self.subscription_data[series_tag]["data"][key].get_items()
                 )
@@ -194,9 +190,6 @@ class PlotVzBox:
                 lambda msg: self.subscriber_msg(msg, (series_tag, msg_type, puuid)),
             )
 
-            # self.subscriber_func.append(tbkpy.Subscriber(
-            #     name, msg_name, lambda msg: self.subscriber_msg(msg, (series_tag,msg_type))
-            # ))
 
     def update(self):
         self.now_time = time.time()

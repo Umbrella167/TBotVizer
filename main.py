@@ -1,5 +1,6 @@
 # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 import dearpygui.dearpygui as dpg
+from numpy.core.defchararray import title
 
 import ui.Ui as ui
 from api import TBKApi
@@ -28,6 +29,7 @@ def main():
     t_msgbox = MessageBox(tbk_data=tbk_data)
     t_plotvzbox = PlotVzBox()
 
+
     l = ["Option 1", "Option 2", "Option 3", "Option 4"]
     t_cbd = ComboBoxDemo(data=l)
 
@@ -40,8 +42,8 @@ def main():
     # UI.config.layout.set_theme("Dark")
     # UI.config.layout.set_font(20)
 
-    UI.draw()
     UI.show()
+    # UI.create()
 
     UI.run_loop(lambda: loop(UI))
 

@@ -5,7 +5,7 @@ class BaseConfig:
         self.tag = tag
         self.label = label
 
-        # self.data = da
+        # self.tbk_data = da
         self.son_tags = son_tags
 
         self.theme = theme
