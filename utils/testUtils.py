@@ -6,7 +6,7 @@ import tzcp.tbk.tbk_pb2 as tbkpb
 import threading
 import random
 
-from twisted.plugin import pickle
+import pickle
 
 # 结束信号
 stop_event = threading.Event()

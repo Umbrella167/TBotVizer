@@ -26,7 +26,9 @@ class CanvasCallBack:
             dpg.configure_item(drawlist_tag, height=parent_height + size_offset[1])
 
     def drag_callback(self, sender, app_data, user_data):
-        canvas_tag, auto_apply = user_data
+        canvas_tag, auto_apply,drawlist_tag = user_data
+        if not dpg.is_item_focused(drawlist_tag):
+            return 
         self._tranform.translation = tuple(
             x + y
             for x, y in zip(
@@ -44,7 +46,9 @@ class CanvasCallBack:
             dpg.apply_transform(canvas_tag, self._tranform.translation_matrix)
 
     def wheel_callback(self, sender, app_data, user_data):
-        canvas_tag, auto_apply = user_data
+        canvas_tag, auto_apply,drawlist_tag = user_data
+        if not dpg.is_item_focused(drawlist_tag):
+            return 
         mouse_x, mouse_y = ui_data.draw_mouse_pos
         tl0, tl1, _ = self._tranform.translation
         scale = self._tranform.scale[0]
@@ -106,11 +110,11 @@ class Canvas():
             dpg.add_mouse_drag_handler(
                 button=dpg.mvMouseButton_Middle,
                 callback=self._callback.drag_callback,
-                user_data=(self.canvas_tag, self.apply_mouse_transfrom),
+                user_data=(self.canvas_tag, self.apply_mouse_transfrom,self.drawlist_tag),
             )
             dpg.add_mouse_wheel_handler(
                 callback=self._callback.wheel_callback,
-                user_data=(self.canvas_tag, self.apply_mouse_transfrom),
+                user_data=(self.canvas_tag, self.apply_mouse_transfrom,self.drawlist_tag),
             )
         with dpg.item_handler_registry() as handler:
             dpg.add_item_resize_handler(

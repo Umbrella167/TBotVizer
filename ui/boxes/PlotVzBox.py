@@ -8,7 +8,6 @@ from loguru import logger as uilogger
 import pickle
 from ui.boxes import Box
 
-
 class PlotUitls:
     @staticmethod
     def is_plot_supported(tbk_type):
@@ -36,29 +35,6 @@ class PlotUitls:
         return res
 
 
-# class TimedDeque:
-#     def __init__(self, max_age_seconds):
-#         self.deque = deque()
-#         self.max_age_seconds = max_age_seconds
-
-#     def append(self, item):
-#         # 添加元素和当前时间戳
-#         self.deque.append((item, time.time()))
-#         self._remove_old_items()
-
-#     def _remove_old_items(self):
-#         # 移除超过时间限制的元素
-#         current_time = time.time()
-#         while self.deque and (current_time - self.deque[0][1]) > self.max_age_seconds:
-#             self.deque.popleft()
-
-#     def __iter__(self):
-#         # 迭代元素，忽略时间戳
-#         return (item for item, _ in self.deque)
-
-#     def __len__(self):
-#         # 返回元素数量
-#         return len(self.deque)
 class TimedDeque:
     def __init__(self, max_age_seconds):
         self.items_with_timestamps = []  # List to store (item, timestamp) tuples
@@ -105,14 +81,16 @@ class PlotVzBox(Box):
         self.now_time = time.time()
         self.max_save_time = 5  # 数据保存的最大时间限制
 
-    def toggle_axis_move(self):
+    def toggle_axis_move(self, sender, app_data,user_data):
+        box_tag = user_data
+        if not dpg.is_item_focused(box_tag):
+            return 
         self.is_axis_move = not self.is_axis_move
 
     def show(self):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Plot Visualizer")
-        # with dpg.window(label=, ):
         # 添加标题
         dpg.add_text("Plot Visualizer", parent=self.tag)
         # 添加画轴
@@ -128,21 +106,9 @@ class PlotVzBox(Box):
         self.plot_x_tag = dpg.add_plot_axis(dpg.mvXAxis, label="Time", parent=self.plot_tag)
         self.plot_y_tag = dpg.add_plot_axis(dpg.mvYAxis, label="Data", parent=self.plot_tag)
 
-        # with dpg.plot(
-        #     tag="plotvz_plot",
-        #     width=-1,
-        #     height=-1,
-        #     label="Plot Tools",
-        #     payload_type="plot_data",
-        #     drop_callback=self.plot_drop_callback,
-        # ):
-        #     dpg.add_plot_legend()
-        #     dpg.add_plot_axis(dpg.mvXAxis, label="Time", tag="plotvz_xaxis")
-        #     dpg.add_plot_axis(dpg.mvYAxis, label="Data", tag="plotvz_yaxis")
-
         with dpg.handler_registry():
             dpg.add_key_release_handler(
-                key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move
+                key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move, user_data=self.plot_tag
             )
 
     def type_check(self, series_tag, msg_type, puuid, msg):
@@ -179,11 +145,11 @@ class PlotVzBox(Box):
                 self.subscription_data[series_tag]["data"][i] = TimedDeque(
                     max_age_seconds=self.max_save_time
                 )
-                dpg.add_line_series(
+                self.series_tag = dpg.add_line_series(
                     x=[0],
                     y=[0],
                     label=f"{series_tag}_{i}",
-                    tag=f"{series_tag}_{i}_line",
+                    # tag=f"{series_tag}_{i}_line",
                     parent=self.plot_x_tag,
                 )
 
@@ -196,7 +162,7 @@ class PlotVzBox(Box):
             self.subscription_data[series_tag]["data"][key].append(value)
             if self.is_axis_move:
                 dpg.configure_item(
-                    item=f"{series_tag}_{key}_line",
+                    item=self.series_tag,
                     x=self.subscription_data[series_tag]["time"].get_items(),
                     y=self.subscription_data[series_tag]["data"][key].get_items()
                 )
