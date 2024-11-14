@@ -16,10 +16,6 @@ class CanvasBox(Box):
         if self.label is None:
             dpg.configure_item(self.tag, label="CANVAS")
 
-
-
-        canvas = Canvas(self.tag)
-        with canvas.draw():
-            dpg.draw_line(p1=[0,0],p2=[600,600])
-
-            
+        self._canvas = Canvas(self.tag)
+        with self._canvas.draw():
+            dpg.draw_line(p1=[0, 0], p2=[600, 600])

@@ -13,8 +13,6 @@ stop_event = threading.Event()
 
 
 def create_nodes(node_len):
-    NODE_LEN = 10
-
     # 定义线程任务
     def initialize_node(node):
         tbkpy.init(f"Node {node}")
@@ -31,21 +29,21 @@ def create_nodes(node_len):
             print(f"Node {node} received message: {msg}")
 
         i = 0
+        f = -1
         while i<1000:
-            f = -1
             i = i + random.randint(1, 10)*f
             puber.publish(pickle.dumps(i))
-            sleep(0.01)
-            while stop_event.is_set():
-                break
             f = -f
+            sleep(0.01)
+            if stop_event.is_set():
+                break
 
         # suber = tbkpy.Subscriber(f"Node {node}", f"Node {node}_sub", f)
 
 
     # 创建并启动线程
     threads = []
-    for node in range(NODE_LEN):
+    for node in range(node_len):
         thread = threading.Thread(target=initialize_node, args=(node,))
         thread.start()
         threads.append(thread)
