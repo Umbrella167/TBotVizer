@@ -1,6 +1,11 @@
 from api.TBKApi import TBKApi
 from utils.Utils import build_message_tree
 
+class UiData:
+    def __init__(self):
+        self.draw_mouse_pos = (0, 0)
+        self.draw_mouse_pos_last = (0, 0)
+        self.mouse_move_pos = (0, 0)
 
 class TBKData:
     def __init__(self, tbkapi: TBKApi):
@@ -48,3 +53,5 @@ class TBKData:
                     print(f"{self.__class__} build message_tree type error!")
                 self._message_node_tree[type] = tree
         return self._message_node_tree
+
+ui_data =  UiData()

@@ -1,21 +1,22 @@
 import dearpygui.dearpygui as dpg
-from docutils.nodes import label
 
 from ui.boxes import Box
-
 
 class ParamBox(Box):
     def __init__(self, tbk_data, **kwargs):
         super().__init__(**kwargs)
         self.tbk_data = tbk_data
         self.table_tag = None
-        if self.label is None:
-            dpg.configure_item(self.tag, label="Param_box")
+
         self.tb = None
         self.cols_title = ["Param", "Info", "Type", "Value"]
         self.tags = []
 
     def create(self):
+        self.check_and_create_window()
+
+        if self.label is None:
+            dpg.configure_item(self.tag, label="Param_box")
         # 添加表格
         self.table_tag = dpg.add_table(
             header_row=True,
@@ -52,6 +53,7 @@ class ParamBox(Box):
                 t_row.append(cell_tag)
             t_table.append(t_row)
         return t_table
+
         # _info = value["info"]
         # _type = value["type"]
         # for item in value:

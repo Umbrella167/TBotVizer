@@ -8,10 +8,12 @@ class MessageBox(Box):
         self.tags = None
         self.tree_tag = None
         self.tbk_data = tbk_data
+        
+    def create(self):
+        self.check_and_create_window()
+
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
-
-    def create(self):
         # 添加列表头
         self.tree_tag = dpg.add_collapsing_header(label="Message List", parent=self.tag)
         # 插入树

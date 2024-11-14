@@ -8,13 +8,20 @@ class Box(object):
         self.label = label
         self.callback = callback
         self.is_created = False
+
+    def check_and_create_window(self):
+        if self.is_created:
+            print("Box is already created")
+            return
         if self.tag:
             dpg.add_window(tag=self.tag, label=self.label)
         else:
             self.tag = dpg.add_window(label=self.label)
+        self.is_created = True
 
     def create(self):
         # 创建
+        self.check_and_create_window()
         raise f"{self.__name__} does not implement create()"
 
     def show(self):

@@ -1,6 +1,12 @@
 import time
+from time import sleep
+
 import tbkpy._core as tbkpy
+import tzcp.tbk.tbk_pb2 as tbkpb
 import threading
+import random
+
+from twisted.plugin import pickle
 
 # 结束信号
 stop_event = threading.Event()
@@ -12,16 +18,30 @@ def create_nodes(node_len):
     # 定义线程任务
     def initialize_node(node):
         tbkpy.init(f"Node {node}")
-        puber = tbkpy.Publisher(f"Node {node}", f"Node {node}_pub")
+        ep = tbkpy.EPInfo()
+        ep.name = f"Node {node}"
+        ep.msg_name = f"Node {node}_pub"
+        ep.msg_type = "int"
+
+        puber = tbkpy.Publisher(ep)
 
         # puber1 = tbkpy.Publisher(f"Node {node}", f"Node {node}_pub1")
 
         def f(msg):
             print(f"Node {node} received message: {msg}")
 
-        suber = tbkpy.Subscriber(f"Node {node}", f"Node {node}_sub", f)
-        while not stop_event.is_set():
-            time.sleep(1)  # 示例任务循环
+        i = 0
+        while i<1000:
+            f = -1
+            i = i + random.randint(1, 10)*f
+            puber.publish(pickle.dumps(i))
+            sleep(0.01)
+            while stop_event.is_set():
+                break
+            f = -f
+
+        # suber = tbkpy.Subscriber(f"Node {node}", f"Node {node}_sub", f)
+
 
     # 创建并启动线程
     threads = []
@@ -43,5 +63,5 @@ def stop_all_nodes():
 
 if __name__ == '__main__':
     create_nodes(10)
-    time.sleep(60)
+    time.sleep(20)
     stop_all_nodes()

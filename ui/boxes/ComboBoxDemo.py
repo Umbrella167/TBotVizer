@@ -1,17 +1,22 @@
-from ui.boxes import Box
 import dearpygui.dearpygui as dpg
+from ui.boxes import Box
 
 
 class ComboBoxDemo(Box):
     def __init__(self,data, **kwargs):
         super().__init__(**kwargs)
         self.data = data
-        if self.label is None:
-            dpg.configure_item(self.tag, label="ComboBoxDemo")
         self.cbl_tag = None
         self.btn_tag = None
 
     def create(self):
+        self.check_and_create_window()
+        # if self.tag:
+        #     dpg.add_window(tag=self.tag, label=self.label)
+        # else:
+        #     self.tag = dpg.add_window(label=self.label)
+        if self.label is None:
+            dpg.configure_item(self.tag, label="ComboBoxDemo")
         # 创建按钮
         self.btn_tag = dpg.add_button(label="Options     V", parent=self.tag)
         # 创建点击后列表

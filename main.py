@@ -10,6 +10,7 @@ from ui.boxes.MessageBox import MessageBox
 from ui.boxes.ParamBox import ParamBox
 from utils.DataProcessor import TBKData
 from ui.boxes.PlotVzBox import PlotVzBox
+from ui.boxes.CanvasBox import CanvasBox
 
 def loop(UI):
     try:
@@ -26,16 +27,20 @@ def main():
     tbk_data = TBKData(tbk_api)
 
     t_pbox = ParamBox(tbk_data=tbk_data)
-    t_msgbox = MessageBox(tbk_data=tbk_data)
-    t_plotvzbox = PlotVzBox()
+    t_msgbox = MessageBox(tag="test", tbk_data=tbk_data)
+    t_canvas_box = CanvasBox()
+    t_plot_vz_box = PlotVzBox(tag="plot_vz_window")
 
 
     l = ["Option 1", "Option 2", "Option 3", "Option 4"]
     t_cbd = ComboBoxDemo(data=l)
 
-    boxes = [t_pbox, t_msgbox, t_plotvzbox, t_cbd]
+    boxes = [t_pbox, t_msgbox, t_plot_vz_box, t_cbd, t_canvas_box, PlotVzBox(), PlotVzBox(), PlotVzBox()]
 
     UI = ui.UI(boxes=boxes)
+
+
+    
 
 
     UI.show()

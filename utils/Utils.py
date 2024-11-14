@@ -2,18 +2,8 @@ import dearpygui.dearpygui as dpg
 import math
 import numpy as np
 import traceback
-from static.Params import TypeParams
-from google.protobuf.json_format import MessageToDict
 
-def tbkdata2list(data,tbk_type):
-    data_list = []
-    data_3d = ['Vector3']
-    if tbk_type in TypeParams.TBK_TYPES['Vector3']:
 
-        data_list.append(data.x)
-        data_list.append(data.y)
-        data_list.append(data.z)
-    return data_list
     
 def calculate_distance(pos1, pos2):
     return math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
