@@ -35,12 +35,9 @@ def main():
     l = ["Option 1", "Option 2", "Option 3", "Option 4"]
     t_cbd = ComboBoxDemo(data=l)
 
-    boxes = [t_pbox, t_msgbox, t_plot_vz_box, t_cbd, t_canvas_box, PlotVzBox(), PlotVzBox(), PlotVzBox()]
+    boxes = [t_pbox, t_msgbox, t_plot_vz_box, t_cbd, t_canvas_box]
 
     UI = ui.UI(boxes=boxes)
-
-
-    
 
 
     UI.show()

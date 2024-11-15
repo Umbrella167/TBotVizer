@@ -30,8 +30,8 @@ def create_nodes(node_len):
 
         i = 0
         f = -1
-        while i<1000:
-            i = i + random.randint(1, 10)*f
+        while i < 1000:
+            i = i + random.randint(1, 10) * f
             puber.publish(pickle.dumps(i))
             f = -f
             sleep(0.01)
@@ -39,7 +39,6 @@ def create_nodes(node_len):
                 break
 
         # suber = tbkpy.Subscriber(f"Node {node}", f"Node {node}_sub", f)
-
 
     # 创建并启动线程
     threads = []
@@ -61,5 +60,5 @@ def stop_all_nodes():
 
 if __name__ == '__main__':
     create_nodes(10)
-    time.sleep(20)
+    time.sleep(40)
     stop_all_nodes()

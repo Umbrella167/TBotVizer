@@ -2,9 +2,11 @@ import dearpygui.dearpygui as dpg
 import math
 import numpy as np
 import traceback
+import pickle
+
+from static.Params import TypeParams
 
 
-    
 def calculate_distance(pos1, pos2):
     return math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
 
@@ -230,3 +232,12 @@ def add_input(_type, tag, default_value, max_value, min_value, step):
                 speed=int(step),
             )
             dpg.add_slider_int(height=10, width=-1)
+
+
+def msg_serializer(msg, msg_type):
+    if msg_type in TypeParams.PYTHON_TYPES:
+        real_msg = pickle.loads(msg)
+    else:
+        real_msg = TypeParams.TBK_TYPES[msg_type]
+        real_msg.ParseFromString(msg)
+    return real_msg

@@ -1,12 +1,16 @@
 import dearpygui.dearpygui as dpg
 from collections import deque
-import tbkpy._core as tbkpy
 import time
-from static.Params import TypeParams
+
 from google.protobuf.json_format import MessageToDict
 from loguru import logger as uilogger
 import pickle
+
+import tbkpy._core as tbkpy
+from static.Params import TypeParams
 from ui.boxes import Box
+from utils.Utils import msg_serializer
+
 
 class PlotUitls:
     @staticmethod
@@ -71,9 +75,12 @@ class TimedDeque:
 class PlotVzBox(Box):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.series_tag = None
+        self.plot_tag = None
+        self.series_tags = {}
         self.plot_x_tag = None
         self.plot_y_tag = None
-        self.plot_tag = None
+        self.message_subscriber_dic = {}
         self.subscriber_func = {}
         self.subscription_data = {}
         self.is_axis_move = True
@@ -81,10 +88,11 @@ class PlotVzBox(Box):
         self.now_time = time.time()
         self.max_save_time = 5  # 数据保存的最大时间限制
 
-    def toggle_axis_move(self, sender, app_data,user_data):
+    def toggle_axis_move(self, sender, app_data, user_data):
+        # 检测到空格则停止移动x轴
         box_tag = user_data
         if not dpg.is_item_focused(box_tag):
-            return 
+            return
         self.is_axis_move = not self.is_axis_move
 
     def show(self):
@@ -99,6 +107,7 @@ class PlotVzBox(Box):
             height=-1,
             label="Plot Tools",
             payload_type="plot_data",
+            # drop_callback=self.plot_drop_callback,
             drop_callback=self.plot_drop_callback,
             parent=self.tag,
         )
@@ -111,30 +120,80 @@ class PlotVzBox(Box):
                 key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move, user_data=self.plot_tag
             )
 
-    def type_check(self, series_tag, msg_type, puuid, msg):
-        if not PlotUitls.is_plot_supported(msg_type):
-            print(f"Unknown msg_type: {msg_type}")
-            del self.subscriber_func[f"{series_tag}_{puuid}"]
-            return
-        try:
-            if msg_type in TypeParams.PYTHON_TYPES:
-                real_msg = pickle.loads(msg)
-            else:
-                real_msg = TypeParams.TBK_TYPES[msg_type]
-                real_msg.ParseFromString(msg)
-        except Exception as e:
-            uilogger.error("Deserialization failed, please check the data!")
-            del self.subscriber_func[f"{series_tag}_{puuid}"]
-            return
-        return real_msg
+    # # 类型检查
+    # def type_check(self, series_tag, msg_type, puuid, msg):
+    #     if not PlotUitls.is_plot_supported(msg_type):
+    #         print(f"Unknown msg_type: {msg_type}")
+    #         del self.subscriber_func[f"{series_tag}_{puuid}"]
+    #         return
+    #     try:
+    #         if msg_type in TypeParams.PYTHON_TYPES:
+    #             real_msg = pickle.loads(msg)
+    #         else:
+    #             real_msg = TypeParams.TBK_TYPES[msg_type]
+    #             real_msg.ParseFromString(msg)
+    #     except Exception as e:
+    #         uilogger.error("Deserialization failed, please check the data!")
+    #         del self.subscriber_func[f"{series_tag}_{puuid}"]
+    #         return
+    #
+    #     return real_msg
+
+    # def subscriber_msg(self, msg, user_data):
+    #     series_tag, msg_type, puuid = user_data
+    #
+    #     real_msg = self.type_check(series_tag, msg_type, puuid, msg)
+    #     real_msg = PlotUitls.tbkdata2plotdata(real_msg, msg_type)
+    #
+    #     if series_tag not in self.subscription_data:
+    #         self.subscription_data[series_tag] = {
+    #             "time": TimedDeque(max_age_seconds=self.max_save_time),
+    #             "data": {},
+    #         }
+    #         if not isinstance(msg, (list, tuple)):
+    #             msg = [msg]
+    #         for i in real_msg:
+    #             self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
+    #             # 添加标签
+    #             self.series_tag = dpg.add_line_series(
+    #                 x=[0],
+    #                 y=[0],
+    #                 label=f"{series_tag}_{i}",
+    #                 # tag=f"{series_tag}_{i}_line",
+    #                 parent=self.plot_x_tag,
+    #             )
+    #
+    #     self.subscription_data[series_tag]["time"].append(
+    #         self.now_time - self.data_start_time
+    #     )
+    #     msg = [msg] if not isinstance(msg, (list, tuple)) else msg
+    #
+    #     for key, value in real_msg.items():
+    #         self.subscription_data[series_tag]["data"][key].append(value)
+    #         if self.is_axis_move:
+    #             dpg.configure_item(
+    #                 item=self.series_tag,
+    #                 x=self.subscription_data[series_tag]["time"].get_items(),
+    #                 y=self.subscription_data[series_tag]["data"][key].get_items()
+    #             )
 
     def subscriber_msg(self, msg, user_data):
-        series_tag, msg_type, puuid = user_data
+        puuid, name, msg_name, msg_type = user_data
+        # series_tag 就是 {puuid}_{name}:{msg_name}
+        # series_tag, msg_type, puuid = user_data
 
-        real_msg = self.type_check(series_tag, msg_type, puuid, msg)
+        try:
+            real_msg = msg_serializer(msg, msg_type)
+        except Exception as e:
+            del self.message_subscriber_dic[puuid][name][msg_name]
+            print(f"Deserialization failed, please check the data! {e}")
+            return
+
         real_msg = PlotUitls.tbkdata2plotdata(real_msg, msg_type)
+        series_tag = f"{puuid}:{name}:{msg_name}"
 
         if series_tag not in self.subscription_data:
+            # 如果该词条未被创建, 则新建词条
             self.subscription_data[series_tag] = {
                 "time": TimedDeque(max_age_seconds=self.max_save_time),
                 "data": {},
@@ -142,43 +201,81 @@ class PlotVzBox(Box):
             if not isinstance(msg, (list, tuple)):
                 msg = [msg]
             for i in real_msg:
-                self.subscription_data[series_tag]["data"][i] = TimedDeque(
-                    max_age_seconds=self.max_save_time
-                )
-                self.series_tag = dpg.add_line_series(
+                self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
+                # 添加标签(这个标签可能有多个)
+                self.series_tags[series_tag] = dpg.add_line_series(
                     x=[0],
                     y=[0],
-                    label=f"{series_tag}_{i}",
+                    # label=f"{series_tag}_{i}", #暂时不指定label，后续更新label
                     # tag=f"{series_tag}_{i}_line",
                     parent=self.plot_x_tag,
                 )
 
+        # 更新数据
         self.subscription_data[series_tag]["time"].append(
             self.now_time - self.data_start_time
         )
         msg = [msg] if not isinstance(msg, (list, tuple)) else msg
-
         for key, value in real_msg.items():
             self.subscription_data[series_tag]["data"][key].append(value)
             if self.is_axis_move:
                 dpg.configure_item(
-                    item=self.series_tag,
+                    item=self.series_tags[series_tag],
                     x=self.subscription_data[series_tag]["time"].get_items(),
                     y=self.subscription_data[series_tag]["data"][key].get_items()
                 )
+        # 更新label，主要是label可能会太长，作简略显示
+        t_label = ""
+        if len(self.message_subscriber_dic) > 1:
+            t_label += puuid + ":"
+        if len(self.message_subscriber_dic[puuid]) > 1:
+            t_label += name + ":"
+        t_label += msg_name
+        dpg.configure_item(self.series_tags[series_tag], label=t_label)
 
-    def plot_drop_callback(self, sender, app_data, user_data):
+    # def plot_drop_callback(self, sender, app_data):
+    #     name = app_data["name"]
+    #     msg_name = app_data["msg_name"]
+    #     msg_type = app_data["msg_type"]
+    #     puuid = app_data["puuid"]
+    #     message_data = f"{name}:{msg_name}"
+    #     self.subscriber_func[f"{message_data}_{puuid}"] = tbkpy.Subscriber(
+    #         # puuid,
+    #         name,
+    #         msg_name,
+    #         lambda msg: self.subscriber_msg(msg, (message_data, msg_type, puuid)),
+    #     )
+
+    def plot_drop_callback(self, sender, app_data):
+        msg_type = app_data["msg_type"]
+        if not PlotUitls.is_plot_supported(msg_type):
+            print(f"Unknown msg_type: {msg_type}")
+            return
+
         name = app_data["name"]
         msg_name = app_data["msg_name"]
-        msg_type = app_data["msg_type"]
         puuid = app_data["puuid"]
-        series_tag = f"{name}:{msg_name}"
-        if series_tag not in self.subscription_data:
-            self.subscriber_func[f"{series_tag}_{puuid}"] = tbkpy.Subscriber(
+        message_data = f"{puuid}_{name}:{msg_name}"
+
+        if puuid not in self.message_subscriber_dic:
+            # 如果节点不在表内则添加该节点进表
+            self.message_subscriber_dic[puuid] = {}
+
+        if name not in self.message_subscriber_dic[puuid]:
+            # 如果消息不在表内，则添加消息进表
+            self.message_subscriber_dic[puuid][name] = {}
+
+        if msg_name not in self.message_subscriber_dic[puuid][name]:
+            # 如果消息不在表内则添加消息进表
+            self.message_subscriber_dic[puuid][name][msg_name] = tbkpy.Subscriber(
+                # puuid, #这个属性tbk内还没开出接口
                 name,
                 msg_name,
-                lambda msg: self.subscriber_msg(msg, (series_tag, msg_type, puuid)),
+                lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
             )
+            # print(f"正在绘制{message_data}")
+            return
+        print(f"{message_data}已绘制")
 
     def update(self):
         self.now_time = time.time()
