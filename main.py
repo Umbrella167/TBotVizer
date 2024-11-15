@@ -1,7 +1,5 @@
 # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 import dearpygui.dearpygui as dpg
-from numpy.core.defchararray import title
-
 import ui.Ui as ui
 from api import TBKApi
 from config.UiConfig import UiConfig
@@ -9,8 +7,9 @@ from ui.boxes.ComboBoxDemo import ComboBoxDemo
 from ui.boxes.MessageBox import MessageBox
 from ui.boxes.ParamBox import ParamBox
 from utils.DataProcessor import TBKData
-from ui.boxes.PlotVzBox import PlotVzBox
+# from ui.boxes.PlotVzBox import PlotVzBox
 from ui.boxes.CanvasBox import CanvasBox
+from ui.boxes.PlotVzBox2 import PlotVzBox
 
 
 def loop(UI):
@@ -31,8 +30,7 @@ def main():
     t_plot_vz_box = PlotVzBox(tag="PlotVzBox")
     l = ["Option 1", "Option 2", "Option 3", "Option 4"]
     t_cbd = ComboBoxDemo(data=l)
-
-    boxes = [t_pbox, t_msgbox, t_plot_vz_box, t_cbd, t_canvas_box]
+    boxes = [t_pbox, t_msgbox,t_plot_vz_box]
 
     UI = ui.UI(boxes=boxes)
 

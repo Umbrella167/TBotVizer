@@ -10,6 +10,7 @@ import tbkpy._core as tbkpy
 from static.Params import TypeParams
 from ui.boxes import Box
 from utils.Utils import msg_serializer
+from utils.DataProcessor import tbk_data
 
 
 class PlotUitls:
@@ -25,9 +26,9 @@ class PlotUitls:
             uilogger.error("Unsupported data type")
             return
         if data_type in TypeParams.PYTHON_TYPES:
-            if data_type == 'int' or data_type == 'float':
-                res = {'0': data}
-            elif data_type == 'list' or data_type == 'tuple':
+            if data_type == "int" or data_type == "float":
+                res = {"0": data}
+            elif data_type == "list" or data_type == "tuple":
                 res = {}
                 for i in range(len(data)):
                     res[str(i)] = data[i]
@@ -54,7 +55,10 @@ class TimedDeque:
     def _remove_old_items(self):
         # Remove items that have exceeded the time limit
         current_time = time.time()
-        while self.items_with_timestamps and (current_time - self.items_with_timestamps[0][1]) > self.max_age_seconds:
+        while (
+            self.items_with_timestamps
+            and (current_time - self.items_with_timestamps[0][1]) > self.max_age_seconds
+        ):
             self.items_with_timestamps.pop(0)
             self.items.pop(0)
 
@@ -111,14 +115,19 @@ class PlotVzBox(Box):
             parent=self.tag,
         )
         dpg.add_plot_legend(parent=self.plot_tag)
-        self.plot_x_tag = dpg.add_plot_axis(dpg.mvXAxis, label="Time", parent=self.plot_tag)
-        self.plot_y_tag = dpg.add_plot_axis(dpg.mvYAxis, label="Data", parent=self.plot_tag)
+        self.plot_x_tag = dpg.add_plot_axis(
+            dpg.mvXAxis, label="Time", parent=self.plot_tag
+        )
+        self.plot_y_tag = dpg.add_plot_axis(
+            dpg.mvYAxis, label="Data", parent=self.plot_tag
+        )
 
         with dpg.handler_registry():
             dpg.add_key_release_handler(
-                key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move, user_data=self.plot_tag
+                key=dpg.mvKey_Spacebar,
+                callback=self.toggle_axis_move,
+                user_data=self.plot_tag,
             )
-
 
     def subscriber_msg(self, msg, user_data):
         puuid, name, msg_name, msg_type = user_data
@@ -145,7 +154,9 @@ class PlotVzBox(Box):
                 msg = [msg]
             for i in real_msg:
                 print(i)
-                self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
+                self.subscription_data[series_tag]["data"][i] = TimedDeque(
+                    max_age_seconds=self.max_save_time
+                )
                 # 添加标签(这个标签可能有多个)
                 self.series_tags[series_tag] = dpg.add_line_series(
                     x=[0],
@@ -166,7 +177,7 @@ class PlotVzBox(Box):
                 dpg.configure_item(
                     item=self.series_tags[series_tag],
                     x=self.subscription_data[series_tag]["time"].get_items(),
-                    y=self.subscription_data[series_tag]["data"][key].get_items()
+                    y=self.subscription_data[series_tag]["data"][key].get_items(),
                 )
         # 更新label，主要是label可能会太长，作简略显示
         t_label = ""
@@ -189,6 +200,8 @@ class PlotVzBox(Box):
     #         msg_name,
     #         lambda msg: self.subscriber_msg(msg, (message_data, msg_type, puuid)),
     #     )
+    def f(self, msg):
+        print(msg)
 
     def plot_drop_callback(self, sender, app_data):
         msg_type = app_data["msg_type"]
@@ -211,12 +224,17 @@ class PlotVzBox(Box):
 
         if msg_name not in self.message_subscriber_dic[puuid][name]:
             # 如果消息不在表内则添加消息进表
-            self.message_subscriber_dic[puuid][name][msg_name] = tbkpy.Subscriber(
-                # puuid, #这个属性tbk内还没开出接口
-                name,
-                msg_name,
-                lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
+            app_data["tag"] = self.tag
+            self.message_subscriber_dic[puuid][name][msg_name] = tbk_data.Subscriber(
+                app_data, lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
             )
+            #
+            # tbkpy.Subscriber(
+            #     # puuid, #这个属性tbk内还没开出接口
+            #     name,
+            #     msg_name,
+            #     lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
+            # )
             return
         print(f"{message_data}已绘制")
 
