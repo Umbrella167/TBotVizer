@@ -1,9 +1,10 @@
 import dearpygui.dearpygui as dpg
 from ui.boxes import Box
+from utils.DataProcessor import tbk_data
 
 
 class MessageBox(Box):
-    def __init__(self, tbk_data, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tags = None
         self.tree_tag = None

@@ -75,6 +75,7 @@ class TimedDeque:
 class PlotVzBox(Box):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.only = False
         self.series_tag = None
         self.plot_tag = None
         self.series_tags = {}
@@ -200,10 +201,11 @@ class PlotVzBox(Box):
             }
             if not isinstance(msg, (list, tuple)):
                 msg = [msg]
+            self.series_tags[series_tag] = {}
             for i in real_msg:
                 self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
                 # 添加标签(这个标签可能有多个)
-                self.series_tags[series_tag] = dpg.add_line_series(
+                self.series_tags[series_tag][i] = dpg.add_line_series(
                     x=[0],
                     y=[0],
                     # label=f"{series_tag}_{i}", #暂时不指定label，后续更新label
@@ -220,18 +222,19 @@ class PlotVzBox(Box):
             self.subscription_data[series_tag]["data"][key].append(value)
             if self.is_axis_move:
                 dpg.configure_item(
-                    item=self.series_tags[series_tag],
+                    item=self.series_tags[series_tag][key],
                     x=self.subscription_data[series_tag]["time"].get_items(),
                     y=self.subscription_data[series_tag]["data"][key].get_items()
                 )
-        # 更新label，主要是label可能会太长，作简略显示
-        t_label = ""
-        if len(self.message_subscriber_dic) > 1:
-            t_label += puuid + ":"
-        if len(self.message_subscriber_dic[puuid]) > 1:
-            t_label += name + ":"
-        t_label += msg_name
-        dpg.configure_item(self.series_tags[series_tag], label=t_label)
+        # 更新图例label，主要是label可能会太长，作简略显示
+        for key, _ in real_msg.items():
+            t_label = ""
+            if len(self.message_subscriber_dic) > 1:
+                t_label += puuid + ":"
+            if len(self.message_subscriber_dic[puuid]) > 1:
+                t_label += name + ":"
+            t_label += msg_name+":"+key
+            dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
 
     # def plot_drop_callback(self, sender, app_data):
     #     name = app_data["name"]

@@ -8,6 +8,7 @@ class Box(object):
         self.label = label
         self.callback = callback
         self.is_created = False
+        self.only = True
 
     def check_and_create_window(self):
         if self.is_created:

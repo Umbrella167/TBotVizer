@@ -55,3 +55,5 @@ class TBKData:
         return self._message_node_tree
 
 ui_data =  UiData()
+tbk_api = TBKApi()
+tbk_data = TBKData(tbk_api)

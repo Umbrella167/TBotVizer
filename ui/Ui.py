@@ -20,8 +20,6 @@ class UICallback:
             x - y for x, y in zip(ui_data.draw_mouse_pos, ui_data.draw_mouse_pos_last)
         )
 
-
-
 class UI:
     def __init__(self, boxes):
         self.boxes = boxes
