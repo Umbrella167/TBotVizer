@@ -45,7 +45,7 @@ class UI:
 
     def create_global_handler(self):
         with dpg.handler_registry() as global_hander:
-            dpg.add_key_release_handler(callback=self._ui_callback.on_key_release)
+            dpg.add_key_release_handler(callback=self._ui_callback.on_key_release, user_data=self.config)
             # dpg.add_mouse_move_handler(callback=self._ui_callback.on_mouse_move)
     def ui_loop(self):
         self._ui_callback.on_mouse_move()
