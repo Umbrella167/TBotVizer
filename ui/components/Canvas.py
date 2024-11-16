@@ -72,7 +72,7 @@ class CanvasCallBack:
             dpg.apply_transform(canvas_tag, self._tranform.translation_matrix)
 
 
-class Canvas():
+class Canvas:
     def __init__(
         self,
         parent,

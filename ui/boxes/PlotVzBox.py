@@ -1,16 +1,14 @@
 import dearpygui.dearpygui as dpg
-from collections import deque
 import time
 
 from google.protobuf.json_format import MessageToDict
 from loguru import logger as uilogger
-import pickle
-
-import tbkpy._core as tbkpy
 from static.Params import TypeParams
-from ui.boxes import Box
+from ui.boxes.BaseBox import Box
 from utils.Utils import msg_serializer
 from utils.DataProcessor import tbk_data
+
+
 class PlotUitls:
     @staticmethod
     def is_plot_supported(tbk_type):
@@ -24,9 +22,9 @@ class PlotUitls:
             uilogger.error("Unsupported data type")
             return
         if data_type in TypeParams.PYTHON_TYPES:
-            if data_type == 'int' or data_type == 'float':
-                res = {'0': data}
-            elif data_type == 'list' or data_type == 'tuple':
+            if data_type == "int" or data_type == "float":
+                res = {"0": data}
+            elif data_type == "list" or data_type == "tuple":
                 res = {}
                 for i in range(len(data)):
                     res[str(i)] = data[i]
@@ -53,7 +51,10 @@ class TimedDeque:
     def _remove_old_items(self):
         # Remove items that have exceeded the time limit
         current_time = time.time()
-        while self.items_with_timestamps and (current_time - self.items_with_timestamps[0][1]) > self.max_age_seconds:
+        while (
+            self.items_with_timestamps
+            and (current_time - self.items_with_timestamps[0][1]) > self.max_age_seconds
+        ):
             self.items_with_timestamps.pop(0)
             self.items.pop(0)
 
@@ -79,13 +80,14 @@ class PlotVzBox(Box):
         self.series_tags = {}
         self.plot_x_tag = None
         self.plot_y_tag = None
-        self.message_subscriber_dic = {}
+        self.message_subscriber_dict = {}
         self.subscriber_func = {}
         self.subscription_data = {}
         self.is_axis_move = True
         self.data_start_time = time.time()
         self.now_time = time.time()
         self.max_save_time = 5  # 数据保存的最大时间限制
+        self.checkbox_bind = {}
 
     def toggle_axis_move(self, sender, app_data, user_data):
         # 检测到空格则停止移动x轴
@@ -94,7 +96,7 @@ class PlotVzBox(Box):
             return
         self.is_axis_move = not self.is_axis_move
 
-    def show(self):
+    def create(self):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Plot Visualizer")
@@ -111,29 +113,30 @@ class PlotVzBox(Box):
             parent=self.tag,
         )
         dpg.add_plot_legend(parent=self.plot_tag)
-        self.plot_x_tag = dpg.add_plot_axis(dpg.mvXAxis, label="Time", parent=self.plot_tag)
-        self.plot_y_tag = dpg.add_plot_axis(dpg.mvYAxis, label="Data", parent=self.plot_tag)
+        self.plot_x_tag = dpg.add_plot_axis(
+            dpg.mvXAxis, label="Time", parent=self.plot_tag
+        )
+        self.plot_y_tag = dpg.add_plot_axis(
+            dpg.mvYAxis, label="Data", parent=self.plot_tag
+        )
 
         with dpg.handler_registry():
             dpg.add_key_release_handler(
-                key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move, user_data=self.plot_tag
+                key=dpg.mvKey_Spacebar,
+                callback=self.toggle_axis_move,
+                user_data=self.plot_tag,
             )
 
-
     def subscriber_msg(self, msg, user_data):
-        puuid, name, msg_name, msg_type = user_data
-        # series_tag 就是 {puuid}_{name}:{msg_name}
-        # series_tag, msg_type, puuid = user_data
-
+        puuid, name, msg_name, msg_type, series_tag = user_data
         try:
             real_msg = msg_serializer(msg, msg_type)
         except Exception as e:
-            del self.message_subscriber_dic[puuid][name][msg_name]
+            del self.message_subscriber_dict[puuid][msg_name][name]
             print(f"Deserialization failed, please check the data! {e}")
             return
 
         real_msg = PlotUitls.tbkdata2plotdata(real_msg, msg_type)
-        series_tag = f"{puuid}:{name}:{msg_name}"
 
         if series_tag not in self.subscription_data:
             # 如果该词条未被创建, 则新建词条
@@ -145,14 +148,13 @@ class PlotVzBox(Box):
                 msg = [msg]
             self.series_tags[series_tag] = {}
             for i in real_msg:
-                print(i)
-                self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
+                self.subscription_data[series_tag]["data"][i] = TimedDeque(
+                    max_age_seconds=self.max_save_time
+                )
                 # 添加标签(这个标签可能有多个)
                 self.series_tags[series_tag][i] = dpg.add_line_series(
                     x=[0],
                     y=[0],
-                    # label=f"{series_tag}_{i}", #暂时不指定label，后续更新label
-                    # tag=f"{series_tag}_{i}_line",
                     parent=self.plot_x_tag,
                 )
 
@@ -167,21 +169,25 @@ class PlotVzBox(Box):
                 dpg.configure_item(
                     item=self.series_tags[series_tag][key],
                     x=self.subscription_data[series_tag]["time"].get_items(),
-                    y=self.subscription_data[series_tag]["data"][key].get_items()
+                    y=self.subscription_data[series_tag]["data"][key].get_items(),
                 )
         # 更新图例label，主要是label可能会太长，作简略显示
         for key, _ in real_msg.items():
             t_label = ""
-            if len(self.message_subscriber_dic) > 1:
-                t_label += puuid + ":"
-            if len(self.message_subscriber_dic[puuid]) > 1:
-                t_label += name + ":"
-            t_label += msg_name+":"+key
+            if len(self.message_subscriber_dict) > 1:
+                tpuuid = puuid
+                if len(puuid) > 8:
+                    tpuuid = puuid[:4]+"..."+puuid[-4:]
+                t_label += tpuuid + ":"
+            t_label += f"{msg_name}({name}):{key}"
             dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
 
     def plot_drop_callback(self, sender, app_data):
-        msg_info,msg_checkbox_tag = app_data
+        msg_info, msg_checkbox_tag = app_data
         msg_type = msg_info["msg_type"]
+        sub_checkbox = msg_checkbox_tag["sub_checkbox"]
+        if not dpg.get_value(sub_checkbox):
+            return
         if not PlotUitls.is_plot_supported(msg_type):
             print(f"Unknown msg_type: {msg_type}")
             return
@@ -189,27 +195,44 @@ class PlotVzBox(Box):
         name = msg_info["name"]
         msg_name = msg_info["msg_name"]
         puuid = msg_info["puuid"]
-        message_data = f"{puuid}_{name}:{msg_name}"
-
-        if puuid not in self.message_subscriber_dic:
+        message_data = f"{puuid}_{msg_name}:{name}"
+        series_tag = f"{puuid}:{msg_name}:{name}"
+        self.checkbox_bind[sub_checkbox] = (series_tag,puuid, msg_name, name)
+        if puuid not in self.message_subscriber_dict:
             # 如果节点不在表内则添加该节点进表
-            self.message_subscriber_dic[puuid] = {}
+            self.message_subscriber_dict[puuid] = {}
 
-        if name not in self.message_subscriber_dic[puuid]:
+        if msg_name not in self.message_subscriber_dict[puuid]:
             # 如果消息不在表内，则添加消息进表
-            self.message_subscriber_dic[puuid][name] = {}
+            self.message_subscriber_dict[puuid][msg_name] = {}
 
-        if msg_name not in self.message_subscriber_dic[puuid][name]:
+        if name not in self.message_subscriber_dict[puuid][msg_name]:
             # 如果消息不在表内则添加消息进表
-            msg_info['tag'] = self.tag
-            self.message_subscriber_dic[puuid][name][msg_name] = tbk_data.Subscriber(
-                msg_info, lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
+            msg_info["tag"] = self.tag
+            self.message_subscriber_dict[puuid][msg_name][name] = tbk_data.Subscriber(
+                msg_info,
+                lambda msg: self.subscriber_msg(
+                    msg, (puuid, name, msg_name, msg_type, series_tag)
+                ),
             )
             return
         print(f"{message_data}已绘制")
 
+    def __(self):
+        for tag in self.checkbox_bind:
+            series_tag_dict,puuid, msg_name, name = self.checkbox_bind[tag]
+
+            if not dpg.get_value(tag):
+                if series_tag_dict in self.series_tags:
+                    for series_tag in self.series_tags[series_tag_dict].values():
+                        dpg.delete_item(series_tag)
+                    del self.subscription_data[series_tag_dict]
+                    del self.series_tags[series_tag_dict]
+                    del self.message_subscriber_dict[puuid][msg_name][name]
+                    
     def update(self):
         self.now_time = time.time()
+        self.__()
         if self.is_axis_move:
             dpg.fit_axis_data(self.plot_y_tag)
             dpg.fit_axis_data(self.plot_x_tag)

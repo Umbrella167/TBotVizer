@@ -1,5 +1,3 @@
-from typing import List
-
 from config import BaseConfig
 from ui.LayoutManager import LayoutManager
 

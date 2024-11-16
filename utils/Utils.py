@@ -249,3 +249,15 @@ def get_all_subclasses(cls):
         all_subclasses.append(subclass)
         all_subclasses.extend(get_all_subclasses(subclass))
     return all_subclasses
+
+def clear_nested_dictionaries(dict_obj):
+    """Recursively clear all nested dictionaries."""
+    print(dict_obj)
+    for key in list(dict_obj.keys()):
+        if isinstance(dict_obj[key], dict):
+            # If the value is a dictionary, clear it
+            clear_nested_dictionaries(dict_obj[key])
+            dict_obj[key] = {}
+        else:
+            # If the value is not a dictionary, just remove the key
+            del dict_obj[key]

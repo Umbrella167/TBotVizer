@@ -1,6 +1,7 @@
 from api.TBKApi import TBKApi
 from utils.Utils import build_message_tree
 import tbkpy._core as tbkpy
+from utils.Utils import clear_nested_dictionaries
 
 
 class UiData:
@@ -32,6 +33,9 @@ class TBKData:
 
         if len(self.callback_dict[puuid][msg_name][name]) < 1 or is_del_msg:
             del self.subscriber_dict[puuid][msg_name][name]
+            del self.callback_dict[puuid][msg_name][name]
+
+
 
     def is_subscribed(self, info: dict) -> bool:
         return info["name"] in self.subscriber_dict.get(info["puuid"], {}).get(info["msg_name"], {})
@@ -74,7 +78,7 @@ class TBKData:
                 lambda msg: self.callback_manager(msg, info),
             )
         )
-
+        
     @property
     def param_data(self):
         # self._old_param_data = self._param_data

@@ -1,9 +1,8 @@
 import dearpygui.dearpygui as dpg
 
-from ui.components import Component
 
 
-class CheckBoxList(Component):
+class CheckBoxList:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if self.tag:

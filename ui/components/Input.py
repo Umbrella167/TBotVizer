@@ -1,7 +1,6 @@
 import dearpygui.dearpygui as dpg
 import re
 
-from ui.components import Component
 from static.Params import TypeParams
 from utils.DataProcessor import TBKData
 from utils.Utils import set_input_color
@@ -10,7 +9,7 @@ from utils.Utils import set_input_color
 有用到但是没做测试，需要进一步测试看看
 """
 
-class Input(Component):
+class Input:
     # def __init__(self, outer_instance, tbk_data: TypeParams, tbk_data: TBKData) -> None:
     def __init__(self, data: TypeParams, tbkdata: TBKData) -> None:
 
