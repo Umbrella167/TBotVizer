@@ -1,10 +1,7 @@
 import dearpygui.dearpygui as dpg
-from docutils.nodes import label
-
-from ui.components import Component
 
 
-class Table(Component):
+class Table:
     def __init__(self, cols_title=None, **kwargs):
         super().__init__(**kwargs)
         if cols_title is None:

@@ -6,7 +6,7 @@ from loguru import logger as uilogger
 
 import tbkpy._core as tbkpy
 from static.Params import TypeParams
-from ui.boxes import Box
+from ui.boxes.BaseBox import Box
 from utils.Utils import msg_serializer
 from utils.DataProcessor import tbk_data
 class PlotUitls:
@@ -92,7 +92,7 @@ class PlotVzBox(Box):
             return
         self.is_axis_move = not self.is_axis_move
 
-    def show(self):
+    def create(self):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Plot Visualizer")
@@ -120,9 +120,6 @@ class PlotVzBox(Box):
 
     def subscriber_msg(self, msg, user_data):
         puuid, msg_name, name, msg_type = user_data
-        # series_tag 就是 {puuid}_{msg_name}:{name}
-        # series_tag, msg_type, puuid = user_data
-
         try:
             real_msg = msg_serializer(msg, msg_type)
         except Exception as e:
@@ -176,19 +173,6 @@ class PlotVzBox(Box):
                 t_label += msg_name + ":"
             t_label += name+":"+key
             dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
-
-    # def plot_drop_callback(self, sender, app_data):
-    #     msg_name = app_data["msg_name"]
-    #     name = app_data["name"]
-    #     msg_type = app_data["msg_type"]
-    #     puuid = app_data["puuid"]
-    #     message_data = f"{msg_name}:{name}"
-    #     self.subscriber_func[f"{message_data}_{puuid}"] = tbkpy.Subscriber(
-    #         # puuid,
-    #         msg_name,
-    #         name,
-    #         lambda msg: self.subscriber_msg(msg, (message_data, msg_type, puuid)),
-    #     )
 
     def plot_drop_callback(self, sender, app_data):
         msg_type = app_data["msg_type"]

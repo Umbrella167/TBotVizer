@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 from contextlib import contextmanager
-from ui.boxes import Box
+from ui.boxes.BaseBox import Box
 from utils.DataProcessor import ui_data
 
 
@@ -73,7 +73,7 @@ class CanvasCallBack:
             dpg.apply_transform(canvas_tag, self._tranform.translation_matrix)
 
 
-class Canvas():
+class Canvas:
     def __init__(
         self,
         parent,

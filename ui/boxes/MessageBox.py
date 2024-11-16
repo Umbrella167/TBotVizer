@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-from ui.boxes import Box
+from ui.boxes.BaseBox import Box
 import tbkpy._core as tbkpy
 from utils.DataProcessor import tbk_data
 

@@ -1,11 +1,13 @@
 import dearpygui.dearpygui as dpg
-from ui.boxes import Box
+from ui.boxes.BaseBox import Box
 from utils.DataProcessor import TBKData
 
 class ComboBoxDemo(Box):
     def __init__(self, data=None, **kwargs):
         super().__init__(**kwargs)
         self.data = data
+        if self.data is None:
+            self.data = ["Option1", "Option2", "Option3", "Option4"]
         self.cbl_tag = None
         self.btn_tag = None
 
@@ -14,10 +16,6 @@ class ComboBoxDemo(Box):
 
         if self.label is None:
             dpg.configure_item(self.tag, label="ComboBoxDemo")
-
-        
-
-
 
         # 创建按钮
         self.btn_tag = dpg.add_button(label="Options     V", parent=self.tag)
