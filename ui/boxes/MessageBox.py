@@ -23,7 +23,6 @@ class MessageBoxCallBack:
         name = msg_info["name"]
         msg_name = msg_info["msg_name"]
         puuid = msg_info["puuid"]
-        message_data = f"{puuid}_{name}:{msg_name}"
         msg_type = msg_info["msg_type"]
         msg_info["tag"] = box_tag
 
@@ -141,42 +140,6 @@ class MessageBox(Box):
                         dpg.add_text(f"{msg_name}({name})")
                 t_tree.append(t_node)
         return t_tree
-
-    # def insert_tree(self, data):
-    #     t_tree = []
-    #     for puuid in data:
-    #         # 添加节点列表
-    #         node = dpg.add_tree_node(label=puuid,parent=self.tree_tag)
-    #         t_node = []
-    #         for uuid in data[puuid]:
-    #             msg_info = data[puuid][uuid].ep_info
-    #             node_name = msg_info.node_name
-    #             name = msg_info.name
-    #             msg_name = msg_info.msg_name
-    #             msg_type = msg_info.msg_type
-    #             msg_type_url = msg_info.msg_type_url
-    #             msg_info_dict = {
-    #                 "msg_name": msg_name,
-    #                 "name": name,
-    #                 "msg_type": msg_type,
-    #                 "uuid": uuid,
-    #                 "puuid": puuid,
-    #             }
-    #             # 添加选框
-    #             checkbox = dpg.add_checkbox(
-    #                 label=f"{msg_name}({name})",
-    #                 parent=node,
-    #                 callback=self._callback.checkbox_record_msg,
-    #                 user_data=(msg_info_dict, self._logger),
-    #             )
-    #             t_node.append(checkbox)
-    #             # 设置拖拽
-    #             with dpg.drag_payload(
-    #                 parent=checkbox, payload_type="plot_data", drag_data=msg_info_dict
-    #             ):
-    #                 dpg.add_text(f"{puuid}_payload")
-    #         t_tree.append(t_node)
-    #     return t_tree
 
     def update(self):
         pass
