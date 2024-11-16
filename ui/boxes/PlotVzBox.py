@@ -128,12 +128,12 @@ class PlotVzBox(Box):
         try:
             real_msg = msg_serializer(msg, msg_type)
         except Exception as e:
-            del self.message_subscriber_dic[puuid][msg_name][name]
+            del self.message_subscriber_dic[puuid][name][msg_name]
             print(f"Deserialization failed, please check the data! {e}")
             return
 
         real_msg = PlotUitls.tbkdata2plotdata(real_msg, msg_type)
-        series_tag = f"{puuid}:{msg_name}:{name}"
+        series_tag = f"{puuid}:{name}:{msg_name}"
 
         if series_tag not in self.subscription_data:
             # 如果该词条未被创建, 则新建词条
@@ -145,6 +145,7 @@ class PlotVzBox(Box):
                 msg = [msg]
             self.series_tags[series_tag] = {}
             for i in real_msg:
+                print(i)
                 self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
                 # 添加标签(这个标签可能有多个)
                 self.series_tags[series_tag][i] = dpg.add_line_series(
@@ -174,33 +175,38 @@ class PlotVzBox(Box):
             if len(self.message_subscriber_dic) > 1:
                 t_label += puuid + ":"
             if len(self.message_subscriber_dic[puuid]) > 1:
-                t_label += msg_name + ":"
-            t_label += name+":"+key
+                t_label += name + ":"
+            t_label += msg_name+":"+key
             dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
 
-
     def plot_drop_callback(self, sender, app_data):
-        msg_type = app_data["msg_type"]
+        msg_info,msg_checkbox_tag = app_data
+        msg_type = msg_info["msg_type"]
         if not PlotUitls.is_plot_supported(msg_type):
             print(f"Unknown msg_type: {msg_type}")
             return
 
-        name = app_data["name"]
-        msg_name = app_data["msg_name"]
-        puuid = app_data["puuid"]
-        message_data = f"{puuid}_{msg_name}:{name}"
+        name = msg_info["name"]
+        msg_name = msg_info["msg_name"]
+        puuid = msg_info["puuid"]
+        message_data = f"{puuid}_{name}:{msg_name}"
 
-        # Initialize dictionaries if they don't exist
-        self.message_subscriber_dic.setdefault(puuid, {}).setdefault(msg_name, {})
+        if puuid not in self.message_subscriber_dic:
+            # 如果节点不在表内则添加该节点进表
+            self.message_subscriber_dic[puuid] = {}
 
-        if name not in self.message_subscriber_dic[puuid][msg_name]:
-            # Add message to dictionary if not already present
-            app_data['tag'] = self.tag
-            self.message_subscriber_dic[puuid][msg_name][name] = tbk_data.Subscriber(
-                app_data, lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
+        if name not in self.message_subscriber_dic[puuid]:
+            # 如果消息不在表内，则添加消息进表
+            self.message_subscriber_dic[puuid][name] = {}
+
+        if msg_name not in self.message_subscriber_dic[puuid][name]:
+            # 如果消息不在表内则添加消息进表
+            msg_info['tag'] = self.tag
+            self.message_subscriber_dic[puuid][name][msg_name] = tbk_data.Subscriber(
+                msg_info, lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
             )
-        else:
-            print(f"{message_data}已绘制")
+            return
+        print(f"{message_data}已绘制")
 
     def update(self):
         self.now_time = time.time()

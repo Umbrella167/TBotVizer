@@ -9,8 +9,6 @@ class UiData:
         self.draw_mouse_pos_last = (0, 0)
         self.mouse_move_pos = (0, 0)
 
-import threading
-
 class TBKData:
     def __init__(self, tbkapi: TBKApi):
         self.TBKApi = tbkapi
@@ -20,40 +18,38 @@ class TBKData:
         self.callback_dict = {}
         self.subscriber_dict = {}
 
-        # 创建一个锁对象
-        self.lock = threading.Lock()
-
     def update(self):
         pass
 
-    def unsubscribe(self, info: dict):
+    def unsubscribe(self, info: dict,is_del_msg=False):
         puuid = info["puuid"]
         name = info["name"]
         msg_name = info["msg_name"]
         tag = info["tag"]
 
-        with self.lock:  # 使用上下文管理器来锁定和解锁
-            if tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
-                del self.callback_dict[puuid][msg_name][name][tag]
+        if tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
+            del self.callback_dict[puuid][msg_name][name][tag]
 
-            if len(self.callback_dict[puuid][msg_name][name]) < 1:
-                del self.subscriber_dict[puuid][msg_name][name]
+        if len(self.callback_dict[puuid][msg_name][name]) < 1 or is_del_msg:
+            del self.subscriber_dict[puuid][msg_name][name]
+
+    def is_subscribed(self, info: dict) -> bool:
+        return info["name"] in self.subscriber_dict.get(info["puuid"], {}).get(info["msg_name"], {})
 
     def callback_manager(self, msg, info):
         puuid = info["puuid"]
         name = info["name"]
         msg_name = info["msg_name"]
 
-        with self.lock:  # 使用锁来保护共享数据的访问
-            for tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
-                callback = (
-                    self.callback_dict.get(puuid, {})
-                    .get(msg_name, {})
-                    .get(name, {})
-                    .get(tag)
-                )
-                if callback:
-                    callback(msg)
+        for tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
+            callback = (
+                self.callback_dict.get(puuid, {})
+                .get(msg_name, {})
+                .get(name, {})
+                .get(tag)
+            )
+            if callback:
+                callback(msg)
 
     def Subscriber(self, info: dict, callback):
         puuid = info["puuid"]
@@ -62,19 +58,22 @@ class TBKData:
         tag = info["tag"]
         if "user_data" in info:
             user_data = info["user_data"]
+        self.callback_dict.setdefault(puuid, {}).setdefault(msg_name, {}).setdefault(
+            name, {}
+        )[tag] = callback
 
-        with self.lock:  # 使用锁来保护共享数据的修改
-            self.callback_dict.setdefault(puuid, {}).setdefault(msg_name, {}).setdefault(
-                name, {}
-            )[tag] = callback
-            self.subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[name] = (
-                tbkpy.Subscriber(
-                    # puuid, #这个属性tbk内还没开出接口
-                    name,
-                    msg_name,
-                    lambda msg: self.callback_manager(msg, info),
-                )
+        if self.subscriber_dict.get(puuid, {}).get(msg_name, {}).get(name) is not None:
+            # 如果self.subscriber_dict[puuid][msg_name][name]中有值则退出
+            return
+
+        self.subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[name] = (
+            tbkpy.Subscriber(
+                # puuid, #这个属性tbk内还没开出接口
+                name,
+                msg_name,
+                lambda msg: self.callback_manager(msg, info),
             )
+        )
 
     @property
     def param_data(self):

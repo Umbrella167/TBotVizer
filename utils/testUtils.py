@@ -57,6 +57,6 @@ def stop_all_nodes():
 
 
 if __name__ == '__main__':
-    create_nodes(1)
+    create_nodes(10)
     time.sleep(40)
     stop_all_nodes()
