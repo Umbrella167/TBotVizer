@@ -1,5 +1,7 @@
 from api.TBKApi import TBKApi
 from utils.Utils import build_message_tree
+import tbkpy._core as tbkpy
+
 
 class UiData:
     def __init__(self):
@@ -7,15 +9,68 @@ class UiData:
         self.draw_mouse_pos_last = (0, 0)
         self.mouse_move_pos = (0, 0)
 
+
 class TBKData:
     def __init__(self, tbkapi: TBKApi):
         self.TBKApi = tbkapi
         self._param_data = self.TBKApi.get_param()
         self._message_data = self.TBKApi.get_message()
         self._message_node_tree = None
+        self.callback_dict = {}
+        self.subscriber_dict = {}
 
     def update(self):
         pass
+
+    def unsubscribe(self, info: dict):
+        puuid = info["puuid"]
+        name = info["name"]
+        msg_name = info["msg_name"]
+        tag = info["tag"]
+
+        if tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
+            del self.callback_dict[puuid][msg_name][name][tag]
+
+        if len(self.callback_dict[puuid][msg_name][name]) < 1:
+            del self.subscriber_dict[puuid][msg_name][name]
+
+    def callback_manager(self, msg, info):
+        puuid = info["puuid"]
+        name = info["name"]
+        msg_name = info["msg_name"]
+        for tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
+            callback = (
+                self.callback_dict.get(puuid, {})
+                .get(msg_name, {})
+                .get(name, {})
+                .get(tag)
+            )
+            if callback:
+                callback(msg)
+
+    def Subscriber(self, info: dict, callback):
+        puuid = info["puuid"]
+        name = info["name"]
+        msg_name = info["msg_name"]
+        tag = info["tag"]
+        if "user_data" in info:
+            user_data = info["user_data"]
+        self.callback_dict.setdefault(puuid, {}).setdefault(msg_name, {}).setdefault(
+            name, {}
+        )[tag] = callback
+
+        if self.subscriber_dict.get(puuid, {}).get(msg_name, {}).get(name) is not None:
+            # 如果self.subscriber_dict[puuid][msg_name][name]中有值则退出
+            return
+
+        self.subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[name] = (
+            tbkpy.Subscriber(
+                # puuid, #这个属性tbk内还没开出接口
+                name,
+                msg_name,
+                lambda msg: self.callback_manager(msg, info),
+            )
+        )
 
     @property
     def param_data(self):
@@ -54,6 +109,7 @@ class TBKData:
                 self._message_node_tree[type] = tree
         return self._message_node_tree
 
-ui_data =  UiData()
+
+ui_data = UiData()
 tbk_api = TBKApi()
 tbk_data = TBKData(tbk_api)

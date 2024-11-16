@@ -6,9 +6,7 @@ import etcd3
 import utils.Utils as uitls
 import tzcp.tbk.tbk_pb2 as tbkpb
 from tbkpy import _core as tbkpy
-
 from config.SystemConfig import config
-
 
 class TBKApi:
     def __init__(self):
@@ -42,6 +40,8 @@ class TBKApi:
     def get_param(self, _prefix=None):
         prefix = self.PARAM_PREFIX + (_prefix if _prefix else "")
         raw_data = self.etcd.get_prefix(prefix)
+
+
         data = dict(
             [
                 (r[1].key.decode('utf-8', errors='ignore')[12:], r[0].decode('utf-8', errors='ignore'))
