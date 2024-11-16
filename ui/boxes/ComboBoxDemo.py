@@ -3,7 +3,7 @@ from ui.boxes import Box
 from utils.DataProcessor import TBKData
 
 class ComboBoxDemo(Box):
-    def __init__(self,data, **kwargs):
+    def __init__(self, data=None, **kwargs):
         super().__init__(**kwargs)
         self.data = data
         self.cbl_tag = None

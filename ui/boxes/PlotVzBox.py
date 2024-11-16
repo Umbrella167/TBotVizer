@@ -10,8 +10,7 @@ import tbkpy._core as tbkpy
 from static.Params import TypeParams
 from ui.boxes import Box
 from utils.Utils import msg_serializer
-
-
+from utils.DataProcessor import tbk_data
 class PlotUitls:
     @staticmethod
     def is_plot_supported(tbk_type):
@@ -74,6 +73,7 @@ class TimedDeque:
 class PlotVzBox(Box):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.only = False
         self.series_tag = None
         self.plot_tag = None
         self.series_tags = {}
@@ -143,11 +143,12 @@ class PlotVzBox(Box):
             }
             if not isinstance(msg, (list, tuple)):
                 msg = [msg]
+            self.series_tags[series_tag] = {}
             for i in real_msg:
                 print(i)
                 self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
                 # 添加标签(这个标签可能有多个)
-                self.series_tags[series_tag] = dpg.add_line_series(
+                self.series_tags[series_tag][i] = dpg.add_line_series(
                     x=[0],
                     y=[0],
                     # label=f"{series_tag}_{i}", #暂时不指定label，后续更新label
@@ -164,18 +165,19 @@ class PlotVzBox(Box):
             self.subscription_data[series_tag]["data"][key].append(value)
             if self.is_axis_move:
                 dpg.configure_item(
-                    item=self.series_tags[series_tag],
+                    item=self.series_tags[series_tag][key],
                     x=self.subscription_data[series_tag]["time"].get_items(),
                     y=self.subscription_data[series_tag]["data"][key].get_items()
                 )
-        # 更新label，主要是label可能会太长，作简略显示
-        t_label = ""
-        if len(self.message_subscriber_dic) > 1:
-            t_label += puuid + ":"
-        if len(self.message_subscriber_dic[puuid]) > 1:
-            t_label += name + ":"
-        t_label += msg_name
-        dpg.configure_item(self.series_tags[series_tag], label=t_label)
+        # 更新图例label，主要是label可能会太长，作简略显示
+        for key, _ in real_msg.items():
+            t_label = ""
+            if len(self.message_subscriber_dic) > 1:
+                t_label += puuid + ":"
+            if len(self.message_subscriber_dic[puuid]) > 1:
+                t_label += name + ":"
+            t_label += msg_name+":"+key
+            dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
 
     # def plot_drop_callback(self, sender, app_data):
     #     name = app_data["name"]
@@ -211,11 +213,9 @@ class PlotVzBox(Box):
 
         if msg_name not in self.message_subscriber_dic[puuid][name]:
             # 如果消息不在表内则添加消息进表
-            self.message_subscriber_dic[puuid][name][msg_name] = tbkpy.Subscriber(
-                # puuid, #这个属性tbk内还没开出接口
-                name,
-                msg_name,
-                lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
+            app_data['tag'] = self.tag
+            self.message_subscriber_dic[puuid][name][msg_name] = tbk_data.Subscriber(
+                app_data, lambda msg: self.subscriber_msg(msg, (puuid, name, msg_name, msg_type)),
             )
             return
         print(f"{message_data}已绘制")

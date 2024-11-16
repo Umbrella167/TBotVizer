@@ -17,49 +17,56 @@ class TBKData:
         self._message_data = self.TBKApi.get_message()
         self._message_node_tree = None
         self.callback_dict = {}
-        self.subscriber_list = []
+        self.subscriber_dict = {}
 
     def update(self):
         pass
 
-    def callback_manager(self, msg,info):
+    def unsubscribe(self, info: dict):
+        puuid = info["puuid"]
+        name = info["name"]
+        msg_name = info["msg_name"]
+        tag = info["tag"]
+
+        if tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
+            del self.callback_dict[puuid][msg_name][name][tag]
+
+        if len(self.callback_dict[puuid][msg_name][name]) < 1:
+            del self.subscriber_dict[puuid][msg_name][name]
+
+    def callback_manager(self, msg, info):
+        puuid = info["puuid"]
+        name = info["name"]
+        msg_name = info["msg_name"]
+        for tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
+            callback = (
+                self.callback_dict.get(puuid, {})
+                .get(msg_name, {})
+                .get(name, {})
+                .get(tag)
+            )
+            if callback:
+                callback(msg)
+
+    def Subscriber(self, info: dict, callback):
         puuid = info["puuid"]
         name = info["name"]
         msg_name = info["msg_name"]
         tag = info["tag"]
         if "user_data" in info:
             user_data = info["user_data"]
-
-        if puuid in self.callback_dict:
-            if msg_name in self.callback_dict[puuid]:
-                if name in self.callback_dict[puuid][msg_name]:
-                    if tag in self.callback_dict[puuid][msg_name][name]:
-                        self.callback_dict[puuid][msg_name][name][tag](msg)
-
-    def Subscriber(self, info: dict, callabck):
-        puuid = info["puuid"]
-        name = info["name"]
-        msg_name = info["msg_name"]
-        tag = info["tag"]
-        if "user_data" in info:
-            user_data = info["user_data"]
-
-        if puuid not in self.callback_dict:
-            self.callback_dict[puuid] = {}
-        if msg_name not in self.callback_dict[puuid]:
-            self.callback_dict[puuid][msg_name] = {}
-        if name not in self.callback_dict[puuid][msg_name]:
-            self.callback_dict[puuid][msg_name][name] = {}
-        self.callback_dict[puuid][msg_name][name][tag] = callabck
-        self.subscriber_list.append(
+        self.callback_dict.setdefault(puuid, {}).setdefault(msg_name, {}).setdefault(
+            name, {}
+        )[tag] = callback
+        self.subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[name] = (
             tbkpy.Subscriber(
                 # puuid, #这个属性tbk内还没开出接口
                 name,
                 msg_name,
-                lambda msg:self.callback_manager(msg,info),
+                lambda msg: self.callback_manager(msg, info),
             )
         )
-        print(111)
+
     @property
     def param_data(self):
         # self._old_param_data = self._param_data
@@ -99,4 +106,5 @@ class TBKData:
 
 
 ui_data = UiData()
-tbk_data = TBKData(TBKApi())
+tbk_api = TBKApi()
+tbk_data = TBKData(tbk_api)

@@ -233,7 +233,7 @@ def add_input(_type, tag, default_value, max_value, min_value, step):
             )
             dpg.add_slider_int(height=10, width=-1)
 
-
+# 反序列化msg数据
 def msg_serializer(msg, msg_type):
     if msg_type in TypeParams.PYTHON_TYPES:
         real_msg = pickle.loads(msg)
@@ -241,3 +241,12 @@ def msg_serializer(msg, msg_type):
         real_msg = TypeParams.TBK_TYPES[msg_type]
         real_msg.ParseFromString(msg)
     return real_msg
+
+# 获取所有子类
+def get_all_subclasses(cls):
+    subclasses = cls.__subclasses__()
+    all_subclasses = []
+    for subclass in subclasses:
+        all_subclasses.append(subclass)
+        all_subclasses.extend(get_all_subclasses(subclass))
+    return all_subclasses

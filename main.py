@@ -7,9 +7,8 @@ from ui.boxes.ComboBoxDemo import ComboBoxDemo
 from ui.boxes.MessageBox import MessageBox
 from ui.boxes.ParamBox import ParamBox
 from utils.DataProcessor import TBKData
-# from ui.boxes.PlotVzBox import PlotVzBox
 from ui.boxes.CanvasBox import CanvasBox
-from ui.boxes.PlotVzBox2 import PlotVzBox
+from ui.boxes.PlotVzBox import PlotVzBox
 
 
 def loop(UI):
@@ -24,8 +23,8 @@ def main():
     dpg.create_context()
     tbk_api = TBKApi.TBKApi()
     tbk_data = TBKData(tbk_api)
-    t_pbox = ParamBox(tbk_data=tbk_data)
-    t_msgbox = MessageBox(tag="test", tbk_data=tbk_data)
+    t_pbox = ParamBox()
+    t_msgbox = MessageBox(tag="test")
     t_canvas_box = CanvasBox()
     t_plot_vz_box = PlotVzBox(tag="PlotVzBox")
     l = ["Option 1", "Option 2", "Option 3", "Option 4"]
@@ -33,7 +32,6 @@ def main():
     boxes = [t_pbox, t_msgbox,t_plot_vz_box]
 
     UI = ui.UI(boxes=boxes)
-
 
     UI.show()
     UI.run_loop(lambda: loop(UI))

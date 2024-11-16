@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 from ui.boxes import Box
 from logger.Logger import Logger
 import tbkpy._core as tbkpy
+from utils.DataProcessor import tbk_data
 
 
 class MessageBoxCallBack:
@@ -18,12 +19,14 @@ class MessageBoxCallBack:
 
     def checkbox_record_msg(self, sender, app_data, user_data):
         is_checked = app_data
-        msg_info, tree_item_tag_dict = user_data
+        msg_info, tree_item_tag_dict,box_tag  = user_data
         name = msg_info["name"]
         msg_name = msg_info["msg_name"]
         puuid = msg_info["puuid"]
         message_data = f"{puuid}_{name}:{msg_name}"
         msg_type = msg_info["msg_type"]
+        msg_info["tag"] = box_tag
+
         if is_checked:
             if puuid not in self.msg_subscriber_dict:
                 # 如果节点不在表内则添加该节点进表
@@ -35,11 +38,8 @@ class MessageBoxCallBack:
 
             if name not in self.msg_subscriber_dict[puuid][msg_name]:
                 # 如果消息不在表内则添加消息进表
-
-                self.msg_subscriber_dict[puuid][msg_name][name] = tbkpy.Subscriber(
-                    # puuid, #这个属性tbk内还没开出接口
-                    name,
-                    msg_name,
+                self.msg_subscriber_dict[puuid][msg_name][name] = tbk_data.Subscriber(
+                    msg_info,
                     lambda msg: self.subscriber_msg(
                         msg, (puuid, name, msg_name, msg_type, tree_item_tag_dict)
                     ),
@@ -48,6 +48,7 @@ class MessageBoxCallBack:
             if puuid in self.msg_subscriber_dict:
                 if msg_name in self.msg_subscriber_dict[puuid]:
                     if name in self.msg_subscriber_dict[puuid][msg_name]:
+                        tbk_data.unsubscribe(msg_info)
                         del self.msg_subscriber_dict[puuid][msg_name][name]
                         del self.msg_subscriber_dict[puuid][msg_name]
                         dpg.configure_item(
@@ -56,14 +57,14 @@ class MessageBoxCallBack:
 
 
 class MessageBox(Box):
-    def __init__(self, tbk_data, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tags = None
         self.tree_tag = None
-        self.tbk_data = tbk_data
         self._callback = MessageBoxCallBack()
         self._logger = Logger()
         self.tree_item_tag_dict = {}
+        self.tbk_data = tbk_data
 
     def create(self):
         self.check_and_create_window()
@@ -117,6 +118,7 @@ class MessageBox(Box):
                                 user_data=(
                                     msg_info_dict,
                                     self.tree_item_tag_dict[puuid][msg_name][name],
+                                    self.tag
                                 ),
                             )
                             # 记录消息选择框

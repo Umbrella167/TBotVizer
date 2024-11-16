@@ -29,11 +29,9 @@ def create_nodes(node_len):
             print(f"Node {node} received message: {msg}")
 
         i = 0
-        f = -1
         while i < 1000:
-            i = i + random.randint(1, 10) * f
+            i = i + random.randint(-10, 10)
             puber.publish(pickle.dumps(i))
-            f = -f
             sleep(0.01)
             if stop_event.is_set():
                 break
