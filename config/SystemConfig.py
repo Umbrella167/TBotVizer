@@ -7,7 +7,7 @@ class Config:
     # FONT_FILE = "static/font/SmileySans-Oblique.ttf"
     # FONT_FILE = "static/font/Minecraft.ttf"
     FONT_FILE = "static/font/FiraCode-Regular.ttf"
-    LOG_DIR = "logs"
+    LOG_DIR = "logs/ui_logs"
 
 
 

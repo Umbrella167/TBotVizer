@@ -4,6 +4,5 @@
 __pycache__
 **/__pycache__
 
-./logger/logs/*.log
-
+./logs/*
 ./static/font/BLACK-NORMAL.ttf
