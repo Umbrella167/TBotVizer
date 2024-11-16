@@ -1,4 +1,5 @@
 from api.TBKApi import TBKApi
+from utils.ClientLogManager import client_logger
 from utils.Utils import build_message_tree
 import tbkpy._core as tbkpy
 
@@ -62,7 +63,7 @@ class TBKData:
         if self.subscriber_dict.get(puuid, {}).get(msg_name, {}).get(name) is not None:
             # 如果self.subscriber_dict[puuid][msg_name][name]中有值则退出
             return
-
+        client_logger.log("INFO", f"Add new subscriber({puuid}, {msg_name}, {name})")
         self.subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[name] = (
             tbkpy.Subscriber(
                 # puuid, #这个属性tbk内还没开出接口
@@ -105,7 +106,7 @@ class TBKData:
                             tree[puuid] = {}
                         tree[puuid][uuid] = data[uuid]
                 else:
-                    print(f"{self.__class__} build message_tree type error!")
+                    client_logger.log("ERROR", f"{self.__class__} build message_tree type error!")
                 self._message_node_tree[type] = tree
         return self._message_node_tree
 

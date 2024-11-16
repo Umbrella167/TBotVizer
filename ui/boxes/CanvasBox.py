@@ -6,6 +6,7 @@ from ui.components.Canvas import Canvas
 class CanvasBox(Box):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._canvas = None
 
     def create(self):
         self.check_and_create_window()

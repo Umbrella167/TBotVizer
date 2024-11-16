@@ -23,11 +23,6 @@ def create_nodes(node_len):
 
         puber = tbkpy.Publisher(ep)
 
-        # puber1 = tbkpy.Publisher(f"Node {node}", f"Node {node}_pub1")
-
-        def f(msg):
-            print(f"Node {node} received message: {msg}")
-
         i = 0
         while i < 1000:
             i = i + random.randint(-10, 10)

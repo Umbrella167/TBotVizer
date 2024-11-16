@@ -90,11 +90,10 @@ class LayoutManager:
                         try:
                             func()
                         except Exception as e:
-                            print(f"Error while executing callback for {item}: {e}")
-
-            print("LayoutManager loaded")
+                            prin(f"Error while executing callback for {item}: {e}")
+            prin("LayoutManager loaded")
         except FileNotFoundError:
-            print("No layout_manager settings found")
+            prin("No layout_manager settings found")
         """
 
     def get_drawer_window_size(self):

@@ -1,6 +1,7 @@
 import dearpygui.dearpygui as dpg
 
 from ui.boxes import *
+from utils.ClientLogManager import client_logger
 
 from utils.Utils import get_all_subclasses
 
@@ -52,7 +53,7 @@ class ConsoleBox(Box):
     def callback_manager(self, sender, app_data, user_data):
         instance_func_name = user_data
         instance_func = getattr(self, instance_func_name, None)
-        # instance_func 中有将新创建的实力添加进 self.boxes
+        # instance_func 中有将新创建的实例添加进 self.boxes
         instance_func()
 
     def generate_add_methods(self):
@@ -65,18 +66,11 @@ class ConsoleBox(Box):
                 try:
                     instance = cls(**kwargs)
                     self.boxes.append(instance)
-                    print(f"{cls} 实例已添加到 boxes 列表中。")
+                    client_logger.log("SUCCESS", f"{cls} 实例已添加到 boxes 列表中。")
                 except TypeError as e:
-                    print(f"无法实例化 {cls}：{e}")
+                    client_logger.log("ERROR", f"无法实例化 {cls}：{e}")
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
-
-        # for subclass in get_all_subclasses(Box):
-        #     if subclass == self.__class__:
-        #         continue
-        #     instance = subclass()
-        #     self.boxes.append(instance)
-        # print(self.boxes)
 
     @property
     def boxes(self):

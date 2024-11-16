@@ -7,8 +7,11 @@ from loguru import logger as uilogger
 import tbkpy._core as tbkpy
 from static.Params import TypeParams
 from ui.boxes.BaseBox import Box
+from utils.ClientLogManager import client_logger
 from utils.Utils import msg_serializer
 from utils.DataProcessor import tbk_data
+
+
 class PlotUitls:
     @staticmethod
     def is_plot_supported(tbk_type):
@@ -117,14 +120,13 @@ class PlotVzBox(Box):
                 key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move, user_data=self.plot_tag
             )
 
-
     def subscriber_msg(self, msg, user_data):
         puuid, msg_name, name, msg_type = user_data
         try:
             real_msg = msg_serializer(msg, msg_type)
         except Exception as e:
             del self.message_subscriber_dic[puuid][msg_name][name]
-            print(f"Deserialization failed, please check the data! {e}")
+            client_logger.log("ERROR", f"Deserialization failed, please check the data! {e}")
             return
 
         real_msg = PlotUitls.tbkdata2plotdata(real_msg, msg_type)
@@ -140,7 +142,6 @@ class PlotVzBox(Box):
                 msg = [msg]
             self.series_tags[series_tag] = {}
             for i in real_msg:
-                print(i)
                 self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
                 # 添加标签(这个标签可能有多个)
                 self.series_tags[series_tag][i] = dpg.add_line_series(
@@ -171,13 +172,13 @@ class PlotVzBox(Box):
                 t_label += puuid + ":"
             if len(self.message_subscriber_dic[puuid]) > 1:
                 t_label += msg_name + ":"
-            t_label += name+":"+key
+            t_label += name + ":" + key
             dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
 
     def plot_drop_callback(self, sender, app_data):
         msg_type = app_data["msg_type"]
         if not PlotUitls.is_plot_supported(msg_type):
-            print(f"Unknown msg_type: {msg_type}")
+            client_logger.log("ERROR", f"Unknown msg_type: {msg_type}")
             return
 
         msg_name = app_data["msg_name"]
@@ -200,7 +201,7 @@ class PlotVzBox(Box):
                 app_data, lambda msg: self.subscriber_msg(msg, (puuid, msg_name, name, msg_type)),
             )
             return
-        print(f"{message_data}已绘制")
+        client_logger.log("WARNING", f"{message_data} was drawn.")
 
     def update(self):
         self.now_time = time.time()

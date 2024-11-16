@@ -112,8 +112,6 @@ class Input:
         except:
             value = 0
         if self.max and self.min:
-            print(self.max, self.min)
-
             dpg.add_slider_int(
                 clamped=True,
                 tag=self._tag,

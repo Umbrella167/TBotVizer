@@ -64,7 +64,6 @@ class TableTree:
                     default_open=True)
 
             for label in cells[1:]:
-                # print(label)
                 dpg.add_text(label, tag=tag)
         try:
             dpg.set_item_user_data(table, cur_level + 1)
@@ -81,13 +80,10 @@ class TableTree:
         for key, value in tree.items():
             if isinstance(value, dict):
                 if 'info' in value and 'type' in value and 'value' in value:
-                    print(value['info'], value['type'], value['value'])
                     self.add_table_tree_leaf(key, value['info'], value['type'], value['value'])
                 else:
                     with self.table_tree_node(key, "--", "--", "--"):
                         self.build_dpg_tree(value)
                         # self.param_tag = self.param_tag + "/" + value
             else:
-                print(key)
-
                 self.add_table_tree_leaf(key, "--", "--", str(value))

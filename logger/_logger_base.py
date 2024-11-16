@@ -7,6 +7,9 @@ import threading
 import re
 from datetime import datetime, timezone
 
+from utils.ClientLogManager import client_logger
+
+
 class UDPMultiCastReceiver(UDPReceiver):
     def __init__(
         self, group, port, *, bind_ip="", callback=None, user_data=None, plugin=None
@@ -91,7 +94,7 @@ class _Utils:
                 log_files, key=lambda x: extract_timestamp(x[0]), reverse=True
             )
         except Exception as e:
-            print(f"An error occurred: {e}")
+            client_logger.log("ERROR", f"An error occurred: {e}")
             return []
 
     def get_log_files(self, log_packge_path):
@@ -106,7 +109,7 @@ class _Utils:
             files.sort(key=lambda x: int(x.split("_")[0]))  # Sort by file index
             return files
         except Exception as e:
-            print(f"Error retrieving log files: {e}")
+            client_logger.log("ERROR", f"Error retrieving log files: {e}")
             return []
 
 class _LogDiskWriter:
@@ -170,14 +173,14 @@ class _LogDiskWriter:
                 try:
                     self._current_file = open(file_path, "ab")
                 except Exception as e:
-                    print(f"Error opening file {file_path}: {e}")
+                    client_logger.log("ERROR", f"Error opening file {file_path}: {e}")
                     return
 
             try:
                 pickle.dump(self.data_list, self._current_file)
                 self._current_file.flush()
             except Exception as e:
-                print(f"Error writing data to file: {e}")
+                client_logger.log("ERROR", f"Error writing data to file: {e}")
             finally:
                 self.data_list.clear()
                 self.data_len = 0
@@ -191,7 +194,7 @@ class _LogDiskWriter:
                 try:
                     self._current_file.close()
                 except Exception as e:
-                    print(f"Error closing file: {e}")
+                    client_logger.log("ERROR", f"Error closing file {e}")
 
 class _LogReader:
     def __init__(self, log_package_path):
@@ -286,11 +289,11 @@ class _LogReader:
                 info["end_timestamp"] / 1e9, tz=timezone.utc
             )
 
-            print(f"Name: {name}")
-            print(f"Count: {info['count']}")
-            print(f"Start Timestamp: {info['start_timestamp']:.0f} ({start_ts_human})")
-            print(f"End Timestamp: {info['end_timestamp']:.0f} ({end_ts_human})")
-            print()
+            # print(f"Name: {name}")
+            # print(f"Count: {info['count']}")
+            # print(f"Start Timestamp: {info['start_timestamp']:.0f} ({start_ts_human})")
+            # print(f"End Timestamp: {info['end_timestamp']:.0f} ({end_ts_human})")
+            # print()
 
     def read_logs(self, message_tag=None):
         """
@@ -318,7 +321,7 @@ class _LogReader:
                             # Break the loop if end of file is reached
                             break
             except Exception as e:
-                print(f"Error reading log file {file_path}: {e}")
+                client_logger.log("ERROR", f"Error reading log file {file_path}: {e}")
 
     def get_closest_message(self, log_file_data, timestamp):
         """
@@ -385,7 +388,7 @@ class _LogReader:
                         break
             return all_messages
         except Exception as e:
-            print(f"Error reading log file {file_path}: {e}")
+            client_logger.log("ErRoR", f"Error reading log file {file_path}: {e}")
             return []
 
     def read_log_by_timestamp(self, timestamp):
@@ -633,7 +636,7 @@ class _Logger:
             if log_package_path:
                 log_package_path = log_package_path[0][0]
             else:
-                print("No log package found.")
+                client_logger.log("ERRor", "No log package found.")
                 return False, None
         return _LogReader(f"{self.log_dir}/{log_package_path}")
 

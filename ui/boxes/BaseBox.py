@@ -1,5 +1,7 @@
 from dearpygui import dearpygui as dpg
 
+from utils.ClientLogManager import client_logger
+
 
 class Box(object):
     def __init__(self, tag=None, parent=None, label=None, callback=None):
@@ -12,7 +14,7 @@ class Box(object):
 
     def check_and_create_window(self):
         if self.is_created:
-            print("Box is already created")
+            client_logger.log("ERROR", "Box has already been created")
             return
         if self.tag:
             dpg.add_window(tag=self.tag, label=self.label,width=800,height=800)

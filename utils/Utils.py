@@ -5,6 +5,7 @@ import traceback
 import pickle
 
 from static.Params import TypeParams
+from utils.ClientLogManager import client_logger
 
 
 def calculate_distance(pos1, pos2):
@@ -84,12 +85,12 @@ def swap_elements(lst, element1, element2):
         # 交换元素
         lst[index1], lst[index2] = lst[index2], lst[index1]
     except ValueError:
-        print("其中一个元素不在列表中")
+        client_logger.log("ERROR", "Utils/swap_elements: One of the elements is not in the list!")
 
 def check_is_created(func):
     def wrapper(self, *args, **kwargs):
         if self.is_created:
-            print(f"{self.__class__.__name__} is already created.")
+            client_logger.log("DEBUG", f"{self.__class__.__name__} is already created.")
             return
         return func(self, *args, **kwargs)
     return wrapper
@@ -212,9 +213,7 @@ def set_input_color(change_item, color):
     except Exception as e:
         tb = traceback.extract_tb(e.__traceback__)
         file_name, line_number, func_name, text = tb[-1]
-        print(
-            f"ERROR(bind_item_theme)：\n    Item:{change_item}\n    File:{file_name}\n    Line:{line_number}\n    Function:{func_name}\n    Text:{text}"
-        )
+        client_logger.log("ERROR", f"ERROR(bind_item_theme)：\n    Item:{change_item}\n    File:{file_name}\n    Line:{line_number}\n    Function:{func_name}\n    Text:{text}")
 
 
 # 这个不知道是啥也没用到

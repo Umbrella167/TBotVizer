@@ -7,6 +7,8 @@ import utils.Utils as uitls
 import tzcp.tbk.tbk_pb2 as tbkpb
 from tbkpy import _core as tbkpy
 from config.SystemConfig import config
+from utils.ClientLogManager import client_logger
+
 
 class TBKApi:
     def __init__(self):
@@ -104,7 +106,7 @@ class TBKApi:
                     info.ParseFromString(value)
                     subscribers[info.uuid] = info
             else:
-                print("Error: key error:", key)
+                client_logger.log("ERROR", f"TBKApi: Error: key error:{key}")
         res = {"ps": processes, "pubs": publishers, "subs": subscribers}
         self.message_data = res
         return res

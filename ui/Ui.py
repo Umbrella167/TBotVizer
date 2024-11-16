@@ -1,9 +1,8 @@
 import dearpygui.dearpygui as dpg
 from config.UiConfig import UiConfig
 from ui.boxes.ConsoleBox import ConsoleBox
+from utils.ClientLogManager import client_logger
 from utils.DataProcessor import ui_data
-from utils.UiLogManager import UiLogManager
-
 
 class UICallback:
     def __init__(self):
@@ -13,7 +12,7 @@ class UICallback:
         config = user_data
         if dpg.is_key_down(dpg.mvKey_LControl) and app_data == dpg.mvKey_S:
             config.layout.save()
-            print("布局保存成功")
+            client_logger.log("SUCCESS", "布局保存成功")
         if dpg.is_key_released(dpg.mvKey_F11):
             dpg.toggle_viewport_fullscreen()
 
@@ -24,13 +23,11 @@ class UICallback:
             x - y for x, y in zip(ui_data.draw_mouse_pos, ui_data.draw_mouse_pos_last)
         )
 
-
 class UI:
     def __init__(self):
         self.config = UiConfig()
         self.console = ConsoleBox()
         self.boxes = self.console.boxes
-        self.logger = UiLogManager()
         self.is_created = False
         self._ui_callback = UICallback()
 

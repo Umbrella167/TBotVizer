@@ -124,9 +124,6 @@ class ParamBox(Box):
     # TODO： 只会更改已有的条目，无法插入新数据，也没有做类型的检查，如果类型错误则会报错
     # def update(self):
     #     for k, v in self.tbk_data.param_data.items():
-    #         # print('k: ',k)
-    #         # print('v: ',v)
-    #
     #         # 这句暂时有点问题
     #         # dpg.set_value(k + '_value', v['value'])
     #         pass

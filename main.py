@@ -2,14 +2,14 @@
 import dearpygui.dearpygui as dpg
 
 import ui.Ui as ui
+from utils.ClientLogManager import ClientLogManager, client_logger
 
 
 def loop(UI):
     try:
         UI.update()
     except Exception as e:
-        print(e)
-        print("loop failed")
+        client_logger.log("ERROR", f"Loop Failed! {e}")
 
 
 def main():
@@ -18,7 +18,10 @@ def main():
     UI = ui.UI()
 
     UI.show()
+
     UI.run_loop(lambda: loop(UI))
+
+
 
 if __name__ == "__main__":
     main()
