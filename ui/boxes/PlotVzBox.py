@@ -3,8 +3,6 @@ import time
 
 from google.protobuf.json_format import MessageToDict
 from loguru import logger as uilogger
-
-import tbkpy._core as tbkpy
 from static.Params import TypeParams
 from ui.boxes.BaseBox import Box
 from utils.ClientLogManager import client_logger
@@ -25,9 +23,9 @@ class PlotUitls:
             uilogger.error("Unsupported data type")
             return
         if data_type in TypeParams.PYTHON_TYPES:
-            if data_type == 'int' or data_type == 'float':
-                res = {'0': data}
-            elif data_type == 'list' or data_type == 'tuple':
+            if data_type == "int" or data_type == "float":
+                res = {"0": data}
+            elif data_type == "list" or data_type == "tuple":
                 res = {}
                 for i in range(len(data)):
                     res[str(i)] = data[i]
@@ -80,13 +78,14 @@ class PlotVzBox(Box):
         self.series_tags = {}
         self.plot_x_tag = None
         self.plot_y_tag = None
-        self.message_subscriber_dic = {}
+        self.message_subscriber_dict = {}
         self.subscriber_func = {}
         self.subscription_data = {}
         self.is_axis_move = True
         self.data_start_time = time.time()
         self.now_time = time.time()
         self.max_save_time = 5  # 数据保存的最大时间限制
+        self.checkbox_bind = {}
 
     def toggle_axis_move(self, sender, app_data, user_data):
         # 检测到空格则停止移动x轴
@@ -117,20 +116,21 @@ class PlotVzBox(Box):
 
         with dpg.handler_registry():
             dpg.add_key_release_handler(
-                key=dpg.mvKey_Spacebar, callback=self.toggle_axis_move, user_data=self.plot_tag
+                key=dpg.mvKey_Spacebar,
+                callback=self.toggle_axis_move,
+                user_data=self.plot_tag,
             )
 
     def subscriber_msg(self, msg, user_data):
-        puuid, msg_name, name, msg_type = user_data
+        puuid, name, msg_name, msg_type, series_tag = user_data
         try:
             real_msg = msg_serializer(msg, msg_type)
         except Exception as e:
-            del self.message_subscriber_dic[puuid][msg_name][name]
+            del self.message_subscriber_dict[puuid][msg_name][name]
             client_logger.log("ERROR", f"Deserialization failed, please check the data! {e}")
             return
 
         real_msg = PlotUitls.tbkdata2plotdata(real_msg, msg_type)
-        series_tag = f"{puuid}:{msg_name}:{name}"
 
         if series_tag not in self.subscription_data:
             # 如果该词条未被创建, 则新建词条
@@ -142,13 +142,13 @@ class PlotVzBox(Box):
                 msg = [msg]
             self.series_tags[series_tag] = {}
             for i in real_msg:
-                self.subscription_data[series_tag]["data"][i] = TimedDeque(max_age_seconds=self.max_save_time)
+                self.subscription_data[series_tag]["data"][i] = TimedDeque(
+                    max_age_seconds=self.max_save_time
+                )
                 # 添加标签(这个标签可能有多个)
                 self.series_tags[series_tag][i] = dpg.add_line_series(
                     x=[0],
                     y=[0],
-                    # label=f"{series_tag}_{i}", #暂时不指定label，后续更新label
-                    # tag=f"{series_tag}_{i}_line",
                     parent=self.plot_x_tag,
                 )
 
@@ -163,48 +163,70 @@ class PlotVzBox(Box):
                 dpg.configure_item(
                     item=self.series_tags[series_tag][key],
                     x=self.subscription_data[series_tag]["time"].get_items(),
-                    y=self.subscription_data[series_tag]["data"][key].get_items()
+                    y=self.subscription_data[series_tag]["data"][key].get_items(),
                 )
         # 更新图例label，主要是label可能会太长，作简略显示
         for key, _ in real_msg.items():
             t_label = ""
-            if len(self.message_subscriber_dic) > 1:
-                t_label += puuid + ":"
-            if len(self.message_subscriber_dic[puuid]) > 1:
-                t_label += msg_name + ":"
-            t_label += name + ":" + key
+            if len(self.message_subscriber_dict) > 1:
+                tpuuid = puuid
+                if len(puuid) > 8:
+                    tpuuid = puuid[:4]+"..."+puuid[-4:]
+                t_label += tpuuid + ":"
+            t_label += f"{msg_name}({name}):{key}"
             dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
 
     def plot_drop_callback(self, sender, app_data):
-        msg_type = app_data["msg_type"]
+        msg_info, msg_checkbox_tag = app_data
+        msg_type = msg_info["msg_type"]
+        sub_checkbox = msg_checkbox_tag["sub_checkbox"]
+        if not dpg.get_value(sub_checkbox):
+            return
         if not PlotUitls.is_plot_supported(msg_type):
             client_logger.log("ERROR", f"Unknown msg_type: {msg_type}")
             return
 
-        msg_name = app_data["msg_name"]
-        name = app_data["name"]
-        puuid = app_data["puuid"]
+        name = msg_info["name"]
+        msg_name = msg_info["msg_name"]
+        puuid = msg_info["puuid"]
         message_data = f"{puuid}_{msg_name}:{name}"
-
-        if puuid not in self.message_subscriber_dic:
+        series_tag = f"{puuid}:{msg_name}:{name}"
+        self.checkbox_bind[sub_checkbox] = (series_tag,puuid, msg_name, name)
+        if puuid not in self.message_subscriber_dict:
             # 如果节点不在表内则添加该节点进表
-            self.message_subscriber_dic[puuid] = {}
+            self.message_subscriber_dict[puuid] = {}
 
-        if msg_name not in self.message_subscriber_dic[puuid]:
+        if msg_name not in self.message_subscriber_dict[puuid]:
             # 如果消息不在表内，则添加消息进表
-            self.message_subscriber_dic[puuid][msg_name] = {}
+            self.message_subscriber_dict[puuid][msg_name] = {}
 
-        if name not in self.message_subscriber_dic[puuid][msg_name]:
+        if name not in self.message_subscriber_dict[puuid][msg_name]:
             # 如果消息不在表内则添加消息进表
-            app_data['tag'] = self.tag
-            self.message_subscriber_dic[puuid][msg_name][name] = tbk_data.Subscriber(
-                app_data, lambda msg: self.subscriber_msg(msg, (puuid, msg_name, name, msg_type)),
+            msg_info["tag"] = self.tag
+            self.message_subscriber_dict[puuid][msg_name][name] = tbk_data.Subscriber(
+                msg_info,
+                lambda msg: self.subscriber_msg(
+                    msg, (puuid, name, msg_name, msg_type, series_tag)
+                ),
             )
             return
         client_logger.log("WARNING", f"{message_data} was drawn.")
 
+    def checkbox_is_checked(self):
+        for tag in self.checkbox_bind:
+            series_tag_dict,puuid, msg_name, name = self.checkbox_bind[tag]
+
+            if not dpg.get_value(tag):
+                if series_tag_dict in self.series_tags:
+                    for series_tag in self.series_tags[series_tag_dict].values():
+                        dpg.delete_item(series_tag)
+                    del self.subscription_data[series_tag_dict]
+                    del self.series_tags[series_tag_dict]
+                    del self.message_subscriber_dict[puuid][msg_name][name]
+
     def update(self):
         self.now_time = time.time()
+        self.checkbox_is_checked()
         if self.is_axis_move:
             dpg.fit_axis_data(self.plot_y_tag)
             dpg.fit_axis_data(self.plot_x_tag)

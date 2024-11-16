@@ -13,3 +13,9 @@
 2024-11-16 18:55:45.134 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_6176596a-fb45-4ce6-89eb-f22f81436f4c, Node 7_pub, Node 7)
 2024-11-16 18:55:47.284 | WARNING  | utils.ClientLogManager:log:35 - Node 0_6176596a-fb45-4ce6-89eb-f22f81436f4c_Node 7_pub:Node 7 was drawn.
 2024-11-16 18:55:50.785 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_6176596a-fb45-4ce6-89eb-f22f81436f4c, Node 0_pub, Node 0)
+2024-11-16 19:05:49.679 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.PlotVzBox.PlotVzBox'> 实例已添加到 boxes 列表中。
+2024-11-16 19:05:52.138 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.ParamBox.ParamBox'> 实例已添加到 boxes 列表中。
+2024-11-16 19:05:53.970 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.MessageBox.MessageBox'> 实例已添加到 boxes 列表中。
+2024-11-16 19:06:02.939 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_fd29c1e8-e609-4bab-a7cc-3159c616f011, Node 2_pub, Node 2)
+2024-11-16 19:06:06.908 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_fd29c1e8-e609-4bab-a7cc-3159c616f011, Node 8_pub, Node 8)
+2024-11-16 19:06:16.128 | WARNING  | utils.ClientLogManager:log:35 - Node 0_fd29c1e8-e609-4bab-a7cc-3159c616f011_Node 2_pub:Node 2 was drawn.

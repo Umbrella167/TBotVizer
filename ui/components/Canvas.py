@@ -1,6 +1,5 @@
 import dearpygui.dearpygui as dpg
 from contextlib import contextmanager
-from ui.boxes.BaseBox import Box
 from utils.DataProcessor import ui_data
 
 

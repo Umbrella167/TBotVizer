@@ -7,7 +7,6 @@ import pickle
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
 
-
 def calculate_distance(pos1, pos2):
     return math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
 
@@ -249,3 +248,15 @@ def get_all_subclasses(cls):
         all_subclasses.append(subclass)
         all_subclasses.extend(get_all_subclasses(subclass))
     return all_subclasses
+
+def clear_nested_dictionaries(dict_obj):
+    """Recursively clear all nested dictionaries."""
+    print(dict_obj)
+    for key in list(dict_obj.keys()):
+        if isinstance(dict_obj[key], dict):
+            # If the value is a dictionary, clear it
+            clear_nested_dictionaries(dict_obj[key])
+            dict_obj[key] = {}
+        else:
+            # If the value is not a dictionary, just remove the key
+            del dict_obj[key]
