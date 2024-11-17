@@ -1,6 +1,5 @@
 import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import Box
-import tbkpy._core as tbkpy
 from utils.DataProcessor import tbk_data
 
 
@@ -33,21 +32,17 @@ class MessageBoxCallBack:
                 ),
             )
         else:
-            if (
-                puuid in self.msg_subscriber_dict
-                and msg_name in self.msg_subscriber_dict[puuid]
-            ):
+            if puuid in self.msg_subscriber_dict and msg_name in self.msg_subscriber_dict[puuid]:
                 if name in self.msg_subscriber_dict[puuid][msg_name]:
-                    tbk_data.unsubscribe(msg_info,True)
+                    tbk_data.unsubscribe(msg_info, True)
                     del self.msg_subscriber_dict[puuid][msg_name][name]
                     del self.msg_subscriber_dict[puuid][msg_name]
-                    dpg.configure_item(
-                        item=tree_item_tag_dict["value_checkbox"], label=""
-                    )
-
+                    dpg.configure_item(item=tree_item_tag_dict["value_checkbox"], label="")
 
 
 class MessageBox(Box):
+    only = True
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tags = None
@@ -105,11 +100,11 @@ class MessageBox(Box):
                         )
 
                     with dpg.drag_payload(
-                        parent=self.tree_item_tag_dict[puuid][msg_name][name][
-                            "sub_checkbox"
-                        ],
-                        payload_type="plot_data",
-                        drag_data=(msg_info_dict,item_dict),
+                            parent=self.tree_item_tag_dict[puuid][msg_name][name][
+                                "sub_checkbox"
+                            ],
+                            payload_type="plot_data",
+                            drag_data=(msg_info_dict, item_dict),
                     ):
                         dpg.add_text(f"{msg_name}({name})")
                 t_tree.append(t_node)

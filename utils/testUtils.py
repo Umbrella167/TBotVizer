@@ -2,7 +2,6 @@ import time
 from time import sleep
 
 import tbkpy._core as tbkpy
-import tzcp.tbk.tbk_pb2 as tbkpb
 import threading
 import random
 
@@ -14,7 +13,9 @@ stop_event = threading.Event()
 
 def create_nodes(node_len):
     # 定义线程任务
-    def initialize_node(node):
+    def initialize_node(node, f):
+        if f == 2:
+            node = random.randint(0, 100)
         tbkpy.init(f"Node {node}")
         ep = tbkpy.EPInfo()
         ep.name = f"Node {node}"
@@ -35,10 +36,13 @@ def create_nodes(node_len):
 
     # 创建并启动线程
     threads = []
+    f = 2
     for node in range(node_len):
-        thread = threading.Thread(target=initialize_node, args=(node,))
+        thread = threading.Thread(target=initialize_node, args=(node, f))
         thread.start()
         threads.append(thread)
+        if f == 2:
+            sleep(3)
 
     # # 等待所有线程完成
     # for thread in threads:

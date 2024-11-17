@@ -70,9 +70,10 @@ class TimedDeque:
 
 
 class PlotVzBox(Box):
+    only = False
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.only = False
         self.series_tag = None
         self.plot_tag = None
         self.series_tags = {}
@@ -171,7 +172,7 @@ class PlotVzBox(Box):
             if len(self.message_subscriber_dict) > 1:
                 tpuuid = puuid
                 if len(puuid) > 8:
-                    tpuuid = puuid[:4]+"..."+puuid[-4:]
+                    tpuuid = puuid[:4] + "..." + puuid[-4:]
                 t_label += tpuuid + ":"
             t_label += f"{msg_name}({name}):{key}"
             dpg.configure_item(self.series_tags[series_tag][key], label=t_label)
@@ -191,7 +192,7 @@ class PlotVzBox(Box):
         puuid = msg_info["puuid"]
         message_data = f"{puuid}_{msg_name}:{name}"
         series_tag = f"{puuid}:{msg_name}:{name}"
-        self.checkbox_bind[sub_checkbox] = (series_tag,puuid, msg_name, name)
+        self.checkbox_bind[sub_checkbox] = (series_tag, puuid, msg_name, name)
         if puuid not in self.message_subscriber_dict:
             # 如果节点不在表内则添加该节点进表
             self.message_subscriber_dict[puuid] = {}
@@ -214,7 +215,7 @@ class PlotVzBox(Box):
 
     def checkbox_is_checked(self):
         for tag in self.checkbox_bind:
-            series_tag_dict,puuid, msg_name, name = self.checkbox_bind[tag]
+            series_tag_dict, puuid, msg_name, name = self.checkbox_bind[tag]
 
             if not dpg.get_value(tag):
                 if series_tag_dict in self.series_tags:

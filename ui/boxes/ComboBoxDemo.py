@@ -1,8 +1,10 @@
 import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import Box
-from utils.DataProcessor import TBKData
+
 
 class ComboBoxDemo(Box):
+    only = False
+
     def __init__(self, data=None, **kwargs):
         super().__init__(**kwargs)
         self.data = data

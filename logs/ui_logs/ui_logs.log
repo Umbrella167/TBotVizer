@@ -1,21 +1,4 @@
-2024-11-16 16:35:16.421 | DEBUG    | utils.ClientLogManager:log:35 - test
-2024-11-16 16:41:56.827 | ERROR    | utils.ClientLogManager:log:38 - Unknown log level: test
-2024-11-16 16:41:56.827 | ERROR    | utils.ClientLogManager:log:38 - Unknown log level: test
-2024-11-16 18:51:43.127 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.PlotVzBox.PlotVzBox'> 实例已添加到 boxes 列表中。
-2024-11-16 18:51:47.388 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.MessageBox.MessageBox'> 实例已添加到 boxes 列表中。
-2024-11-16 18:53:59.525 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.PlotVzBox.PlotVzBox'> 实例已添加到 boxes 列表中。
-2024-11-16 18:54:01.566 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.MessageBox.MessageBox'> 实例已添加到 boxes 列表中。
-2024-11-16 18:54:03.458 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_144dbca4-e447-48fb-b866-f5f1c11fb30a, Node 5_pub, Node 5)
-2024-11-16 18:54:04.656 | SUCCESS  | utils.ClientLogManager:log:35 - Node 0_144dbca4-e447-48fb-b866-f5f1c11fb30a_Node 5_pub:Node 5已绘制
-2024-11-16 18:54:07.886 | SUCCESS  | utils.ClientLogManager:log:35 - Node 0_144dbca4-e447-48fb-b866-f5f1c11fb30a_Node 5_pub:Node 5已绘制
-2024-11-16 18:55:41.193 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.PlotVzBox.PlotVzBox'> 实例已添加到 boxes 列表中。
-2024-11-16 18:55:43.013 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.MessageBox.MessageBox'> 实例已添加到 boxes 列表中。
-2024-11-16 18:55:45.134 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_6176596a-fb45-4ce6-89eb-f22f81436f4c, Node 7_pub, Node 7)
-2024-11-16 18:55:47.284 | WARNING  | utils.ClientLogManager:log:35 - Node 0_6176596a-fb45-4ce6-89eb-f22f81436f4c_Node 7_pub:Node 7 was drawn.
-2024-11-16 18:55:50.785 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_6176596a-fb45-4ce6-89eb-f22f81436f4c, Node 0_pub, Node 0)
-2024-11-16 19:05:49.679 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.PlotVzBox.PlotVzBox'> 实例已添加到 boxes 列表中。
-2024-11-16 19:05:52.138 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.ParamBox.ParamBox'> 实例已添加到 boxes 列表中。
-2024-11-16 19:05:53.970 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.MessageBox.MessageBox'> 实例已添加到 boxes 列表中。
-2024-11-16 19:06:02.939 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_fd29c1e8-e609-4bab-a7cc-3159c616f011, Node 2_pub, Node 2)
-2024-11-16 19:06:06.908 | INFO     | utils.ClientLogManager:log:35 - Add new subscriber(Node 0_fd29c1e8-e609-4bab-a7cc-3159c616f011, Node 8_pub, Node 8)
-2024-11-16 19:06:16.128 | WARNING  | utils.ClientLogManager:log:35 - Node 0_fd29c1e8-e609-4bab-a7cc-3159c616f011_Node 2_pub:Node 2 was drawn.
+2024-11-17 09:38:42.251 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.ParamBox.ParamBox'>: This box can only be created once
+2024-11-17 09:38:42.771 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.ParamBox.ParamBox'>: This box can only be created once
+2024-11-17 09:39:42.140 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.ParamBox.ParamBox'>: This box can only be created once
+2024-11-17 09:39:43.620 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.MessageBox.MessageBox'>: This box can only be created once

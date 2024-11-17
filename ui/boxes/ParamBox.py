@@ -1,18 +1,22 @@
 import dearpygui.dearpygui as dpg
 
 from ui.boxes.BaseBox import Box
+from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 
 
 class ParamBox(Box):
+    only = True
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tbk_data = tbk_data
+        self.data = self.tbk_data.param_data
         self.table_tag = None
 
         self.tb = None
         self.cols_title = ["Param", "Info", "Type", "Value"]
-        self.tags = []
+        self.row_tags = {}
 
     def create(self):
         self.check_and_create_window()
@@ -39,22 +43,57 @@ class ParamBox(Box):
         for t in self.cols_title:
             dpg.add_table_column(label=t, width_fixed=True, parent=self.table_tag)
         # 插入表格内容
-        self.tags = self.insert_row(self.tbk_data.param_data)
+        self.insert_row(self.tbk_data.param_data)
+
+    def update(self):
+        # 如果数据没有变化，则不更新
+        if self.data == self.tbk_data.param_data:
+            return
+        # 将现有数据和新数据转换为集合，便于比较
+        current_params = set(self.data.keys())
+        new_params = set(self.tbk_data.param_data.keys())
+        # 找到需要删除的行（即在current而不在new中的参数）
+        params_to_delete = current_params - new_params
+        # 找到需要新增的行（即在new而不在current中的参数）
+        params_to_add = new_params - current_params
+        # 删除不需要的数据行
+        for param in params_to_delete:
+            row_tag = self.row_tags[param]
+            dpg.delete_item(row_tag)
+            del self.row_tags[param]
+        # 添加新的数据行
+        for param in params_to_add:
+            value = self.tbk_data.param_data[param]
+            row_tag = dpg.add_table_row(parent=self.table_tag)
+            self.row_tags[param] = row_tag
+            dpg.add_text(default_value=param, parent=row_tag)
+            for item in value:
+                cell_tag = dpg.add_text(default_value=value[item], parent=row_tag)
+        # 更新现有的行
+        for param in current_params.intersection(new_params):
+            if self.data.get(param) == self.tbk_data.param_data[param]:
+                # 如果值相同则不更新
+                continue
+            row_tag = self.row_tags[param]
+            # 更新每个单元格的内容
+            value = self.tbk_data.param_data[param]
+            for cell_index, (key, cell_value) in enumerate(value.items()):
+                cell_tag = dpg.get_item_children(row_tag)[1][cell_index + 1]
+                dpg.set_value(cell_tag, cell_value)
+        # 更新完后将当前数据保存
+        client_logger.log("INFO", "ParamBox updated!")
+        self.data = self.tbk_data.param_data
 
     def insert_row(self, data):
         # 返回整个表的tag表
-        t_table = []
-        for row_index, (param, value) in enumerate(data.items()):
+        for param, value in data.items():
             # 创建行
-            t_row = []
             row_tag = dpg.add_table_row(parent=self.table_tag)
+            self.row_tags[param] = row_tag
             dpg.add_text(default_value=param, parent=row_tag)
             for item in value:
                 # 创建单元格
                 cell_tag = dpg.add_text(default_value=value[item], parent=row_tag)
-                t_row.append(cell_tag)
-            t_table.append(t_row)
-        return t_table
 
         # _info = value["info"]
         # _type = value["type"]
