@@ -43,6 +43,7 @@ class UDPMultiCastReceiver(UDPReceiver):
         """
         self.__callback(msg, self.user_data)
 
+
 class _Utils:
     def __init__(self):
         """
@@ -112,6 +113,7 @@ class _Utils:
             client_logger.log("ERROR", f"Error retrieving log files: {e}")
             return []
 
+
 class _LogDiskWriter:
     def __init__(self, output_dir="logs"):
         """
@@ -121,7 +123,7 @@ class _LogDiskWriter:
         """
         self.output_dir = output_dir
         self.chunking_size_len = 100
-        self._file_max_size = 5 * 1024 * 1024  # 5MB
+        self._file_max_size = 20 * 1024 * 1024  # 5MB
         self._current_file_index = 0
         self._current_file = None
         self._file_start_timestamp = None
@@ -156,34 +158,43 @@ class _LogDiskWriter:
             if self.data_len < self.chunking_size_len:
                 return
 
-            if (
-                self._current_file is None
-                or os.path.getsize(self._current_file.name) > self._file_max_size
-            ):
-                if self._current_file:
-                    self._msg_index_file = 0
-                    self._current_file.close()
+            self._save_to_file()
 
-                self._file_start_timestamp = int(time() * 1e9)
-                file_name = (
-                    f"{self._current_file_index}_{self._file_start_timestamp}.log"
-                )
-                self._current_file_index += 1
-                file_path = os.path.join(self.log_file_path, file_name)
-                try:
-                    self._current_file = open(file_path, "ab")
-                except Exception as e:
-                    client_logger.log("ERROR", f"Error opening file {file_path}: {e}")
-                    return
+    def save_current_data(self):
+        """
+        Manually saves the current data list to the log file.
+        """
+        with self.lock:
+            self._save_to_file()
 
+    def _save_to_file(self):
+        if (
+            self._current_file is None
+            or os.path.getsize(self._current_file.name) > self._file_max_size
+        ):
+            if self._current_file:
+                self._msg_index_file = 0
+                self._current_file.close()
+
+            self._file_start_timestamp = int(time() * 1e9)
+            file_name = f"{self._current_file_index}_{self._file_start_timestamp}.log"
+            self._current_file_index += 1
+            file_path = os.path.join(self.log_file_path, file_name)
             try:
-                pickle.dump(self.data_list, self._current_file)
-                self._current_file.flush()
+                self._current_file = open(file_path, "ab")
             except Exception as e:
-                client_logger.log("ERROR", f"Error writing data to file: {e}")
-            finally:
-                self.data_list.clear()
-                self.data_len = 0
+                client_logger.log("ERROR", f"Error opening file {file_path}: {e}")
+                return
+
+        try:
+            pickle.dump(self.data_list, self._current_file)
+            self._current_file.flush()
+
+        except Exception as e:
+            client_logger.log("ERROR", f"Error writing data to file: {e}")
+        finally:
+            self.data_list.clear()
+            self.data_len = 0
 
     def close(self):
         """
@@ -196,12 +207,14 @@ class _LogDiskWriter:
                 except Exception as e:
                     client_logger.log("ERROR", f"Error closing file {e}")
 
+
 class _LogReader:
     def __init__(self, log_package_path):
         """
         A class for reading and filtering logs from a specified log package.
 
         :param log_package_path: The path to the log package.
+        
         """
         self._utils = _Utils()
         self.log_package_path = log_package_path
@@ -456,6 +469,7 @@ class _LogReader:
 
         return count
 
+
 class _LogIterator:
     def __init__(self, selected_file, index, msg, log_reader: _LogReader):
         """
@@ -475,7 +489,7 @@ class _LogIterator:
     def _load_messages_from_file(self):
         """
         Helper function to load all messages from the current file.
-        
+
         :return: All messages from the current file.
         """
         return self.log_reader.read_log_file(self.selected_file)
@@ -549,6 +563,7 @@ class _LogIterator:
         """
         return self.current_msg
 
+
 class _Logger:
     def __init__(self, log_dir="logs"):
         """
@@ -576,7 +591,7 @@ class _Logger:
                 user_data=msg,
             )
 
-    def _new_msg(self, msg, tag, _from=""):
+    def _new_msg(self, msg: str, puuid: str, msg_name: str, name: str, msg_type: str):
         """
         Creates a new message with metadata.
 
@@ -586,17 +601,19 @@ class _Logger:
         :return: A dictionary representing the message.
         """
         self.msg_count += 1
-        msgs = {
-            "name": tag,
+        msg = {
+            "message": msg,
+            "name": name,
+            "msg_name": msg_name,
+            "puuid": puuid,
             "index": self._diskWriter._msg_index_file,
             "count": self.msg_count,
             "timestamp": int(time() * 1e9),
-            "message": msg,
-            "from": _from,
+            "msg_type": msg_type,
         }
-        return msgs
+        return msg
 
-    def record(self, msg, tag: str, _from: str = ""):
+    def record(self, msg, msg_name: str, name: str, puuid: str, msg_type: str):
         """
         Records a message to the log.
 
@@ -604,7 +621,7 @@ class _Logger:
         :param tag: The tag associated with the message.
         :param _from: The source of the message.
         """
-        new_msg = self._new_msg(msg, tag, _from)
+        new_msg = self._new_msg(msg, puuid, msg_name, name, msg_type)
         self._diskWriter.write(new_msg)
 
     def stop(self):

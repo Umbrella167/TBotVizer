@@ -63,6 +63,7 @@ class Box(object):
         sub_box_y -= pos_offset
         client_logger.log("INFO", f"{self} has been destroyed.")
 
+
     @property
     def x(self):
         return dpg.get_item_pos(self.tag)[0]

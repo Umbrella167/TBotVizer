@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import Box
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
+from logger.logger import Logger
 
 
 class MessageBox(Box):
@@ -14,8 +15,8 @@ class MessageBox(Box):
         self.table_tags = {}
         self.uuid_tags = {}
 
-
-        self._callback = MessageBoxCallBack()
+        self.msg_logger = Logger("logs/msg_log")
+        self._callback = MessageBoxCallBack(self.msg_logger)
         self.tree_item_tag_dict = {}
         self.tbk_data = tbk_data
         self.data = {}
@@ -163,16 +164,19 @@ class MessageBox(Box):
     #                 ):
     #                     dpg.add_text(f"{msg_name}({name})")
 
-
 class MessageBoxCallBack:
-    def __init__(self):
+    def __init__(self,msg_logger):
+        self.msg_logger = msg_logger
         self.msg_subscriber_dict = {}
 
     def subscriber_msg(self, msg, msg_info):
         puuid, name, msg_name, msg_type, tree_item_tag_dict = msg_info
         value_checkbox_tag = tree_item_tag_dict["value_checkbox"]
+        log_checkbox_tag = tree_item_tag_dict["log_checkbox"]
         if dpg.get_value(value_checkbox_tag):
             dpg.configure_item(item=value_checkbox_tag, label=msg)
+        if dpg.get_value(log_checkbox_tag):
+            self.msg_logger.record(msg,puuid, msg_name, name,  msg_type)
 
     def checkbox_record_msg(self, sender, app_data, user_data):
         is_checked = app_data
@@ -198,4 +202,8 @@ class MessageBoxCallBack:
                     tbk_data.unsubscribe(msg_info, True)
                     del self.msg_subscriber_dict[puuid][msg_name][name]
                     del self.msg_subscriber_dict[puuid][msg_name]
-                    dpg.configure_item(item=tree_item_tag_dict["value_checkbox"], label="")
+                    dpg.configure_item(
+                        item=tree_item_tag_dict["value_checkbox"], label=""
+                    )
+
+
