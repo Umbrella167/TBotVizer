@@ -20,7 +20,7 @@ class TableTree:
             table, row = user_data
             root_level, node = dpg.get_item_user_data(row)
 
-            # First of all let's toggle the node's "expanded" status
+            # First of all let's toggle the puuid_tags's "expanded" status
             is_expanded = not dpg.get_value(node)
             dpg.set_value(node, is_expanded)
             # All children *beyond* this level (but not on this level) will be hidden
@@ -29,7 +29,7 @@ class TableTree:
             # Now manage the visibility of all the children as necessary
             rows = dpg.get_item_children(table, slot=1)
             root_idx = rows.index(row)
-            # We don't want to look at rows preceding our current "root" node
+            # We don't want to look at rows preceding our current "root" puuid_tags
             rows = rows[root_idx + 1:]
             for child_row in rows:
 

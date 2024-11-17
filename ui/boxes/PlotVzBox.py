@@ -23,6 +23,7 @@ class PlotUitls:
             uilogger.error("Unsupported data type")
             return
         if data_type in TypeParams.PYTHON_TYPES:
+            # TODO: 如果字典有多层，则迭代每一层
             if data_type == "int" or data_type == "float":
                 res = {"0": data}
             elif data_type == "list" or data_type == "tuple":

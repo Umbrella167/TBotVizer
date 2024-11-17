@@ -94,25 +94,24 @@ class TBKData:
 
     @property
     def message_tree(self):
-        if self._message_node_tree is None:
-            self._message_node_tree = {}
-            for type in self._message_data:
-                tree = {}
-                if type == "ps":
-                    continue
-                elif type == "subs":
-                    continue
-                elif type == "pubs":
-                    data = self._message_data[type]
-                    for uuid in data:
-                        puuid = f"{data[uuid].ep_info.node_name}_{data[uuid].puuid}"
-                        if puuid not in tree:
-                            tree[puuid] = {}
-                        tree[puuid][uuid] = data[uuid]
-                else:
-                    client_logger.log("ERROR", f"{self.__class__} build message_tree type error!")
-                self._message_node_tree[type] = tree
-        return self._message_node_tree
+        message_tree = {}
+        for node_type in self.message_data:
+            tree = {}
+            if node_type == "ps":
+                continue
+            elif node_type == "subs":
+                continue
+            elif node_type == "pubs":
+                data = self.message_data[node_type]
+                for uuid in data:
+                    puuid = f"{data[uuid].ep_info.node_name}_{data[uuid].puuid}"
+                    if puuid not in tree:
+                        tree[puuid] = {}
+                    tree[puuid][uuid] = data[uuid]
+            else:
+                client_logger.log("ERROR", f"{self.__class__} build message_tree type error!")
+            message_tree[node_type] = tree
+        return message_tree
 
 
 ui_data = UiData()

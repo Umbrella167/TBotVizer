@@ -24,7 +24,7 @@ def create_nodes(node_len):
 
         puber = tbkpy.Publisher(ep)
 
-        i = 0
+        i = 1
         while i < 1000:
             i = i + random.randint(-10, 10)
             puber.publish(pickle.dumps(i))
@@ -32,7 +32,7 @@ def create_nodes(node_len):
             if stop_event.is_set():
                 break
 
-        # suber = tbkpy.Subscriber(f"Node {node}", f"Node {node}_sub", f)
+        # suber = tbkpy.Subscriber(f"Node {puuid_tags}", f"Node {puuid_tags}_sub", f)
 
     # 创建并启动线程
     threads = []
