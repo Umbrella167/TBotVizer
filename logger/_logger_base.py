@@ -43,6 +43,7 @@ class UDPMultiCastReceiver(UDPReceiver):
         """
         self.__callback(msg, self.user_data)
 
+
 class _Utils:
     def __init__(self):
         """
@@ -111,6 +112,7 @@ class _Utils:
         except Exception as e:
             client_logger.log("ERROR", f"Error retrieving log files: {e}")
             return []
+
 
 class _LogDiskWriter:
     def __init__(self, output_dir="logs"):
@@ -195,6 +197,7 @@ class _LogDiskWriter:
                     self._current_file.close()
                 except Exception as e:
                     client_logger.log("ERROR", f"Error closing file {e}")
+
 
 class _LogReader:
     def __init__(self, log_package_path):
@@ -456,6 +459,7 @@ class _LogReader:
 
         return count
 
+
 class _LogIterator:
     def __init__(self, selected_file, index, msg, log_reader: _LogReader):
         """
@@ -475,7 +479,7 @@ class _LogIterator:
     def _load_messages_from_file(self):
         """
         Helper function to load all messages from the current file.
-        
+
         :return: All messages from the current file.
         """
         return self.log_reader.read_log_file(self.selected_file)
@@ -549,6 +553,7 @@ class _LogIterator:
         """
         return self.current_msg
 
+
 class _Logger:
     def __init__(self, log_dir="logs"):
         """
@@ -576,7 +581,7 @@ class _Logger:
                 user_data=msg,
             )
 
-    def _new_msg(self, msg, tag, _from=""):
+    def _new_msg(self, msg: str, puuid: str, msg_name: str, name: str, msg_type: str):
         """
         Creates a new message with metadata.
 
@@ -586,17 +591,19 @@ class _Logger:
         :return: A dictionary representing the message.
         """
         self.msg_count += 1
-        msgs = {
-            "name": tag,
+        msg = {
+            "message": msg,
+            "name": name,
+            "msg_name": msg_name,
+            "puuid": puuid,
             "index": self._diskWriter._msg_index_file,
             "count": self.msg_count,
             "timestamp": int(time() * 1e9),
-            "message": msg,
-            "from": _from,
+            "msg_type": msg_type,
         }
-        return msgs
+        return msg
 
-    def record(self, msg, tag: str, _from: str = ""):
+    def record(self, msg, msg_name: str, name: str, puuid: str, msg_type: str):
         """
         Records a message to the log.
 
@@ -604,7 +611,7 @@ class _Logger:
         :param tag: The tag associated with the message.
         :param _from: The source of the message.
         """
-        new_msg = self._new_msg(msg, tag, _from)
+        new_msg = self._new_msg(msg, puuid, msg_name, name, msg_type)
         self._diskWriter.write(new_msg)
 
     def stop(self):

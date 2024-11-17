@@ -2,17 +2,20 @@ import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import Box
 import tbkpy._core as tbkpy
 from utils.DataProcessor import tbk_data
-
-
+from logger.logger import Logger
+from utils.Utils import item_auto_resize
 class MessageBoxCallBack:
     def __init__(self):
         self.msg_subscriber_dict = {}
-
+        self.msg_logger = Logger("logs/msg_log")
     def subscriber_msg(self, msg, msg_info):
         puuid, name, msg_name, msg_type, tree_item_tag_dict = msg_info
         value_checkbox_tag = tree_item_tag_dict["value_checkbox"]
+        log_checkbox_tag = tree_item_tag_dict["log_checkbox"]
         if dpg.get_value(value_checkbox_tag):
             dpg.configure_item(item=value_checkbox_tag, label=msg)
+        if dpg.get_value(log_checkbox_tag):
+            self.msg_logger.record(msg,puuid, msg_name, name,  msg_type)
 
     def checkbox_record_msg(self, sender, app_data, user_data):
         is_checked = app_data
@@ -38,13 +41,12 @@ class MessageBoxCallBack:
                 and msg_name in self.msg_subscriber_dict[puuid]
             ):
                 if name in self.msg_subscriber_dict[puuid][msg_name]:
-                    tbk_data.unsubscribe(msg_info,True)
+                    tbk_data.unsubscribe(msg_info, True)
                     del self.msg_subscriber_dict[puuid][msg_name][name]
                     del self.msg_subscriber_dict[puuid][msg_name]
                     dpg.configure_item(
                         item=tree_item_tag_dict["value_checkbox"], label=""
                     )
-
 
 
 class MessageBox(Box):
@@ -60,13 +62,14 @@ class MessageBox(Box):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
-        with dpg.child_window(parent=self.tag) as self.msg_child_window_tag:
-            self.tree_tag = dpg.add_collapsing_header(label="Message List")
+        with dpg.child_window(parent=self.tag,width=-1) as self.msg_child_window_tag:
+            self.tree_tag = dpg.add_collapsing_header(
+                label="Message List", default_open=True
+            )
             self.tags = self.insert_tree(self.tbk_data.message_tree["pubs"])
 
     def insert_tree(self, data):
         t_tree = []
-
         for puuid in data:
             # 添加节点列表
             node = dpg.add_tree_node(label=puuid, parent=self.tree_tag)
@@ -99,7 +102,7 @@ class MessageBox(Box):
                             callback=self._callback.checkbox_record_msg,
                             user_data=(msg_info_dict, item_dict, self.tag),
                         )
-                        item_dict["log_checkbox"] = dpg.add_checkbox()
+                        item_dict["log_checkbox"] = dpg.add_checkbox(default_value=True)
                         item_dict["value_checkbox"] = dpg.add_checkbox(
                             default_value=True
                         )
@@ -109,7 +112,7 @@ class MessageBox(Box):
                             "sub_checkbox"
                         ],
                         payload_type="plot_data",
-                        drag_data=(msg_info_dict,item_dict),
+                        drag_data=(msg_info_dict, item_dict),
                     ):
                         dpg.add_text(f"{msg_name}({name})")
                 t_tree.append(t_node)

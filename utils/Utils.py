@@ -7,6 +7,22 @@ import pickle
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
 
+
+def item_auto_resize(item,parent,height_rate:float = 0,width_rate:float = 0):
+    parent_width, parent_height = dpg.get_item_rect_size(parent)
+    def f(sender, app_data, user_data):
+        parent_width, parent_height = dpg.get_item_rect_size(parent)
+        if width_rate:
+            dpg.configure_item(item, width=parent_width * width_rate)
+        if height_rate:
+            dpg.configure_item(item, height=parent_height * height_rate)
+    with dpg.item_handler_registry() as handler:
+        dpg.add_item_resize_handler(
+            callback=f
+        )
+    dpg.bind_item_handler_registry(parent, handler)
+
+
 def calculate_distance(pos1, pos2):
     return math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
 
