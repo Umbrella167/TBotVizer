@@ -1,8 +1,8 @@
 # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 import dearpygui.dearpygui as dpg
 
-import ui.Ui as ui
-from utils.ClientLogManager import ClientLogManager, client_logger
+from ui.Ui import UI
+from utils.ClientLogManager import client_logger
 
 
 def loop(UI):
@@ -15,17 +15,12 @@ def loop(UI):
 def main():
     dpg.create_context()
 
-    UI = ui.UI()
+    ui = UI()
 
-    UI.show()
+    ui.show()
 
-    UI.run_loop(lambda: loop(UI))
-
+    ui.run_loop(lambda: loop(ui))
 
 
 if __name__ == "__main__":
     main()
-
-
-
-

@@ -38,11 +38,9 @@ class TBKApi:
         )
         return data
 
-
     def get_param(self, _prefix=None):
         prefix = self.PARAM_PREFIX + (_prefix if _prefix else "")
         raw_data = self.etcd.get_prefix(prefix)
-
 
         data = dict(
             [
@@ -81,7 +79,6 @@ class TBKApi:
         else:
             self.param_change_data = {"added": {}, "removed": {}, "modified": {}}
             self.param_is_change = False
-
 
     def get_message(self):
         processes = {}

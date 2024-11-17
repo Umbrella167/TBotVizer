@@ -3,6 +3,8 @@ from config.UiConfig import UiConfig
 from ui.boxes.ConsoleBox import ConsoleBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import ui_data
+import pickle
+
 
 class UICallback:
     def __init__(self):
@@ -12,7 +14,7 @@ class UICallback:
         config = user_data
         if dpg.is_key_down(dpg.mvKey_LControl) and app_data == dpg.mvKey_S:
             config.layout.save()
-            client_logger.log("SUCCESS", "布局保存成功")
+            client_logger.log("SUCCESS", "Layout saved successfully!")
         if dpg.is_key_released(dpg.mvKey_F11):
             dpg.toggle_viewport_fullscreen()
 
@@ -23,9 +25,11 @@ class UICallback:
             x - y for x, y in zip(ui_data.draw_mouse_pos, ui_data.draw_mouse_pos_last)
         )
 
+
 class UI:
     def __init__(self):
         self.config = UiConfig()
+        self.config.instance = self
         self.console = ConsoleBox()
         self.boxes = self.console.boxes
         self.is_created = False
@@ -47,18 +51,13 @@ class UI:
         self.console.create()
         self.is_created = True
 
-    def create_global_handler(self):
-        # 创建全局监听
-        with dpg.handler_registry() as global_hander:
-            dpg.add_key_release_handler(callback=self._ui_callback.on_key_release, user_data=self.config)
-            # dpg.add_mouse_move_handler(callback=self._ui_callback.on_mouse_move)
-
     def show(self):
         if not self.is_created:
             self.create()
         for box in self.boxes:
             if not box.is_created:
                 box.create()
+
     def update(self):
         self.show()
         for box in self.boxes:
@@ -75,3 +74,8 @@ class UI:
                 dpg.render_dearpygui_frame()
         else:
             dpg.start_dearpygui()
+
+    def create_global_handler(self):
+        # 创建全局监听
+        with dpg.handler_registry() as global_hander:
+            dpg.add_key_release_handler(callback=self._ui_callback.on_key_release, user_data=self.config)

@@ -1,13 +1,12 @@
 import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import Box
-import tbkpy._core as tbkpy
 from utils.DataProcessor import tbk_data
 from logger.logger import Logger
-from utils.Utils import item_auto_resize
 class MessageBoxCallBack:
-    def __init__(self):
+    def __init__(self,msg_logger):
+        self.msg_logger = msg_logger
         self.msg_subscriber_dict = {}
-        self.msg_logger = Logger("logs/msg_log")
+        
     def subscriber_msg(self, msg, msg_info):
         puuid, name, msg_name, msg_type, tree_item_tag_dict = msg_info
         value_checkbox_tag = tree_item_tag_dict["value_checkbox"]
@@ -36,10 +35,7 @@ class MessageBoxCallBack:
                 ),
             )
         else:
-            if (
-                puuid in self.msg_subscriber_dict
-                and msg_name in self.msg_subscriber_dict[puuid]
-            ):
+            if puuid in self.msg_subscriber_dict and msg_name in self.msg_subscriber_dict[puuid]:
                 if name in self.msg_subscriber_dict[puuid][msg_name]:
                     tbk_data.unsubscribe(msg_info, True)
                     del self.msg_subscriber_dict[puuid][msg_name][name]
@@ -50,23 +46,23 @@ class MessageBoxCallBack:
 
 
 class MessageBox(Box):
+    only = True
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tags = None
         self.tree_tag = None
-        self._callback = MessageBoxCallBack()
+        self.msg_logger = Logger("logs/msg_log")
+        self._callback = MessageBoxCallBack(self.msg_logger)
         self.tree_item_tag_dict = {}
         self.tbk_data = tbk_data
-
     def create(self):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
-        with dpg.child_window(parent=self.tag,width=-1) as self.msg_child_window_tag:
-            self.tree_tag = dpg.add_collapsing_header(
-                label="Message List", default_open=True
-            )
-            self.tags = self.insert_tree(self.tbk_data.message_tree["pubs"])
+        self.tree_tag = dpg.add_collapsing_header(
+            label="Message List", default_open=True,parent=self.tag
+        )
+        self.tags = self.insert_tree(self.tbk_data.message_tree["pubs"])
 
     def insert_tree(self, data):
         t_tree = []
@@ -117,6 +113,13 @@ class MessageBox(Box):
                         dpg.add_text(f"{msg_name}({name})")
                 t_tree.append(t_node)
         return t_tree
-
+    
+    def destroy(self):
+        self.msg_logger.stop()
+        super().destroy()
+    
+    
     def update(self):
         pass
+    
+    

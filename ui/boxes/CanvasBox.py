@@ -4,6 +4,8 @@ from ui.components.Canvas import Canvas
 
 
 class CanvasBox(Box):
+    only = False
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._canvas = None

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2024-11-17 07:28:56.328 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.PlotVzBox.PlotVzBox'> 实例已添加到 boxes 列表中。
 2024-11-17 07:28:59.341 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.MessageBox.MessageBox'> 实例已添加到 boxes 列表中。
 2024-11-17 07:43:26.744 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.PlotVzBox.PlotVzBox'> 实例已添加到 boxes 列表中。
@@ -48,3 +49,13 @@
 2024-11-17 09:40:09.700 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.MessageBox.MessageBox'> 实例已添加到 boxes 列表中。
 2024-11-17 09:44:37.430 | SUCCESS  | utils.ClientLogManager:log:35 - <class 'ui.boxes.LogReaderBox.LogReaderBox'> 实例已添加到 boxes 列表中。
 2024-11-17 09:44:37.440 | ERROR    | utils.ClientLogManager:log:35 - Loop Failed! 'LogReaderBox' object has no attribute 'msg_child_window_tag'
+=======
+2024-11-17 09:38:42.251 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.ParamBox.ParamBox'>: This box can only be created once
+2024-11-17 09:38:42.771 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.ParamBox.ParamBox'>: This box can only be created once
+2024-11-17 09:39:42.140 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.ParamBox.ParamBox'>: This box can only be created once
+2024-11-17 09:39:43.620 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.MessageBox.MessageBox'>: This box can only be created once
+>>>>>>> d8110d86676ef01677fcc956d73424885a86352b
+2024-11-17 09:48:35.212 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'LogReaderBox' object has no attribute 'msg_child_window_tag'
+2024-11-17 10:53:37.472 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! <built-in function add_collapsing_header> returned a result with an exception set
+2024-11-17 10:53:50.832 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! <built-in function add_collapsing_header> returned a result with an exception set
+2024-11-17 10:53:52.683 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.MessageBox.MessageBox'>: This box can only be created once

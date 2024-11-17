@@ -6,6 +6,7 @@ from typing import Generator, Union
 这个类还没用到，也没做测试
 """
 
+
 class TableTree:
     def __init__(self):
         self.param_tag = ""

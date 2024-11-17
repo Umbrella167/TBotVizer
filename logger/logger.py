@@ -8,7 +8,11 @@ class Logger:
         :param log_dir: The directory to store logs.
         """
         self.logger = _Logger(log_dir)
-
+    def save(self):
+        """
+        Saves the log package to a zip file.
+        """
+        self.logger.save()
     def record_udp(self, udp_dict):
         """
         Records UDP messages based on a dictionary of UDP configurations.

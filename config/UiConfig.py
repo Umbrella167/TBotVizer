@@ -8,5 +8,6 @@ class UiConfig(BaseConfig):
         super().__init__()
         self.layout = LayoutManager()
         self.title = title
+        self.instance = None
 
 

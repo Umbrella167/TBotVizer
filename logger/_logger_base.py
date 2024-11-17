@@ -123,7 +123,7 @@ class _LogDiskWriter:
         """
         self.output_dir = output_dir
         self.chunking_size_len = 100
-        self._file_max_size = 5 * 1024 * 1024  # 5MB
+        self._file_max_size = 20 * 1024 * 1024  # 5MB
         self._current_file_index = 0
         self._current_file = None
         self._file_start_timestamp = None
@@ -158,34 +158,43 @@ class _LogDiskWriter:
             if self.data_len < self.chunking_size_len:
                 return
 
-            if (
-                self._current_file is None
-                or os.path.getsize(self._current_file.name) > self._file_max_size
-            ):
-                if self._current_file:
-                    self._msg_index_file = 0
-                    self._current_file.close()
+            self._save_to_file()
 
-                self._file_start_timestamp = int(time() * 1e9)
-                file_name = (
-                    f"{self._current_file_index}_{self._file_start_timestamp}.log"
-                )
-                self._current_file_index += 1
-                file_path = os.path.join(self.log_file_path, file_name)
-                try:
-                    self._current_file = open(file_path, "ab")
-                except Exception as e:
-                    client_logger.log("ERROR", f"Error opening file {file_path}: {e}")
-                    return
+    def save_current_data(self):
+        """
+        Manually saves the current data list to the log file.
+        """
+        with self.lock:
+            self._save_to_file()
 
+    def _save_to_file(self):
+        if (
+            self._current_file is None
+            or os.path.getsize(self._current_file.name) > self._file_max_size
+        ):
+            if self._current_file:
+                self._msg_index_file = 0
+                self._current_file.close()
+
+            self._file_start_timestamp = int(time() * 1e9)
+            file_name = f"{self._current_file_index}_{self._file_start_timestamp}.log"
+            self._current_file_index += 1
+            file_path = os.path.join(self.log_file_path, file_name)
             try:
-                pickle.dump(self.data_list, self._current_file)
-                self._current_file.flush()
+                self._current_file = open(file_path, "ab")
             except Exception as e:
-                client_logger.log("ERROR", f"Error writing data to file: {e}")
-            finally:
-                self.data_list.clear()
-                self.data_len = 0
+                client_logger.log("ERROR", f"Error opening file {file_path}: {e}")
+                return
+
+        try:
+            pickle.dump(self.data_list, self._current_file)
+            self._current_file.flush()
+
+        except Exception as e:
+            client_logger.log("ERROR", f"Error writing data to file: {e}")
+        finally:
+            self.data_list.clear()
+            self.data_len = 0
 
     def close(self):
         """
@@ -205,6 +214,7 @@ class _LogReader:
         A class for reading and filtering logs from a specified log package.
 
         :param log_package_path: The path to the log package.
+        
         """
         self._utils = _Utils()
         self.log_package_path = log_package_path
