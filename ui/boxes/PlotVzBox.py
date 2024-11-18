@@ -4,7 +4,7 @@ import time
 from google.protobuf.json_format import MessageToDict
 from loguru import logger as uilogger
 from static.Params import TypeParams
-from ui.boxes.BaseBox import Box
+from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
 from utils.Utils import msg_serializer
 from utils.DataProcessor import tbk_data
@@ -70,7 +70,7 @@ class TimedDeque:
         return self.items
 
 
-class PlotVzBox(Box):
+class PlotVzBaseBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):

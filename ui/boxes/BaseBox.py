@@ -7,7 +7,7 @@ sub_box_y = 50
 pos_offset = 20
 
 
-class Box(object):
+class BaseBox(object):
     only = False
 
     def __init__(self, tag=None, parent=None, label=None, callback=None):
@@ -21,7 +21,7 @@ class Box(object):
     def check_and_create_window(self):
         global sub_box_x, sub_box_y, pos_offset
         if self.is_created:
-            client_logger.log("ERROR", "Box has already been created")
+            client_logger.log("ERROR", "BaseBox has already been created")
             return
         if self.tag:
             dpg.add_window(tag=self.tag, label=self.label, width=800, height=800, pos=(sub_box_x, sub_box_y),

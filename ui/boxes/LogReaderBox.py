@@ -1,10 +1,10 @@
 
-from ui.boxes.BaseBox import Box
+from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
 from utils.Utils import item_auto_resize
 
 
-class LogReaderBox(Box):
+class LogReaderBaseBox(BaseBox):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._canvas = None

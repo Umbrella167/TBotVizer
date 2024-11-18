@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 from config.UiConfig import UiConfig
-from ui.boxes.ConsoleBox import ConsoleBox
+from ui.boxes.ConsoleBox import ConsoleBaseBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import ui_data
 import pickle
@@ -30,7 +30,7 @@ class UI:
     def __init__(self):
         self.config = UiConfig()
         self.config.instance = self
-        self.console = ConsoleBox()
+        self.console = ConsoleBaseBox()
         self.boxes = self.console.boxes
         self.is_created = False
         self._ui_callback = UICallback()
