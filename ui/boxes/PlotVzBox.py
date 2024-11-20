@@ -9,67 +9,6 @@ from utils.ClientLogManager import client_logger
 from utils.Utils import msg_serializer
 from utils.DataProcessor import tbk_data
 
-
-class PlotUitls:
-    @staticmethod
-    def is_plot_supported(tbk_type):
-        if tbk_type not in TypeParams.PLOT_SUPPORT_TYPES:
-            return False
-        return True
-
-    @staticmethod
-    def tbkdata2plotdata(data, data_type):
-        if not PlotUitls.is_plot_supported(data_type):
-            uilogger.error("Unsupported data type")
-            return
-        if data_type in TypeParams.PYTHON_TYPES:
-            # TODO: 如果字典有多层，则迭代每一层
-            if data_type == "int" or data_type == "float":
-                res = {"0": data}
-            elif data_type == "list" or data_type == "tuple":
-                res = {}
-                for i in range(len(data)):
-                    res[str(i)] = data[i]
-            else:
-                res = data
-        else:
-            res = MessageToDict(data, preserving_proto_field_name=True)
-        return res
-
-
-class TimedDeque:
-    def __init__(self, max_age_seconds):
-        self.items_with_timestamps = []  # List to store (item, timestamp) tuples
-        self.items = []  # List to store only items for direct access
-        self.max_age_seconds = max_age_seconds
-
-    def append(self, item):
-        # Add item along with the current timestamp
-        current_time = time.time()
-        self.items_with_timestamps.append((item, current_time))
-        self.items.append(item)
-        self._remove_old_items()
-
-    def _remove_old_items(self):
-        # Remove items that have exceeded the time limit
-        current_time = time.time()
-        while self.items_with_timestamps and (current_time - self.items_with_timestamps[0][1]) > self.max_age_seconds:
-            self.items_with_timestamps.pop(0)
-            self.items.pop(0)
-
-    def __iter__(self):
-        # Directly iterate over the items list
-        return iter(self.items)
-
-    def __len__(self):
-        # Return the number of items
-        return len(self.items)
-
-    def get_items(self):
-        # Directly return the list of items
-        return self.items
-
-
 class PlotVzBox(Box):
     only = False
 
@@ -111,8 +50,10 @@ class PlotVzBox(Box):
             # drop_callback=self.plot_drop_callback,
             drop_callback=self.plot_drop_callback,
             parent=self.tag,
+            anti_aliased=True,
         )
         dpg.add_plot_legend(parent=self.plot_tag)
+        dpg.add_plot_annotation(parent=self.plot_tag)
         self.plot_x_tag = dpg.add_plot_axis(dpg.mvXAxis, label="Time", parent=self.plot_tag)
         self.plot_y_tag = dpg.add_plot_axis(dpg.mvYAxis, label="Data", parent=self.plot_tag)
 
@@ -239,3 +180,66 @@ class PlotVzBox(Box):
             )
         else:
             dpg.set_axis_limits_auto(self.plot_x_tag)
+
+
+
+
+class PlotUitls:
+    @staticmethod
+    def is_plot_supported(tbk_type):
+        if tbk_type not in TypeParams.PLOT_SUPPORT_TYPES:
+            return False
+        return True
+
+    @staticmethod
+    def tbkdata2plotdata(data, data_type):
+        if not PlotUitls.is_plot_supported(data_type):
+            uilogger.error("Unsupported data type")
+            return
+        if data_type in TypeParams.PYTHON_TYPES:
+            # TODO: 如果字典有多层，则迭代每一层
+            if data_type == "int" or data_type == "float":
+                res = {"0": data}
+            elif data_type == "list" or data_type == "tuple":
+                res = {}
+                for i in range(len(data)):
+                    res[str(i)] = data[i]
+            else:
+                res = data
+        else:
+            res = MessageToDict(data, preserving_proto_field_name=True)
+        return res
+
+
+class TimedDeque:
+    def __init__(self, max_age_seconds):
+        self.items_with_timestamps = []  # List to store (item, timestamp) tuples
+        self.items = []  # List to store only items for direct access
+        self.max_age_seconds = max_age_seconds
+
+    def append(self, item):
+        # Add item along with the current timestamp
+        current_time = time.time()
+        self.items_with_timestamps.append((item, current_time))
+        self.items.append(item)
+        self._remove_old_items()
+
+    def _remove_old_items(self):
+        # Remove items that have exceeded the time limit
+        current_time = time.time()
+        while self.items_with_timestamps and (current_time - self.items_with_timestamps[0][1]) > self.max_age_seconds:
+            self.items_with_timestamps.pop(0)
+            self.items.pop(0)
+
+    def __iter__(self):
+        # Directly iterate over the items list
+        return iter(self.items)
+
+    def __len__(self):
+        # Return the number of items
+        return len(self.items)
+
+    def get_items(self):
+        # Directly return the list of items
+        return self.items
+

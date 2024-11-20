@@ -24,7 +24,6 @@ class ConsoleBox(Box):
         dpg.configure_item(
             self.tag,
             pos=[0, 0],
-            # height=1000,
             autosize=True,
             menubar=True,
             collapsed=False,

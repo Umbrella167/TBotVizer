@@ -14,6 +14,7 @@ stop_event = threading.Event()
 def create_nodes(node_len):
     # 定义线程任务
     def initialize_node(node, f):
+        node = 1
         if f == 2:
             node = random.randint(0, 100)
         tbkpy.init(f"Node {node}")

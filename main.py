@@ -5,7 +5,6 @@ import dearpygui.dearpygui as dpg
 from ui.Ui import UI
 from utils.ClientLogManager import client_logger
 
-
 def loop(UI):
     try:
         UI.update()
@@ -17,7 +16,6 @@ def main():
     dpg.create_context()
     ui = UI()
     ui.show()
-    # demo.show_demo()
     ui.run_loop(lambda: loop(ui))
 
 

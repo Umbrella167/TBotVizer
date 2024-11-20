@@ -3,7 +3,7 @@ from ui.boxes.BaseBox import Box
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 from logger.logger import Logger
-
+import threading
 
 class MessageBox(Box):
     only = True
@@ -25,8 +25,7 @@ class MessageBox(Box):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
-        with dpg.child_window(parent=self.tag) as self.msg_child_window_tag:
-            self.header = dpg.add_collapsing_header(label="Message List")
+        self.header = dpg.add_collapsing_header(label="Message List",parent=self.tag)
 
     def update(self):
         new_data = self.tbk_data.message_tree["pubs"]
@@ -42,6 +41,7 @@ class MessageBox(Box):
         puuids_to_add = new_puuids - current_puuids
         # 删除不需要的节点
         for puuid in puuids_to_delete:
+            self.msg_logger.save()
             row_tag = self.puuid_tags[puuid]
             dpg.delete_item(row_tag)
             del self.puuid_tags[puuid]
@@ -116,7 +116,9 @@ class MessageBox(Box):
                 drag_data=(msg_info_dict, item_dict),
         ):
             dpg.add_text(f"{msg_name}({name})")
-
+    def destroy(self):
+        self.msg_logger.close()
+        super().destroy()
     # def insert_tree(self, data):
     #     for puuid in data:
     #         # 添加节点列表
@@ -165,10 +167,10 @@ class MessageBox(Box):
     #                     dpg.add_text(f"{msg_name}({name})")
 
 class MessageBoxCallBack:
-    def __init__(self,msg_logger):
+    def __init__(self,msg_logger:Logger):
         self.msg_logger = msg_logger
         self.msg_subscriber_dict = {}
-
+        self.lock = threading.Lock()
     def subscriber_msg(self, msg, msg_info):
         puuid, name, msg_name, msg_type, tree_item_tag_dict = msg_info
         value_checkbox_tag = tree_item_tag_dict["value_checkbox"]
@@ -176,7 +178,10 @@ class MessageBoxCallBack:
         if dpg.get_value(value_checkbox_tag):
             dpg.configure_item(item=value_checkbox_tag, label=msg)
         if dpg.get_value(log_checkbox_tag):
-            self.msg_logger.record(msg,puuid, msg_name, name,  msg_type)
+            with self.lock:
+                self.msg_logger.record(msg,puuid, msg_name, name, msg_type)
+            
+
 
     def checkbox_record_msg(self, sender, app_data, user_data):
         is_checked = app_data
@@ -197,6 +202,7 @@ class MessageBoxCallBack:
                 ),
             )
         else:
+            self.msg_logger.save()
             if puuid in self.msg_subscriber_dict and msg_name in self.msg_subscriber_dict[puuid]:
                 if name in self.msg_subscriber_dict[puuid][msg_name]:
                     tbk_data.unsubscribe(msg_info, True)

@@ -6,7 +6,11 @@ import pickle
 
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
-
+def set_itme_text_color(item, color):
+    with dpg.theme() as input_text:
+        with dpg.theme_component(dpg.mvInputText):
+            dpg.add_theme_color(dpg.mvThemeCol_Text, color)
+        dpg.bind_item_theme(item, input_text)
 
 def item_auto_resize(item,parent,height_rate:float = 0,width_rate:float = 0):
     parent_width, parent_height = dpg.get_item_rect_size(parent)
@@ -21,7 +25,6 @@ def item_auto_resize(item,parent,height_rate:float = 0,width_rate:float = 0):
             callback=f
         )
     dpg.bind_item_handler_registry(parent, handler)
-
 
 def calculate_distance(pos1, pos2):
     return math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)

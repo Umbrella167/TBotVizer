@@ -128,6 +128,7 @@ class LayoutManager:
                     dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered, (90, 90, 90, 255))
                     dpg.add_theme_color(dpg.mvThemeCol_HeaderActive, (110, 110, 110, 255))
                     dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 5, 5)
+
                 if theme == "Light":
                     dpg.add_theme_color(dpg.mvThemeCol_WindowBg, (240, 240, 240, 255))
                     dpg.add_theme_color(dpg.mvThemeCol_TitleBg, (220, 220, 220, 255))

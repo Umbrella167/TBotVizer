@@ -1,4 +1,770 @@
-2024-11-17 15:50:38.468 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'LogReaderBox' object has no attribute 'msg_child_window_tag'
-2024-11-17 15:50:51.653 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.ParamBox.ParamBox'>: This box can only be created once
-2024-11-17 15:50:57.149 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.MessageBox.MessageBox'>: This box can only be created once
-2024-11-17 15:50:57.449 | ERROR    | utils.ClientLogManager:log:39 - Unable to instantiate <class 'ui.boxes.MessageBox.MessageBox'>: This box can only be created once
+2024-11-20 20:02:39.397 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.406 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.418 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.428 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.438 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.449 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.459 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.468 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.479 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.489 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.498 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.508 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.519 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.528 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.539 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.549 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.559 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.569 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.579 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.589 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.598 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.609 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.619 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.628 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.639 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.649 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.658 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.668 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.678 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.688 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:02:39.699 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:36.987 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:36.997 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:37.007 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:37.017 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:37.027 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:37.037 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:37.047 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:37.057 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:03:37.067 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'NoneType' object is not subscriptable
+2024-11-20 20:13:56.612 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'LogReaderBox' object has no attribute 'last_message'
+2024-11-20 20:15:54.111 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! 'LogReaderBox' object has no attribute 'last_message'
+2024-11-20 20:20:56.926 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K|.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 1, 'count': 1, 'timestamp': 1732104190270302208, 'msg_type': 'int'}
+2024-11-20 20:20:56.937 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Ku.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 2, 'count': 2, 'timestamp': 1732104190280387328, 'msg_type': 'int'}
+2024-11-20 20:20:56.946 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kw.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 3, 'count': 3, 'timestamp': 1732104190290472704, 'msg_type': 'int'}
+2024-11-20 20:20:56.956 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K|.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 4, 'count': 4, 'timestamp': 1732104190300747520, 'msg_type': 'int'}
+2024-11-20 20:20:56.966 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kr.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 5, 'count': 5, 'timestamp': 1732104190310626304, 'msg_type': 'int'}
+2024-11-20 20:20:56.976 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Km.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 6, 'count': 6, 'timestamp': 1732104190320742144, 'msg_type': 'int'}
+2024-11-20 20:20:56.986 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Ks.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 7, 'count': 7, 'timestamp': 1732104190330819584, 'msg_type': 'int'}
+2024-11-20 20:20:56.997 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kr.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 8, 'count': 8, 'timestamp': 1732104190340908544, 'msg_type': 'int'}
+2024-11-20 20:20:57.007 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kh.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 9, 'count': 9, 'timestamp': 1732104190350973696, 'msg_type': 'int'}
+2024-11-20 20:20:57.017 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kr.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 10, 'count': 10, 'timestamp': 1732104190361073920, 'msg_type': 'int'}
+2024-11-20 20:20:57.027 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kk.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 11, 'count': 11, 'timestamp': 1732104190371125504, 'msg_type': 'int'}
+2024-11-20 20:20:57.037 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kq.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 12, 'count': 12, 'timestamp': 1732104190381180416, 'msg_type': 'int'}
+2024-11-20 20:20:57.047 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Ks.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 13, 'count': 13, 'timestamp': 1732104190391256064, 'msg_type': 'int'}
+2024-11-20 20:20:57.057 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kt.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 14, 'count': 14, 'timestamp': 1732104190401346048, 'msg_type': 'int'}
+2024-11-20 20:20:57.067 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Ks.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 15, 'count': 15, 'timestamp': 1732104190411390208, 'msg_type': 'int'}
+2024-11-20 20:20:57.077 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kv.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 16, 'count': 16, 'timestamp': 1732104190421490176, 'msg_type': 'int'}
+2024-11-20 20:20:57.087 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K|.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 17, 'count': 17, 'timestamp': 1732104190431564288, 'msg_type': 'int'}
+2024-11-20 20:20:57.097 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kr.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 18, 'count': 18, 'timestamp': 1732104190441647872, 'msg_type': 'int'}
+2024-11-20 20:20:57.107 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kz.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 19, 'count': 19, 'timestamp': 1732104190451737344, 'msg_type': 'int'}
+2024-11-20 20:20:57.117 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kt.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 20, 'count': 20, 'timestamp': 1732104190461826048, 'msg_type': 'int'}
+2024-11-20 20:20:57.127 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Ks.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 21, 'count': 21, 'timestamp': 1732104190471895296, 'msg_type': 'int'}
+2024-11-20 20:20:57.137 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kt.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 22, 'count': 22, 'timestamp': 1732104190481981184, 'msg_type': 'int'}
+2024-11-20 20:20:57.147 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Km.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 23, 'count': 23, 'timestamp': 1732104190492050688, 'msg_type': 'int'}
+2024-11-20 20:20:57.157 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Km.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 24, 'count': 24, 'timestamp': 1732104190502153216, 'msg_type': 'int'}
+2024-11-20 20:20:57.167 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Ks.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 25, 'count': 25, 'timestamp': 1732104190512243456, 'msg_type': 'int'}
+2024-11-20 20:20:57.177 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Ky.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 26, 'count': 26, 'timestamp': 1732104190522327296, 'msg_type': 'int'}
+2024-11-20 20:20:57.187 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x82.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 27, 'count': 27, 'timestamp': 1732104190532400384, 'msg_type': 'int'}
+2024-11-20 20:20:57.197 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x87.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 28, 'count': 28, 'timestamp': 1732104190542466304, 'msg_type': 'int'}
+2024-11-20 20:20:57.207 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x8a.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 29, 'count': 29, 'timestamp': 1732104190552552704, 'msg_type': 'int'}
+2024-11-20 20:20:57.217 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x81.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 30, 'count': 30, 'timestamp': 1732104190562626048, 'msg_type': 'int'}
+2024-11-20 20:20:57.227 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kx.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 31, 'count': 31, 'timestamp': 1732104190634973440, 'msg_type': 'int'}
+2024-11-20 20:20:57.237 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x87.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 32, 'count': 32, 'timestamp': 1732104190635005952, 'msg_type': 'int'}
+2024-11-20 20:20:57.247 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x80.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 33, 'count': 33, 'timestamp': 1732104190635210752, 'msg_type': 'int'}
+2024-11-20 20:20:57.257 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x80.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 34, 'count': 34, 'timestamp': 1732104190635265536, 'msg_type': 'int'}
+2024-11-20 20:20:57.267 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kw.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 35, 'count': 35, 'timestamp': 1732104190635350016, 'msg_type': 'int'}
+2024-11-20 20:20:57.277 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x81.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 36, 'count': 36, 'timestamp': 1732104190635363584, 'msg_type': 'int'}
+2024-11-20 20:20:57.287 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04Kz.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 37, 'count': 37, 'timestamp': 1732104190635374848, 'msg_type': 'int'}
+2024-11-20 20:20:57.297 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K{.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 38, 'count': 38, 'timestamp': 1732104190643227136, 'msg_type': 'int'}
+2024-11-20 20:20:57.307 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x7f.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 39, 'count': 39, 'timestamp': 1732104190653278976, 'msg_type': 'int'}
+2024-11-20 20:20:57.317 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x89.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 40, 'count': 40, 'timestamp': 1732104190663399424, 'msg_type': 'int'}
+2024-11-20 20:20:57.327 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x90.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 41, 'count': 41, 'timestamp': 1732104190673466624, 'msg_type': 'int'}
+2024-11-20 20:20:57.337 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x97.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 42, 'count': 42, 'timestamp': 1732104190683565056, 'msg_type': 'int'}
+2024-11-20 20:20:57.347 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\x99.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 43, 'count': 43, 'timestamp': 1732104190693630464, 'msg_type': 'int'}
+2024-11-20 20:20:57.357 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 44, 'count': 44, 'timestamp': 1732104190703744512, 'msg_type': 'int'}
+2024-11-20 20:20:57.367 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 45, 'count': 45, 'timestamp': 1732104190713807360, 'msg_type': 'int'}
+2024-11-20 20:20:57.377 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa7.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 46, 'count': 46, 'timestamp': 1732104190723903488, 'msg_type': 'int'}
+2024-11-20 20:20:57.387 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xaf.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 47, 'count': 47, 'timestamp': 1732104190733972224, 'msg_type': 'int'}
+2024-11-20 20:20:57.397 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb1.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 48, 'count': 48, 'timestamp': 1732104190744075776, 'msg_type': 'int'}
+2024-11-20 20:20:57.407 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa7.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 49, 'count': 49, 'timestamp': 1732104190754147584, 'msg_type': 'int'}
+2024-11-20 20:20:57.417 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xae.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 50, 'count': 50, 'timestamp': 1732104190764245760, 'msg_type': 'int'}
+2024-11-20 20:20:57.427 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa8.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 51, 'count': 51, 'timestamp': 1732104190774320128, 'msg_type': 'int'}
+2024-11-20 20:20:57.437 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb2.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 52, 'count': 52, 'timestamp': 1732104190784401408, 'msg_type': 'int'}
+2024-11-20 20:20:57.447 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa9.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 53, 'count': 53, 'timestamp': 1732104190794491648, 'msg_type': 'int'}
+2024-11-20 20:20:57.457 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb3.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 54, 'count': 54, 'timestamp': 1732104190804590848, 'msg_type': 'int'}
+2024-11-20 20:20:57.467 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa9.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 55, 'count': 55, 'timestamp': 1732104190814666240, 'msg_type': 'int'}
+2024-11-20 20:20:57.477 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb2.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 56, 'count': 56, 'timestamp': 1732104190824762624, 'msg_type': 'int'}
+2024-11-20 20:20:57.487 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb2.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 57, 'count': 57, 'timestamp': 1732104190834833920, 'msg_type': 'int'}
+2024-11-20 20:20:57.497 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xf2\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 58, 'count': 58, 'timestamp': 1732104190839493888, 'msg_type': 'int'}
+2024-11-20 20:20:57.507 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa9.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 59, 'count': 59, 'timestamp': 1732104190844930816, 'msg_type': 'int'}
+2024-11-20 20:20:57.517 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xf4\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 60, 'count': 60, 'timestamp': 1732104190849505280, 'msg_type': 'int'}
+2024-11-20 20:20:57.527 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xae.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 61, 'count': 61, 'timestamp': 1732104190854996992, 'msg_type': 'int'}
+2024-11-20 20:20:57.537 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xfe\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 62, 'count': 62, 'timestamp': 1732104190859598336, 'msg_type': 'int'}
+2024-11-20 20:20:57.547 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb5.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 63, 'count': 63, 'timestamp': 1732104190865095680, 'msg_type': 'int'}
+2024-11-20 20:20:57.557 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x01.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 64, 'count': 64, 'timestamp': 1732104190869453568, 'msg_type': 'int'}
+2024-11-20 20:20:57.567 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xaf.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 65, 'count': 65, 'timestamp': 1732104190875165440, 'msg_type': 'int'}
+2024-11-20 20:20:57.577 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xf7\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 66, 'count': 66, 'timestamp': 1732104190879593984, 'msg_type': 'int'}
+2024-11-20 20:20:57.587 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa8.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 67, 'count': 67, 'timestamp': 1732104190885258240, 'msg_type': 'int'}
+2024-11-20 20:20:57.597 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x00.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 68, 'count': 68, 'timestamp': 1732104190889614848, 'msg_type': 'int'}
+2024-11-20 20:20:57.607 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xa4.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 69, 'count': 69, 'timestamp': 1732104190895328512, 'msg_type': 'int'}
+2024-11-20 20:20:57.617 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xfa\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 70, 'count': 70, 'timestamp': 1732104190899694592, 'msg_type': 'int'}
+2024-11-20 20:20:57.627 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xad.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 71, 'count': 71, 'timestamp': 1732104190905408768, 'msg_type': 'int'}
+2024-11-20 20:20:57.637 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xf1\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 72, 'count': 72, 'timestamp': 1732104190909778432, 'msg_type': 'int'}
+2024-11-20 20:20:57.647 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb7.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 73, 'count': 73, 'timestamp': 1732104190915491072, 'msg_type': 'int'}
+2024-11-20 20:20:57.657 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xfb\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 74, 'count': 74, 'timestamp': 1732104190919866368, 'msg_type': 'int'}
+2024-11-20 20:20:57.667 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xbd.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 75, 'count': 75, 'timestamp': 1732104190925589248, 'msg_type': 'int'}
+2024-11-20 20:20:57.677 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xfc\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 76, 'count': 76, 'timestamp': 1732104190929943040, 'msg_type': 'int'}
+2024-11-20 20:20:57.687 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb5.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 77, 'count': 77, 'timestamp': 1732104190935661056, 'msg_type': 'int'}
+2024-11-20 20:20:57.697 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xf8\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 78, 'count': 78, 'timestamp': 1732104190940041216, 'msg_type': 'int'}
+2024-11-20 20:20:57.707 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb4.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 79, 'count': 79, 'timestamp': 1732104190945763840, 'msg_type': 'int'}
+2024-11-20 20:20:57.717 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x00.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 80, 'count': 80, 'timestamp': 1732104190950118656, 'msg_type': 'int'}
+2024-11-20 20:20:57.727 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb1.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 81, 'count': 81, 'timestamp': 1732104190955849728, 'msg_type': 'int'}
+2024-11-20 20:20:57.737 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xff\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 82, 'count': 82, 'timestamp': 1732104190960206336, 'msg_type': 'int'}
+2024-11-20 20:20:57.747 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb3.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 83, 'count': 83, 'timestamp': 1732104190965932800, 'msg_type': 'int'}
+2024-11-20 20:20:57.756 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xfe\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 84, 'count': 84, 'timestamp': 1732104190970278400, 'msg_type': 'int'}
+2024-11-20 20:20:57.766 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb7.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 85, 'count': 85, 'timestamp': 1732104190976001024, 'msg_type': 'int'}
+2024-11-20 20:20:57.776 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x06.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 86, 'count': 86, 'timestamp': 1732104190980366080, 'msg_type': 'int'}
+2024-11-20 20:20:57.786 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 87, 'count': 87, 'timestamp': 1732104190986074112, 'msg_type': 'int'}
+2024-11-20 20:20:57.796 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x07.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 88, 'count': 88, 'timestamp': 1732104190990457600, 'msg_type': 'int'}
+2024-11-20 20:20:57.806 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc6.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 89, 'count': 89, 'timestamp': 1732104190996148480, 'msg_type': 'int'}
+2024-11-20 20:20:57.816 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x0e.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 90, 'count': 90, 'timestamp': 1732104191000539648, 'msg_type': 'int'}
+2024-11-20 20:20:57.826 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc6.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 91, 'count': 91, 'timestamp': 1732104191006246400, 'msg_type': 'int'}
+2024-11-20 20:20:57.836 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x11.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 92, 'count': 92, 'timestamp': 1732104191010692608, 'msg_type': 'int'}
+2024-11-20 20:20:57.846 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc8.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 93, 'count': 93, 'timestamp': 1732104191016321536, 'msg_type': 'int'}
+2024-11-20 20:20:57.856 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x10.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 94, 'count': 94, 'timestamp': 1732104191020732160, 'msg_type': 'int'}
+2024-11-20 20:20:57.866 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xca.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 95, 'count': 95, 'timestamp': 1732104191026395136, 'msg_type': 'int'}
+2024-11-20 20:20:57.876 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\r.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 96, 'count': 96, 'timestamp': 1732104191030815232, 'msg_type': 'int'}
+2024-11-20 20:20:57.886 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd1.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 97, 'count': 97, 'timestamp': 1732104191036455168, 'msg_type': 'int'}
+2024-11-20 20:20:57.896 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x03.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 98, 'count': 98, 'timestamp': 1732104191040885504, 'msg_type': 'int'}
+2024-11-20 20:20:57.906 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd1.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 99, 'count': 99, 'timestamp': 1732104191046520064, 'msg_type': 'int'}
+2024-11-20 20:20:57.916 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xfa\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 100, 'count': 100, 'timestamp': 1732104191050989824, 'msg_type': 'int'}
+2024-11-20 20:20:57.926 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd1.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 101, 'count': 101, 'timestamp': 1732104191056575232, 'msg_type': 'int'}
+2024-11-20 20:20:57.936 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xff\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 102, 'count': 102, 'timestamp': 1732104191061065472, 'msg_type': 'int'}
+2024-11-20 20:20:57.946 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xca.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 103, 'count': 103, 'timestamp': 1732104191066654464, 'msg_type': 'int'}
+2024-11-20 20:20:57.956 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x06.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 104, 'count': 104, 'timestamp': 1732104191071168768, 'msg_type': 'int'}
+2024-11-20 20:20:57.966 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc9.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 105, 'count': 105, 'timestamp': 1732104191076704512, 'msg_type': 'int'}
+2024-11-20 20:20:57.976 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x01.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 106, 'count': 106, 'timestamp': 1732104191081244672, 'msg_type': 'int'}
+2024-11-20 20:20:57.986 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc4.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 107, 'count': 107, 'timestamp': 1732104191086787072, 'msg_type': 'int'}
+2024-11-20 20:20:57.996 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\t.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 108, 'count': 108, 'timestamp': 1732104191091334400, 'msg_type': 'int'}
+2024-11-20 20:20:58.006 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 109, 'count': 109, 'timestamp': 1732104191096840448, 'msg_type': 'int'}
+2024-11-20 20:20:58.016 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x05.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 110, 'count': 110, 'timestamp': 1732104191101399808, 'msg_type': 'int'}
+2024-11-20 20:20:58.026 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xbd.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 111, 'count': 111, 'timestamp': 1732104191106902272, 'msg_type': 'int'}
+2024-11-20 20:20:58.036 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x03.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 112, 'count': 112, 'timestamp': 1732104191111477248, 'msg_type': 'int'}
+2024-11-20 20:20:58.046 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc1.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 113, 'count': 113, 'timestamp': 1732104191116967424, 'msg_type': 'int'}
+2024-11-20 20:20:58.056 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xff\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 114, 'count': 114, 'timestamp': 1732104191121560320, 'msg_type': 'int'}
+2024-11-20 20:20:58.066 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc5.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 115, 'count': 115, 'timestamp': 1732104191127102208, 'msg_type': 'int'}
+2024-11-20 20:20:58.076 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\t.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 116, 'count': 116, 'timestamp': 1732104191131659264, 'msg_type': 'int'}
+2024-11-20 20:20:58.086 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xca.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 117, 'count': 117, 'timestamp': 1732104191137118208, 'msg_type': 'int'}
+2024-11-20 20:20:58.096 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x08.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 118, 'count': 118, 'timestamp': 1732104191141716480, 'msg_type': 'int'}
+2024-11-20 20:20:58.106 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 119, 'count': 119, 'timestamp': 1732104191147353088, 'msg_type': 'int'}
+2024-11-20 20:20:58.116 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x12.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 120, 'count': 120, 'timestamp': 1732104191151821056, 'msg_type': 'int'}
+2024-11-20 20:20:58.126 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xbc.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 121, 'count': 121, 'timestamp': 1732104191157221376, 'msg_type': 'int'}
+2024-11-20 20:20:58.136 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\r.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 122, 'count': 122, 'timestamp': 1732104191161902080, 'msg_type': 'int'}
+2024-11-20 20:20:58.146 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 123, 'count': 123, 'timestamp': 1732104191167310592, 'msg_type': 'int'}
+2024-11-20 20:20:58.156 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x04.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 124, 'count': 124, 'timestamp': 1732104191172006144, 'msg_type': 'int'}
+2024-11-20 20:20:58.166 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc2.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 125, 'count': 125, 'timestamp': 1732104191177383168, 'msg_type': 'int'}
+2024-11-20 20:20:58.176 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04\x95\x06\x00\x00\x00\x00\x00\x00\x00J\xfc\xff\xff\xff.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 126, 'count': 126, 'timestamp': 1732104191182084864, 'msg_type': 'int'}
+2024-11-20 20:20:58.186 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc6.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 127, 'count': 127, 'timestamp': 1732104191187467008, 'msg_type': 'int'}
+2024-11-20 20:20:58.196 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x05.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 128, 'count': 128, 'timestamp': 1732104191192170240, 'msg_type': 'int'}
+2024-11-20 20:20:58.206 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc8.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 129, 'count': 129, 'timestamp': 1732104191197543168, 'msg_type': 'int'}
+2024-11-20 20:20:58.216 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x08.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 130, 'count': 130, 'timestamp': 1732104191202233856, 'msg_type': 'int'}
+2024-11-20 20:20:58.226 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc2.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 131, 'count': 131, 'timestamp': 1732104191207619072, 'msg_type': 'int'}
+2024-11-20 20:20:58.236 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x11.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 132, 'count': 132, 'timestamp': 1732104191212312832, 'msg_type': 'int'}
+2024-11-20 20:20:58.246 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc2.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 133, 'count': 133, 'timestamp': 1732104191217692928, 'msg_type': 'int'}
+2024-11-20 20:20:58.256 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x17.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 134, 'count': 134, 'timestamp': 1732104191222429440, 'msg_type': 'int'}
+2024-11-20 20:20:58.266 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xbb.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 135, 'count': 135, 'timestamp': 1732104191227806720, 'msg_type': 'int'}
+2024-11-20 20:20:58.276 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1d.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 136, 'count': 136, 'timestamp': 1732104191232468224, 'msg_type': 'int'}
+2024-11-20 20:20:58.286 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xbc.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 137, 'count': 137, 'timestamp': 1732104191237867008, 'msg_type': 'int'}
+2024-11-20 20:20:58.296 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1a.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 138, 'count': 138, 'timestamp': 1732104191242541056, 'msg_type': 'int'}
+2024-11-20 20:20:58.306 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb5.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 139, 'count': 139, 'timestamp': 1732104191247960576, 'msg_type': 'int'}
+2024-11-20 20:20:58.316 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K$.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 140, 'count': 140, 'timestamp': 1732104191252608256, 'msg_type': 'int'}
+2024-11-20 20:20:58.326 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xb6.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 141, 'count': 141, 'timestamp': 1732104191258019328, 'msg_type': 'int'}
+2024-11-20 20:20:58.336 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K".', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 142, 'count': 142, 'timestamp': 1732104191262709760, 'msg_type': 'int'}
+2024-11-20 20:20:58.346 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xbb.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 143, 'count': 143, 'timestamp': 1732104191268084992, 'msg_type': 'int'}
+2024-11-20 20:20:58.356 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K!.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 144, 'count': 144, 'timestamp': 1732104191272778752, 'msg_type': 'int'}
+2024-11-20 20:20:58.366 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc3.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 145, 'count': 145, 'timestamp': 1732104191278163456, 'msg_type': 'int'}
+2024-11-20 20:20:58.376 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x17.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 146, 'count': 146, 'timestamp': 1732104191282845696, 'msg_type': 'int'}
+2024-11-20 20:20:58.386 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc7.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 147, 'count': 147, 'timestamp': 1732104191288220160, 'msg_type': 'int'}
+2024-11-20 20:20:58.396 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1a.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 148, 'count': 148, 'timestamp': 1732104191292922368, 'msg_type': 'int'}
+2024-11-20 20:20:58.406 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xcb.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 149, 'count': 149, 'timestamp': 1732104191298299904, 'msg_type': 'int'}
+2024-11-20 20:20:58.416 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K#.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 150, 'count': 150, 'timestamp': 1732104191303018496, 'msg_type': 'int'}
+2024-11-20 20:20:58.426 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc6.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 151, 'count': 151, 'timestamp': 1732104191308372480, 'msg_type': 'int'}
+2024-11-20 20:20:58.436 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K#.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 152, 'count': 152, 'timestamp': 1732104191313096448, 'msg_type': 'int'}
+2024-11-20 20:20:58.446 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc1.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 153, 'count': 153, 'timestamp': 1732104191318443520, 'msg_type': 'int'}
+2024-11-20 20:20:58.456 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K#.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 154, 'count': 154, 'timestamp': 1732104191323176448, 'msg_type': 'int'}
+2024-11-20 20:20:58.466 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xca.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 155, 'count': 155, 'timestamp': 1732104191328493824, 'msg_type': 'int'}
+2024-11-20 20:20:58.476 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K".', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 156, 'count': 156, 'timestamp': 1732104191333263872, 'msg_type': 'int'}
+2024-11-20 20:20:58.486 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x19.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 157, 'count': 157, 'timestamp': 1732104191403863552, 'msg_type': 'int'}
+2024-11-20 20:20:58.496 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1c.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 158, 'count': 158, 'timestamp': 1732104191403885312, 'msg_type': 'int'}
+2024-11-20 20:20:58.506 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 159, 'count': 159, 'timestamp': 1732104191403953920, 'msg_type': 'int'}
+2024-11-20 20:20:58.516 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xc9.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 160, 'count': 160, 'timestamp': 1732104191403973120, 'msg_type': 'int'}
+2024-11-20 20:20:58.526 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x13.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 161, 'count': 161, 'timestamp': 1732104191404004096, 'msg_type': 'int'}
+2024-11-20 20:20:58.536 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd4.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 162, 'count': 162, 'timestamp': 1732104191404022016, 'msg_type': 'int'}
+2024-11-20 20:20:58.546 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd6.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 163, 'count': 163, 'timestamp': 1732104191404034304, 'msg_type': 'int'}
+2024-11-20 20:20:58.556 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x14.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 164, 'count': 164, 'timestamp': 1732104191404058368, 'msg_type': 'int'}
+2024-11-20 20:20:58.566 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1c.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 165, 'count': 165, 'timestamp': 1732104191404076032, 'msg_type': 'int'}
+2024-11-20 20:20:58.576 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xe0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 166, 'count': 166, 'timestamp': 1732104191404090368, 'msg_type': 'int'}
+2024-11-20 20:20:58.586 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x18.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 167, 'count': 167, 'timestamp': 1732104191404157952, 'msg_type': 'int'}
+2024-11-20 20:20:58.596 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xe0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 168, 'count': 168, 'timestamp': 1732104191404169472, 'msg_type': 'int'}
+2024-11-20 20:20:58.606 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K".', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 169, 'count': 169, 'timestamp': 1732104191404182784, 'msg_type': 'int'}
+2024-11-20 20:20:58.616 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xdb.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 170, 'count': 170, 'timestamp': 1732104191404192768, 'msg_type': 'int'}
+2024-11-20 20:20:58.626 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xe0.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 171, 'count': 171, 'timestamp': 1732104191409078272, 'msg_type': 'int'}
+2024-11-20 20:20:58.636 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1c.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 172, 'count': 172, 'timestamp': 1732104191413898496, 'msg_type': 'int'}
+2024-11-20 20:20:58.646 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xde.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 173, 'count': 173, 'timestamp': 1732104191419156480, 'msg_type': 'int'}
+2024-11-20 20:20:58.656 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K$.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 174, 'count': 174, 'timestamp': 1732104191423986432, 'msg_type': 'int'}
+2024-11-20 20:20:58.666 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd8.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 175, 'count': 175, 'timestamp': 1732104191429224704, 'msg_type': 'int'}
+2024-11-20 20:20:58.676 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K(.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 176, 'count': 176, 'timestamp': 1732104191434097920, 'msg_type': 'int'}
+2024-11-20 20:20:58.686 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xd6.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 177, 'count': 177, 'timestamp': 1732104191439327744, 'msg_type': 'int'}
+2024-11-20 20:20:58.696 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1e.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 178, 'count': 178, 'timestamp': 1732104191444137216, 'msg_type': 'int'}
+2024-11-20 20:20:58.706 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xde.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 179, 'count': 179, 'timestamp': 1732104191449393152, 'msg_type': 'int'}
+2024-11-20 20:20:58.716 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K%.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 180, 'count': 180, 'timestamp': 1732104191454240768, 'msg_type': 'int'}
+2024-11-20 20:20:58.726 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db960b0>, {'message': b'\x80\x04K\xe4.', 'name': 'Node 73', 'msg_name': 'Node 73_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 181, 'count': 181, 'timestamp': 1732104191459472896, 'msg_type': 'int'}
+2024-11-20 20:20:58.736 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! publish(): incompatible function arguments. The following argument types are supported:
+    1. (self: tbkpy._core.Publisher, data: str) -> None
+
+Invoked with: <tbkpy._core.Publisher object at 0x7fd26db3dff0>, {'message': b'\x80\x04K\x1e.', 'name': 'Node 70', 'msg_name': 'Node 70_pub', 'puuid': 'Node 70_df9891e5-61a7-4e75-b87e-41ca596d3767', 'index': 182, 'count': 182, 'timestamp': 1732104191464323584, 'msg_type': 'int'}

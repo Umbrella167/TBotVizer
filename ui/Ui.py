@@ -63,15 +63,25 @@ class UI:
         for box in self.boxes:
             box.update()
 
+    def destroy_all_boxes(self):
+        for box in self.boxes:
+            box.destroy()
+
     def ui_loop(self):
         self._ui_callback.on_mouse_move()
 
     def run_loop(self, func=None):
         if func is not None:
-            while dpg.is_dearpygui_running():
-                self.ui_loop()
-                func()
-                dpg.render_dearpygui_frame()
+            try:
+                while dpg.is_dearpygui_running():
+                    self.ui_loop()
+                    func()
+                    dpg.render_dearpygui_frame()
+            except Exception as e:
+                client_logger.log("ERROR", f"Loop Failed! {e}")
+            finally:
+                self.destroy_all_boxes()
+            
         else:
             dpg.start_dearpygui()
 

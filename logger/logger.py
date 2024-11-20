@@ -1,5 +1,6 @@
 from logger._logger_base import _Logger
 from logger._log_reader import LogReader
+from utils.ClientLogManager import client_logger
 class Logger:
     def __init__(self, log_dir="logs"):
         """
@@ -12,7 +13,18 @@ class Logger:
         """
         Saves the log package to a zip file.
         """
-        self.logger.save()
+        if self.logger.is_recording:
+            self.logger._diskWriter.save_current_data()
+        client_logger.log("info", "Log is auto saved.")
+
+    def close(self):
+        """
+        Closes the log package.
+        """
+        if self.logger.is_recording:
+            self.logger._diskWriter.close()
+            client_logger.log("info", "Log is auto saved.")
+
     def record_udp(self, udp_dict):
         """
         Records UDP messages based on a dictionary of UDP configurations.
@@ -39,8 +51,14 @@ class Logger:
         Stops recording UDP messages and clears the receiver list.
         """
         self.logger.stop()
+    def is_recording(self):
+        """
+        Returns whether the logger is currently recording UDP messages.
 
-    def record(self, message,puuid, msg_name, name,msg_type):
+        :return: True if the logger is recording, False otherwise.
+        """
+        return self.logger.is_recording
+    def record(self,message, puuid, msg_name, name,msg_type):
         """
         Records a message to the log with a specified tag and source.
 
@@ -48,7 +66,7 @@ class Logger:
         ```
 
         logger = Logger()
-
+            
         while True:
             message = "msg"
             logger.record(message, tag="vision")
@@ -66,7 +84,7 @@ class Logger:
         :return: A list of log packages.
         """
         packge = self.logger.list_log_packge()
-        print(packge)
+        client_logger.log("info", f"Log packages: {packge}")
         return packge
 
     def open(self, log_package_path=None):
@@ -77,13 +95,13 @@ class Logger:
         :return: An instance of LogReader for the opened log package.
         """
         if log_package_path is None:
-            log_package_path = self.logger.list_log_packge()
+            log_package_path = self.logger.list_log_packge(log_package_path)
             if log_package_path:
                 log_package_path = log_package_path[0][0]
             else:
-                print("No log package found.")
+                client_logger.log("error","No log package found.")
                 return None
-        return LogReader(f"{self.logger.log_dir}/{log_package_path}")
+        return LogReader(f"{log_package_path}")
 
 if __name__ == "__main__":
 
