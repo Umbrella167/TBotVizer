@@ -18,8 +18,9 @@ class NodeBaseBox(BaseBox):
         self.node_window = None
         self.node_group = None
         self.node_editor = None
-        self.nodes = []
+        self.nodes = {}
         self.box_count = {}
+        self.link_func = {}
 
 
     def create(self):
@@ -52,7 +53,9 @@ class NodeBaseBox(BaseBox):
             payload_type="Function"
         )
         self.node_editor = dpg.add_node_editor(
-            callback=lambda sender, app_data: dpg.add_node_link(app_data[0], app_data[1], parent=sender),
+            # 链接两个节点时的回调
+            callback=self.link_callback,
+            # 断开两个节点时的回调
             delink_callback=lambda sender, app_data: dpg.delete_item(app_data),
             minimap=True,
             minimap_location=dpg.mvNodeMiniMap_Location_BottomRight,
@@ -87,12 +90,46 @@ class NodeBaseBox(BaseBox):
         item_auto_resize(self.func_window, self.tag, 0, 0.15, 200, 300)
 
     def update(self):
-        for node in self.nodes:
+        for k, node in self.nodes.items():
             node.calc()
+        for k, func in self.link_func.items():
+            func()
 
     def new_node(self, sender, cls, user_data):
         instance = cls(parent=self.node_editor)
-        self.nodes.append(instance)
-        self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
         instance.create()
+
+        # node的tag和实例的对应表
+        self.nodes[instance.tag] = instance
+        self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
+
+    def link_callback(self, sender, app_data):
+        def create_link_function(input_ins, input_label, output_ins, output_label):
+            def link_function():
+                input_ins.input_data[input_label] = output_ins.output_data[output_label]
+            return link_function
+        # 0是output,1是input
+        # node的实例化类
+        output_ins = self.nodes[dpg.get_item_parent(app_data[0])]
+        input_ins = self.nodes[dpg.get_item_parent(app_data[1])]
+
+        # text 的 tag
+        output_tag =dpg.get_item_user_data(app_data[0])
+        input_tag =dpg.get_item_user_data(app_data[1])
+
+        # 标签
+        output_label = output_ins.output_text[output_tag]
+        input_label = input_ins.input_text[input_tag]
+
+        # # 获取数据
+        # print(output_ins.output_data[output_label])
+        # print(input_ins.input_data[input_label])
+        # input_ins.input_data[input_ins.input_text[input_tag]] = output_ins.output_data[output_ins.output_text[output_tag]]
+
+        # 建立函数
+        self.link_func[output_tag+input_tag] = create_link_function(input_ins, input_label, output_ins, output_label)
+
+        dpg.add_node_link(app_data[0], app_data[1], parent=sender)
+
+
 

@@ -6,9 +6,9 @@
 #     def __init__(self, **kwargs):
 #         super().__init__(**kwargs)
 #         self.input_data = {"upper": None, "lower": None}
-#         self.input_type = {"upper": "int", "lower": "int"}
+#         self._input_type = {"upper": "int", "lower": "int"}
 #         self.output_data = {"res": None}
-#         self.output_type = {"res": "int"}
+#         self._output_type = {"res": "int"}
 #
 #     def calc(self):
 #         self.output_data["res"] = random.randint(self.input_data["lower"], self.input_data["upper"])

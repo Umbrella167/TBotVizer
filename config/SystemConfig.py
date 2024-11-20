@@ -1,3 +1,5 @@
+import time
+
 ENVIRONMENT = 'development'
 
 class Config:
@@ -30,3 +32,4 @@ configurations = {
 }
 
 config = configurations[ENVIRONMENT]
+run_time = time.time()
