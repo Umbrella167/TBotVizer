@@ -3052,3 +3052,12 @@
 2024-11-20 16:41:11.463 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! <built-in function add_spacer> returned a result with an error set
 2024-11-20 16:41:38.414 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! <built-in function add_spacer> returned a result with an error set
 2024-11-20 16:45:21.959 | ERROR    | utils.ClientLogManager:log:39 - Loop Failed! <built-in function configure_item> returned a result with an error set
+2024-11-20 17:16:00.138 | ERROR    | utils.ClientLogManager:log:41 - Loop Failed! 'LogReaderBaseBox' object has no attribute 'msg_child_window_tag'
+2024-11-20 17:16:26.287 | ERROR    | utils.ClientLogManager:log:41 - Loop Failed!
+2024-11-20 17:19:10.716 | ERROR    | utils.ClientLogManager:log:41 - Loop Failed!
+2024-11-20 17:19:27.674 | ERROR    | utils.ClientLogManager:log:41 - Loop Failed!
+2024-11-20 17:19:40.224 | ERROR    | utils.ClientLogManager:log:42 - Loop Failed!
+2024-11-20 17:19:59.364 | ERROR    | utils.ClientLogManager:log:41 - Loop Failed!
+2024-11-20 17:20:16.314 | ERROR    | utils.ClientLogManager:log:41 - Loop Failed!
+2024-11-20 17:20:26.783 | ERROR    | utils.ClientLogManager:log:41 - Loop Failed!
+2024-11-20 17:21:33.153 | ERROR    | utils.ClientLogManager:log:48 - Loop Failed! Error: 'LogReaderBaseBox' object has no attribute 'msg_child_window_tag', occurred on line 18 in file /home/mark/TnTeQAQ/workspace/dpg demo/TBK-Client/ui/boxes/LogReaderBox.py

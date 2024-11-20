@@ -10,7 +10,7 @@ def loop(UI):
     try:
         UI.update()
     except Exception as e:
-        client_logger.log("ERROR", f"Loop Failed! {e}")
+        client_logger.log("ERROR", f"Loop Failed!", e)
 
 
 def main():
