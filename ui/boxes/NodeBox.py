@@ -1,7 +1,7 @@
 import dearpygui.dearpygui as dpg
 
 from ui.boxes.BaseBox import BaseBox
-from utils.Utils import item_auto_resize, get_all_subclasses, get_mouse_relative_pos
+from utils.Utils import item_auto_resize, get_all_subclasses
 from utils.node_utils import *
 
 
@@ -21,7 +21,6 @@ class NodeBaseBox(BaseBox):
         self.nodes = {}
         self.box_count = {}
         self.link_func = {}
-
 
     def create(self):
         self.check_and_create_window()
@@ -56,36 +55,32 @@ class NodeBaseBox(BaseBox):
             # 链接两个节点时的回调
             callback=self.link_callback,
             # 断开两个节点时的回调
-            delink_callback=lambda sender, app_data: dpg.delete_item(app_data),
+            # delink_callback=lambda sender, app_data: dpg.delete_item(app_data),
+            delink_callback=self.delink_callback,
             minimap=True,
             minimap_location=dpg.mvNodeMiniMap_Location_BottomRight,
             parent=self.node_group,
         )
 
-        # # 这里假设我们要获取所有属性字段的类型
-        # # 可以通过其他方式来获取类定义的信息
-        # print(f"{cls.__name__} has input_data keys: {[key for key in cls().input_data.keys()]}")
-        # print(f"{cls.__name__} has output_data keys: {[key for key in cls().output_data.keys()]}")
-
-        with dpg.node(label="Node 1", pos=[10, 10], parent=self.node_editor):
-            with dpg.node_attribute():
-                dpg.add_input_float(label="F1", width=150)
-            with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Output):
-                dpg.add_input_float(label="F2", width=150)
-
-        with dpg.node(label="Node 2", pos=[300, 10], parent=self.node_editor):
-            with dpg.node_attribute() as na2:
-                dpg.add_input_float(label="F3", width=200)
-
-            with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Output):
-                dpg.add_input_float(label="F4", width=200)
-
-        with dpg.node(label="Node 3", pos=[25, 150], parent=self.node_editor):
-            with dpg.node_attribute():
-                dpg.add_input_text(label="T5", width=200)
+        with dpg.node(label="Tips: 拖动左侧节点到视窗以使用函数", parent=self.node_editor, use_internal_label=True, show=True, draggable=False):
             with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
-                dpg.add_simple_plot(label="Node Plot", default_value=(0.3, 0.9, 2.5, 8.9), width=200, height=80,
-                                    histogram=True)
+                dpg.add_spacer(width=1)
+
+
+
+        # with dpg.node(label="Node 2", pos=[300, 10], parent=self.node_editor):
+        #     with dpg.node_attribute() as na2:
+        #         dpg.add_input_float(label="F3", width=200)
+        #
+        #     with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Output):
+        #         dpg.add_input_float(label="F4", width=200)
+        #
+        # with dpg.node(label="Node 3", pos=[25, 150], parent=self.node_editor):
+        #     with dpg.node_attribute():
+        #         dpg.add_input_text(label="T5", width=200)
+        #     with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
+        #         dpg.add_simple_plot(label="Node Plot", default_value=(0.3, 0.9, 2.5, 8.9), width=200, height=80,
+        #                             histogram=True)
 
         item_auto_resize(self.func_window, self.tag, 0, 0.15, 200, 300)
 
@@ -107,29 +102,27 @@ class NodeBaseBox(BaseBox):
         def create_link_function(input_ins, input_label, output_ins, output_label):
             def link_function():
                 input_ins.input_data[input_label] = output_ins.output_data[output_label]
+
             return link_function
+
         # 0是output,1是input
         # node的实例化类
         output_ins = self.nodes[dpg.get_item_parent(app_data[0])]
         input_ins = self.nodes[dpg.get_item_parent(app_data[1])]
 
         # text 的 tag
-        output_tag =dpg.get_item_user_data(app_data[0])
-        input_tag =dpg.get_item_user_data(app_data[1])
+        output_tag = dpg.get_item_user_data(app_data[0])
+        input_tag = dpg.get_item_user_data(app_data[1])
 
         # 标签
         output_label = output_ins.output_text[output_tag]
         input_label = input_ins.input_text[input_tag]
 
-        # # 获取数据
-        # print(output_ins.output_data[output_label])
-        # print(input_ins.input_data[input_label])
-        # input_ins.input_data[input_ins.input_text[input_tag]] = output_ins.output_data[output_ins.output_text[output_tag]]
-
+        link = dpg.add_node_link(app_data[0], app_data[1], parent=sender)
         # 建立函数
-        self.link_func[output_tag+input_tag] = create_link_function(input_ins, input_label, output_ins, output_label)
+        self.link_func[link] = create_link_function(input_ins, input_label, output_ins, output_label)
 
-        dpg.add_node_link(app_data[0], app_data[1], parent=sender)
-
-
-
+    def delink_callback(self, sender, app_data):
+        # 删除函数
+        del self.link_func[app_data]
+        dpg.delete_item(app_data)

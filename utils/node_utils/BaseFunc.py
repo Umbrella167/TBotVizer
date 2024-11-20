@@ -52,9 +52,11 @@ class BaseFunc:
         if self.old_output_data != self.output_data:
             self.output_data_callback()
 
+    # 当input被手动改变触发的callback
     def input_callback(self, sender, app_data):
         self.input_data[self.input_text[sender]] = app_data
 
+    # 当输入的值被改变时
     def input_data_callback(self):
         for i in self.input_data:
             dpg.configure_item(self.input_text[i], default_value=self.input_data[i])

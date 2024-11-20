@@ -29,7 +29,8 @@ def item_auto_resize(item, parent, height_rate: float = 0, width_rate: float = 0
 
 def get_mouse_relative_pos(parent):
     pos = dpg.get_mouse_pos(local=False)
-    ref_node = dpg.get_item_children(parent, slot=1)[0]
+    children = dpg.get_item_children(parent, slot=1)
+    ref_node = children[0]
     ref_screen_pos = dpg.get_item_rect_min(ref_node)
     NODE_PADDING = (18, 18)
     pos[0] = pos[0] - (ref_screen_pos[0] - NODE_PADDING[0])
