@@ -6,25 +6,41 @@ import pickle
 
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
+
 def set_itme_text_color(item, color):
     with dpg.theme() as input_text:
         with dpg.theme_component(dpg.mvInputText):
             dpg.add_theme_color(dpg.mvThemeCol_Text, color)
         dpg.bind_item_theme(item, input_text)
-
-def item_auto_resize(item,parent,height_rate:float = 0,width_rate:float = 0):
-    parent_width, parent_height = dpg.get_item_rect_size(parent)
-    def f(sender, app_data, user_data):
+def item_auto_resize(item, parent, height_rate: float = 0, width_rate: float = 0, min_width=None, max_width=None):
+    def resize_callback(sender, app_data, user_data):
         parent_width, parent_height = dpg.get_item_rect_size(parent)
-        if width_rate:
-            dpg.configure_item(item, width=parent_width * width_rate)
-        if height_rate:
-            dpg.configure_item(item, height=parent_height * height_rate)
+        new_width = parent_width * width_rate if width_rate > 0 else None
+        new_height = parent_height * height_rate if height_rate > 0 else None
+        if new_width is not None:
+            if min_width is not None and new_width < min_width:
+                new_width = min_width
+            elif max_width is not None and new_width > max_width:
+                new_width = max_width
+            dpg.configure_item(item, width=new_width)
+        if new_height is not None:
+            dpg.configure_item(item, height=new_height)
+
     with dpg.item_handler_registry() as handler:
-        dpg.add_item_resize_handler(
-            callback=f
-        )
+        dpg.add_item_resize_handler(callback=resize_callback)
     dpg.bind_item_handler_registry(parent, handler)
+
+
+def get_mouse_relative_pos(parent):
+    pos = dpg.get_mouse_pos(local=False)
+    children = dpg.get_item_children(parent, slot=1)
+    ref_node = children[0]
+    ref_screen_pos = dpg.get_item_rect_min(ref_node)
+    NODE_PADDING = (18, 18)
+    pos[0] = pos[0] - (ref_screen_pos[0] - NODE_PADDING[0])
+    pos[1] = pos[1] - (ref_screen_pos[1] - NODE_PADDING[1])
+    return pos
+
 
 def calculate_distance(pos1, pos2):
     return math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
@@ -105,13 +121,16 @@ def swap_elements(lst, element1, element2):
     except ValueError:
         client_logger.log("ERROR", "Utils/swap_elements: One of the elements is not in the list!")
 
+
 def check_is_created(func):
     def wrapper(self, *args, **kwargs):
         if self.is_created:
             client_logger.log("DEBUG", f"{self.__class__.__name__} is already created.")
             return
         return func(self, *args, **kwargs)
+
     return wrapper
+
 
 # def compare_dicts(dict1, dict2):
 #     keys1 = set(dict1.keys())
@@ -173,6 +192,7 @@ def build_message_tree(data):
         tree[puuid][uuid] = data[uuid]
     return tree
 
+
 def build_param_tree(flat_dict):
     tree = {}
 
@@ -231,7 +251,8 @@ def set_input_color(change_item, color):
     except Exception as e:
         tb = traceback.extract_tb(e.__traceback__)
         file_name, line_number, func_name, text = tb[-1]
-        client_logger.log("ERROR", f"ERROR(bind_item_theme)：\n    Item:{change_item}\n    File:{file_name}\n    Line:{line_number}\n    Function:{func_name}\n    Text:{text}")
+        client_logger.log("ERROR",
+                          f"ERROR(bind_item_theme)：\n    Item:{change_item}\n    File:{file_name}\n    Line:{line_number}\n    Function:{func_name}\n    Text:{text}")
 
 
 # 这个不知道是啥也没用到
@@ -250,6 +271,7 @@ def add_input(_type, tag, default_value, max_value, min_value, step):
             )
             dpg.add_slider_int(height=10, width=-1)
 
+
 # 反序列化msg数据
 def msg_serializer(msg, msg_type):
     if msg_type in TypeParams.PYTHON_TYPES:
@@ -259,6 +281,7 @@ def msg_serializer(msg, msg_type):
         real_msg.ParseFromString(msg)
     return real_msg
 
+
 # 获取所有子类
 def get_all_subclasses(cls):
     subclasses = cls.__subclasses__()
@@ -267,6 +290,7 @@ def get_all_subclasses(cls):
         all_subclasses.append(subclass)
         all_subclasses.extend(get_all_subclasses(subclass))
     return all_subclasses
+
 
 def clear_nested_dictionaries(dict_obj):
     """Recursively clear all nested dictionaries."""

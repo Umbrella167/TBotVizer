@@ -1,8 +1,10 @@
 from loguru import logger
 import os
 import sys
+import traceback
 
 from config.SystemConfig import config
+
 
 class ClientLogManager:
     def __init__(self, log_file="ui_logs.log"):
@@ -34,7 +36,14 @@ class ClientLogManager:
             colorize=True,
         )
 
-    def log(self, level, msg, no=None):
+    def log(self, level, msg, e:Exception=None, no=None):
+        if e is not None:
+            tb = traceback.extract_tb(e.__traceback__)
+            last_traceback = tb[-1]
+            line_number = last_traceback.lineno
+            file_name = last_traceback.filename
+            msg += f" Error: {e}, occurred on line {line_number} in file {file_name}"
+
         if level.lower() in self.log_levels:
             self.logger.log(level.upper(), msg)
         else:
@@ -42,6 +51,5 @@ class ClientLogManager:
                 self.logger.level(level.upper(), no=no)
                 self.logger.log(level.upper(), msg)
             self.logger.error("Unknown log level: {}".format(level))
-
 
 client_logger = ClientLogManager()

@@ -5,14 +5,14 @@ from utils.ClientLogManager import client_logger
 from utils.Utils import get_all_subclasses
 
 
-class ConsoleBox(Box):
+class ConsoleBaseBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._boxes = []
         self.button_tags = []
-        self.all_classes = get_all_subclasses(Box)
+        self.all_classes = get_all_subclasses(BaseBox)
         self.generate_add_methods()
         self.box_count = {}
 
@@ -20,7 +20,7 @@ class ConsoleBox(Box):
         # 初始化设置
         self.check_and_create_window()
         if self.label is None:
-            dpg.configure_item(self.tag, label="ConsoleBox")
+            dpg.configure_item(self.tag, label="ConsoleBaseBox")
         dpg.configure_item(
             self.tag,
             pos=[0, 0],
@@ -64,7 +64,6 @@ class ConsoleBox(Box):
             if cls == self.__class__:
                 continue
             method_name = f"add_{cls.__name__}"
-
             # 使用闭包捕获cls
             def add_method(self, cls=cls, **kwargs):
                 try:

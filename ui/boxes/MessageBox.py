@@ -1,11 +1,11 @@
 import dearpygui.dearpygui as dpg
-from ui.boxes.BaseBox import Box
+from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 from logger.logger import Logger
 import threading
 
-class MessageBox(Box):
+class MessageBaseBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -64,7 +64,7 @@ class MessageBox(Box):
             # 添加新的行
             for uuid in uuids_to_add:
                 self.add_row(new_data, puuid, uuid)
-        client_logger.log("INFO", "MessageBox updated!")
+        client_logger.log("INFO", "MessageBaseBox updated!")
         self.data = new_data.copy()
 
     def add_node(self, data, puuid):

@@ -1,9 +1,9 @@
-from ui.boxes.BaseBox import Box
+from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
 from ui.components.Canvas import Canvas
 
 
-class CanvasBox(Box):
+class CanvasBaseBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):

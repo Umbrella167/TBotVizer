@@ -1,4 +1,5 @@
-from ui.boxes.BaseBox import Box
+
+from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
 from logger.logger import Logger
 from utils.ClientLogManager import client_logger
@@ -6,9 +7,7 @@ from utils.Utils import set_itme_text_color
 import tbkpy._core as tbkpy
 
 
-class LogReaderBox(Box):
-    onle = True
-
+class LogReaderBaseBox(BaseBox):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._logger = Logger()
