@@ -1,7 +1,10 @@
-from api.TBKApi import TBKApi
-from utils.ClientLogManager import client_logger
 import tbkpy._core as tbkpy
+
+from api.TBKApi import TBKApi
 from config.SystemConfig import config
+from utils.ClientLogManager import client_logger
+
+
 class UiData:
     def __init__(self):
         self.draw_mouse_pos = (0, 0)
@@ -13,11 +16,12 @@ ui_data = UiData()
 class TBKData:
     def __init__(self, tbkapi: TBKApi):
         self.TBKApi = tbkapi
-        self._param_data = self.TBKApi.get_param()
-        self._message_data = self.TBKApi.get_message()
+        self._param_data = None
+        self._message_data = None
         self._message_node_tree = None
         self.callback_dict = {}
         self.subscriber_dict = {}
+
     def update(self):
         pass
 
@@ -26,6 +30,7 @@ class TBKData:
         name = info["name"]
         msg_name = info["msg_name"]
         tag = info["tag"]
+
         if tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
             del self.callback_dict[puuid][msg_name][name][tag]
 

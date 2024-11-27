@@ -1,15 +1,20 @@
-import dearpygui.dearpygui as dpg
 import math
-import numpy as np
-import traceback
 import pickle
+import traceback
+
+import dearpygui.dearpygui as dpg
+import numpy as np
+
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
+
+
 def new_texture(image):
-    height,width, _ = image.shape
+    height, width, _ = image.shape
     texture_data = image.ravel().astype("float32") / 255
     with dpg.texture_registry():
-        texture_tag = dpg.add_raw_texture(width=width, height=height, default_value=texture_data, format=dpg.mvFormat_Float_rgba)
+        texture_tag = dpg.add_raw_texture(width=width, height=height, default_value=texture_data,
+                                          format=dpg.mvFormat_Float_rgba)
     return texture_tag
 
 

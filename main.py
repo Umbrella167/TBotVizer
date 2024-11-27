@@ -1,9 +1,12 @@
 # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 import dearpygui.dearpygui as dpg
-import dearpygui.demo as demo
 
 from ui.Ui import UI
 from utils.ClientLogManager import client_logger
+
+
+# import dearpygui.demo as demo
+
 
 def loop(UI):
     try:

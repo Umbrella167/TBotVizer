@@ -1,14 +1,14 @@
-import dearpygui.dearpygui as dpg
 import time
 
+import dearpygui.dearpygui as dpg
 from google.protobuf.json_format import MessageToDict
 from loguru import logger as uilogger
+
 from static.Params import TypeParams
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
-from utils.Utils import msg_serializer
 from utils.DataProcessor import tbk_data
-
+from utils.Utils import msg_serializer
 
 
 class PlotVzBaseBox(BaseBox):
@@ -179,8 +179,6 @@ class PlotVzBaseBox(BaseBox):
             dpg.set_axis_limits_auto(self.plot_x_tag)
 
 
-
-
 class PlotUitls:
     @staticmethod
     def is_plot_supported(tbk_type):
@@ -259,4 +257,3 @@ class TimedDeque:
     def get_items(self):
         # Directly return the list of items
         return self.items
-

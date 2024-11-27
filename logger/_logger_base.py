@@ -1,25 +1,27 @@
 import os
-from time import time
 import pickle
-from tbkpy.socket.udp import UDPReceiver
-from zipfile import ZipFile, ZIP_STORED
-import threading
 import re
-from datetime import datetime, timezone
+import threading
 from collections import defaultdict
+from datetime import datetime
+from time import time
+from zipfile import ZipFile, ZIP_STORED
+
+from tbkpy.socket.udp import UDPReceiver
+
 from utils.ClientLogManager import client_logger
 
 
 class UDPMultiCastReceiver(UDPReceiver):
     def __init__(
-        self,
-        group,
-        port,
-        *,
-        bind_ip="",
-        callback=None,
-        user_data=None,
-        plugin=None,
+            self,
+            group,
+            port,
+            *,
+            bind_ip="",
+            callback=None,
+            user_data=None,
+            plugin=None,
     ):
         """
         Initializes a UDP multicast receiver that listens to a specified group and port.
@@ -70,9 +72,9 @@ class _Utils:
         """
         size = 0
         for (
-            root,
-            dirs,
-            files,
+                root,
+                dirs,
+                files,
         ) in os.walk(dir):
             size += sum(
                 [
@@ -97,7 +99,7 @@ class _Utils:
         directory_path = log_dir
 
         def extract_timestamp(
-            file_name,
+                file_name,
         ):
             match = re.search(
                 r"Rec_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d+)",
@@ -125,7 +127,7 @@ class _Utils:
                         file,
                     )
                 )
-                > 0
+                   > 0
             ]
             return sorted(
                 log_files,
@@ -316,7 +318,7 @@ class _LogReader:
         if start_index > 0:
             prev_index = start_index - 1
             if abs(log_file_data[prev_index]["timestamp"] - timestamp) <= abs(
-                log_file_data[start_index]["timestamp"] - timestamp
+                    log_file_data[start_index]["timestamp"] - timestamp
             ):
                 closest_index = prev_index
 
@@ -458,6 +460,8 @@ class _LogReader:
 
         self.now_msg = self.now_msg_list[previous_index]
         return self.now_msg
+
+
 class _Logger:
     def __init__(self, log_dir="logs"):
         """
@@ -472,7 +476,6 @@ class _Logger:
         self.msg_count = 0
         self.is_recording = False
         self.lock = threading.Lock()
-
 
     def record_udp(self, udp_dict: dict):
         """
@@ -489,14 +492,14 @@ class _Logger:
             )
 
     def _new_msg(
-        self,
-        msg: str,
-        puuid: str,
-        msg_name: str,
-        name: str,
-        msg_type: str,
+            self,
+            msg: str,
+            puuid: str,
+            msg_name: str,
+            name: str,
+            msg_type: str,
     ):
-        
+
         """
         Creates a new message with metadata.
 
@@ -520,12 +523,12 @@ class _Logger:
         return msg
 
     def record(
-        self,
-        msg,
-        puuid: str,
-        msg_name: str,
-        name: str,
-        msg_type: str,
+            self,
+            msg,
+            puuid: str,
+            msg_name: str,
+            name: str,
+            msg_type: str,
     ):
         """
         Records a message to the log.
@@ -566,8 +569,8 @@ class _Logger:
         )
 
     def open(
-        self,
-        log_package_path=None,
+            self,
+            log_package_path=None,
     ):
         """
         Opens a log package for reading.

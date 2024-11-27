@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import etcd3
 
-import utils.Utils as uitls
+import etcd3
 import tzcp.tbk.tbk_pb2 as tbkpb
 from tbkpy import _core as tbkpy
+
+import utils.Utils as uitls
 from config.SystemConfig import config
 from utils.ClientLogManager import client_logger
 

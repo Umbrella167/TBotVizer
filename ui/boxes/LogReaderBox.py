@@ -1,10 +1,10 @@
-
-from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
+import tbkpy._core as tbkpy
+
 from logger.logger import Logger
+from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
 from utils.Utils import set_itme_text_color
-import tbkpy._core as tbkpy
 
 
 class LogReaderBaseBox(BaseBox):
@@ -75,12 +75,12 @@ class LogReaderBaseBox(BaseBox):
             dpg.add_key_press_handler(key=dpg.mvKey_Left, callback=self.prev_msg)
             dpg.add_key_press_handler(key=dpg.mvKey_Right, callback=self.next_msg)
         with dpg.file_dialog(
-            directory_selector=False,
-            show=False,
-            width=700,
-            height=400,
-            default_path="logs/msg_log",
-            callback=lambda sender, app_data: dpg.set_value(self.path_input_tag, app_data["file_path_name"]),
+                directory_selector=False,
+                show=False,
+                width=700,
+                height=400,
+                default_path="logs/msg_log",
+                callback=lambda sender, app_data: dpg.set_value(self.path_input_tag, app_data["file_path_name"]),
         ) as self.file_dialog_tag:
             dpg.add_file_extension(
                 "Source files (*.tzlog){.tzlog}",

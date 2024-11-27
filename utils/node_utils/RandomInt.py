@@ -15,4 +15,3 @@ class RandomInt(BaseFunc):
         super().calc()
         if self.automatic and (time.time() - run_time) % 0.5 < 0.01:
             self.output_data["res"] = random.randint(0, 100)
-            self.last_time = time.time()

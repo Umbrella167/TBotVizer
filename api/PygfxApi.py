@@ -1,9 +1,9 @@
-import pygfx as gfx
-from wgpu.gui.offscreen import WgpuCanvas
-import numpy as np
-
 # import imageio.v3 as iio
 import cv2
+import numpy as np
+import pygfx as gfx
+from wgpu.gui.offscreen import WgpuCanvas
+
 
 
 class Camera:
@@ -64,7 +64,7 @@ class World:
         self.world.add(background)
 
     def add_plane(
-        self, width=10, height=10, position=(0, 0, 0), rotation=(0, 0, 0), flat_shading=True, color=(1, 1, 1, 1)
+            self, width=10, height=10, position=(0, 0, 0), rotation=(0, 0, 0), flat_shading=True, color=(1, 1, 1, 1)
     ):
         plane = gfx.Mesh(
             gfx.plane_geometry(width, height),
@@ -105,7 +105,6 @@ class World:
 _engine = GfxEngine()
 
 if __name__ == "__main__":
-
     engine = GfxEngine()
     world = engine.new_world()
     world.add_plane()

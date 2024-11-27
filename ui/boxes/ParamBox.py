@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
-
+import time
+from config.SystemConfig import run_time
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
@@ -13,6 +14,7 @@ class ParamBaseBox(BaseBox):
         self.tbk_data = tbk_data
         self.data = {}
         self.table_tag = None
+        self.create_time = time.time()
 
         self.tb = None
         self.table_title = ["Param", "Info", "Type", "Value"]
@@ -45,6 +47,9 @@ class ParamBaseBox(BaseBox):
 
     # 更新表格中内容
     def update(self):
+        if not (time.time() - self.create_time) % 2 < 0.01:
+            # 每两秒更新一次数据
+            return
         new_data = self.tbk_data.param_data
         # 如果数据没有变化，则不更新
         if self.data == new_data:

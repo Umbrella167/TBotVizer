@@ -1,7 +1,8 @@
-from loguru import logger
 import os
 import sys
 import traceback
+
+from loguru import logger
 
 from config.SystemConfig import config
 
@@ -36,7 +37,7 @@ class ClientLogManager:
             colorize=True,
         )
 
-    def log(self, level, msg, e:Exception=None, no=None):
+    def log(self, level, msg, e: Exception = None, no=None):
         if e is not None:
             tb = traceback.extract_tb(e.__traceback__)
             last_traceback = tb[-1]
@@ -51,5 +52,6 @@ class ClientLogManager:
                 self.logger.level(level.upper(), no=no)
                 self.logger.log(level.upper(), msg)
             self.logger.error("Unknown log level: {}".format(level))
+
 
 client_logger = ClientLogManager()

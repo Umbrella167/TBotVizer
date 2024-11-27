@@ -1,7 +1,7 @@
 from api import TBKApi
 from utils.DataProcessor import TBKData
-from utils.Utils import build_message_tree
 from utils.testUtils import create_nodes, stop_all_nodes
+
 
 def test_attr():
     tbk_api = TBKApi.TBKApi()
@@ -11,15 +11,9 @@ def test_attr():
     # original_param = tbk_api.get_original_param()
     # for k, v in original_param.items():
 
-
     message = tbk_data.message_node_tree
 
-
     stop_all_nodes()
-
-
-
-
 
 
 def test_answer():

@@ -1,9 +1,9 @@
 import dearpygui.dearpygui as dpg
+
 from config.UiConfig import UiConfig
 from ui.boxes.ConsoleBox import ConsoleBaseBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import ui_data
-import pickle
 
 
 class UICallback:
@@ -81,7 +81,7 @@ class UI:
                 client_logger.log("ERROR", f"Loop Failed! {e}")
             finally:
                 self.destroy_all_boxes()
-            
+
         else:
             dpg.start_dearpygui()
 

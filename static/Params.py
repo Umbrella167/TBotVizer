@@ -108,7 +108,8 @@ class TypeParams:
         'array',
     ]
     PYTHON_TYPES = ['int', 'float', 'list', 'tuple', 'dict']
-    
+
+
 class LanguageParams:
     def __init__(self):
         self._language_settings = {
@@ -134,5 +135,6 @@ class LanguageParams:
 
     def __getitem__(self, lang):
         return self._language_settings.get(lang)
+
 
 language = LanguageParams()

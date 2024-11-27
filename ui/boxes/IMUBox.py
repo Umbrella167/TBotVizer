@@ -75,6 +75,7 @@ class IMUBox(BaseBox):
         self.count = 0
         self._callback = IMUBoxCallback()
         self.checkbox_bind = {}
+
     def create(self):
         self.check_and_create_window()
         if self.label is None:
@@ -86,7 +87,6 @@ class IMUBox(BaseBox):
         self.canvas3D.add(scene)
 
     def imu_scene(self):
-
         self.grid = gfx.GridHelper(5000, 50, color1="#444444", color2="#222222")
         self.imu_group = gfx.Group()
         self.car_meshes = gfx.load_mesh("static/model/car.STL")[0]

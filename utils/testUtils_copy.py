@@ -1,11 +1,10 @@
+import pickle
+import random
+import threading
 import time
 from time import sleep
 
 import tbkpy._core as tbkpy
-import threading
-import random
-
-import pickle
 
 # 结束信号
 stop_event = threading.Event()

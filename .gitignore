@@ -3,7 +3,9 @@
 
 __pycache__
 **/__pycache__
-
-./logs/*
-./static/font/BLACK-NORMAL.ttf
+*.lprof
 ./static/model/car.STL
+logs/*
+!logs/.gitkeep
+static/font/BLACK-NORMAL.ttf
+

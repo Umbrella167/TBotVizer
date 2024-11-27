@@ -1,5 +1,6 @@
-from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
+
+from ui.boxes.BaseBox import BaseBox
 from ui.components.Canvas2D import Canvas2D
 
 
