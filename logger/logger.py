@@ -1,5 +1,8 @@
-from logger._logger_base import _Logger
 from logger._log_reader import LogReader
+from logger._logger_base import _Logger
+from utils.ClientLogManager import client_logger
+
+
 class Logger:
     def __init__(self, log_dir="logs"):
         """
@@ -8,11 +11,23 @@ class Logger:
         :param log_dir: The directory to store logs.
         """
         self.logger = _Logger(log_dir)
+
     def save(self):
         """
         Saves the log package to a zip file.
         """
-        self.logger.save()
+        if self.logger.is_recording:
+            self.logger._diskWriter.save_current_data()
+        client_logger.log("info", "Log is auto saved.")
+
+    def close(self):
+        """
+        Closes the log package.
+        """
+        if self.logger.is_recording:
+            self.logger._diskWriter.close()
+            client_logger.log("info", "Log is auto saved.")
+
     def record_udp(self, udp_dict):
         """
         Records UDP messages based on a dictionary of UDP configurations.
@@ -40,7 +55,15 @@ class Logger:
         """
         self.logger.stop()
 
-    def record(self, message,puuid, msg_name, name,msg_type):
+    def is_recording(self):
+        """
+        Returns whether the logger is currently recording UDP messages.
+
+        :return: True if the logger is recording, False otherwise.
+        """
+        return self.logger.is_recording
+
+    def record(self, message, puuid, msg_name, name, msg_type):
         """
         Records a message to the log with a specified tag and source.
 
@@ -48,7 +71,7 @@ class Logger:
         ```
 
         logger = Logger()
-
+            
         while True:
             message = "msg"
             logger.record(message, tag="vision")
@@ -57,7 +80,7 @@ class Logger:
         :param tag: The tag associated with the message.
         :param source: The source of the message.
         """
-        self.logger.record(message, puuid, msg_name, name,msg_type)
+        self.logger.record(message, puuid, msg_name, name, msg_type)
 
     def list_log_packages(self):
         """
@@ -66,7 +89,7 @@ class Logger:
         :return: A list of log packages.
         """
         packge = self.logger.list_log_packge()
-        print(packge)
+        client_logger.log("info", f"Log packages: {packge}")
         return packge
 
     def open(self, log_package_path=None):
@@ -77,16 +100,16 @@ class Logger:
         :return: An instance of LogReader for the opened log package.
         """
         if log_package_path is None:
-            log_package_path = self.logger.list_log_packge()
+            log_package_path = self.logger.list_log_packge(log_package_path)
             if log_package_path:
                 log_package_path = log_package_path[0][0]
             else:
-                print("No log package found.")
+                client_logger.log("error", "No log package found.")
                 return None
-        return LogReader(f"{self.logger.log_dir}/{log_package_path}")
+        return LogReader(f"{log_package_path}")
+
 
 if __name__ == "__main__":
-
     udp_dict = {
         "event": ["233.233.233.233", 1670],
         "vision": ["233.233.233.233", 41001],

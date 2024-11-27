@@ -34,6 +34,8 @@ class ConsoleBaseBox(BaseBox):
             no_saved_settings=True,
             no_title_bar=True,
         )
+        self.boxes.append(self)
+        self.fps_text = dpg.add_text(f"FPS:{dpg.get_frame_rate()}", parent=self.tag)
         # 实例化按钮
         self.generate_add_bottom()
 
@@ -64,6 +66,7 @@ class ConsoleBaseBox(BaseBox):
             if cls == self.__class__:
                 continue
             method_name = f"add_{cls.__name__}"
+
             # 使用闭包捕获cls
             def add_method(self, cls=cls, **kwargs):
                 try:
@@ -79,6 +82,10 @@ class ConsoleBaseBox(BaseBox):
 
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
+
+    def update(self):
+        super().update()
+        dpg.set_value(self.fps_text, f"FPS:{dpg.get_frame_rate()}")
 
     @property
     def boxes(self):

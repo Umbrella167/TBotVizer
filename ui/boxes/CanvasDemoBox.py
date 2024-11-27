@@ -1,9 +1,10 @@
-from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
+
+from ui.boxes.BaseBox import BaseBox
 from ui.components.Canvas import Canvas
 
 
-class CanvasBaseBox(BaseBox):
+class CanvasDemoBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):
@@ -12,10 +13,6 @@ class CanvasBaseBox(BaseBox):
 
     def create(self):
         self.check_and_create_window()
-        # if self.tag:
-        #     dpg.add_window(tag=self.tag, label=self.label)
-        # else:
-        #     self.tag = dpg.add_window(label=self.label)
         if self.label is None:
             dpg.configure_item(self.tag, label="CANVAS")
 

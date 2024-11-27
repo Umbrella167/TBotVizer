@@ -1,11 +1,28 @@
-import dearpygui.dearpygui as dpg
 import math
-import numpy as np
-import traceback
 import pickle
+import traceback
+
+import dearpygui.dearpygui as dpg
+import numpy as np
 
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
+
+
+def new_texture(image):
+    height, width, _ = image.shape
+    texture_data = image.ravel().astype("float32") / 255
+    with dpg.texture_registry():
+        texture_tag = dpg.add_raw_texture(width=width, height=height, default_value=texture_data,
+                                          format=dpg.mvFormat_Float_rgba)
+    return texture_tag
+
+
+def set_itme_text_color(item, color):
+    with dpg.theme() as input_text:
+        with dpg.theme_component(dpg.mvInputText):
+            dpg.add_theme_color(dpg.mvThemeCol_Text, color)
+        dpg.bind_item_theme(item, input_text)
 
 
 def item_auto_resize(item, parent, height_rate: float = 0, width_rate: float = 0, min_width=None, max_width=None):
@@ -137,15 +154,15 @@ def check_is_created(func):
 #     common_keys = keys1 & keys2
 #     modified_items = {key: dict2[key] for key in common_keys if dict1[key] != dict2[key]}
 #     return added_keys, removed_keys, modified_items
-# def compare_dicts(dict1, dict2):  
-#     added = {k: dict2[k] for k in dict2 if k not in dict1}  
-#     removed = {k: dict1[k] for k in dict1 if k not in dict2}  
-#     modified = {k: (dict1[k], dict2[k]) for k in dict1 if k in dict2 and dict1[k] != dict2[k]}  
+# def compare_dicts(dict1, dict2):
+#     added = {k: dict2[k] for k in dict2 if k not in dict1}
+#     removed = {k: dict1[k] for k in dict1 if k not in dict2}
+#     modified = {k: (dict1[k], dict2[k]) for k in dict1 if k in dict2 and dict1[k] != dict2[k]}
 
-#     return {  
-#         'added': added,  
-#         'removed': removed,  
-#         'modified': modified  
+#     return {
+#         'added': added,
+#         'removed': removed,
+#         'modified': modified
 #     }
 
 
@@ -154,29 +171,25 @@ def compare_dicts(dict1, dict2):
     removed = {}
     modified = {}
 
-    # 处理新增和删除的键  
+    # 处理新增和删除的键
     for key in dict1.keys():
         if key not in dict2:
             removed[key] = dict1[key]
         else:
             if isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
-                # 如果值是字典，递归比较  
+                # 如果值是字典，递归比较
                 nested_changes = compare_dicts(dict1[key], dict2[key])
-                if nested_changes['added'] or nested_changes['removed'] or nested_changes['modified']:
+                if nested_changes["added"] or nested_changes["removed"] or nested_changes["modified"]:
                     modified[key] = nested_changes
             elif dict1[key] != dict2[key]:
-                # 如果值不相等，记录修改  
+                # 如果值不相等，记录修改
                 modified[key] = (dict1[key], dict2[key])
 
     for key in dict2.keys():
         if key not in dict1:
             added[key] = dict2[key]
 
-    return {
-        'added': added,
-        'removed': removed,
-        'modified': modified
-    }
+    return {"added": added, "removed": removed, "modified": modified}
 
 
 def build_message_tree(data):
@@ -193,7 +206,7 @@ def build_param_tree(flat_dict):
     tree = {}
 
     for key, value in flat_dict.items():
-        parts = key.split('/')
+        parts = key.split("/")
         current_level = tree
 
         for part in parts[:-1]:  # 遍历层级中的所有部分（除了最后一个）
@@ -203,7 +216,7 @@ def build_param_tree(flat_dict):
 
         # 处理最后一个部分，可能包含冒号
         last_part = parts[-1]
-        sub_parts = last_part.split(':')
+        sub_parts = last_part.split(":")
 
         for sub_part in sub_parts[:-1]:
             if sub_part not in current_level:
@@ -227,9 +240,7 @@ def get_tree_depth(tree, current_depth=0):
 def set_input_color(change_item, color):
     with dpg.theme() as theme_id:
         with dpg.theme_component(dpg.mvAll):
-            dpg.add_theme_color(
-                dpg.mvThemeCol_FrameBg, (0, 0, 0, 0), category=dpg.mvThemeCat_Core
-            )
+            dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (0, 0, 0, 0), category=dpg.mvThemeCat_Core)
             dpg.add_theme_color(
                 dpg.mvThemeCol_FrameBgHovered,
                 (0, 0, 0, 0),
@@ -247,8 +258,10 @@ def set_input_color(change_item, color):
     except Exception as e:
         tb = traceback.extract_tb(e.__traceback__)
         file_name, line_number, func_name, text = tb[-1]
-        client_logger.log("ERROR",
-                          f"ERROR(bind_item_theme)：\n    Item:{change_item}\n    File:{file_name}\n    Line:{line_number}\n    Function:{func_name}\n    Text:{text}")
+        client_logger.log(
+            "ERROR",
+            f"ERROR(bind_item_theme)：\n    Item:{change_item}\n    File:{file_name}\n    Line:{line_number}\n    Function:{func_name}\n    Text:{text}",
+        )
 
 
 # 这个不知道是啥也没用到

@@ -9,5 +9,3 @@ class UiConfig(BaseConfig):
         self.layout = LayoutManager()
         self.title = title
         self.instance = None
-
-

@@ -62,11 +62,10 @@ class NodeBaseBox(BaseBox):
             parent=self.node_group,
         )
 
-        with dpg.node(label="Tips: 拖动左侧节点到视窗以使用函数", parent=self.node_editor, use_internal_label=True, show=True, draggable=False):
+        with dpg.node(label="Tips: 拖动左侧节点到视窗以使用函数", parent=self.node_editor, use_internal_label=True,
+                      show=True, draggable=False):
             with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
                 dpg.add_spacer(width=1)
-
-
 
         # with dpg.node(label="Node 2", pos=[300, 10], parent=self.node_editor):
         #     with dpg.node_attribute() as na2:

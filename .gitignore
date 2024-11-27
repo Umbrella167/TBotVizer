@@ -4,6 +4,7 @@
 __pycache__
 **/__pycache__
 
-./logs/*
-./static/font/BLACK-NORMAL.ttf
+logs/*
+!logs/.gitkeep
+static/font/BLACK-NORMAL.ttf
 

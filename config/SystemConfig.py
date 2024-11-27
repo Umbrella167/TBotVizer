@@ -2,6 +2,7 @@ import time
 
 ENVIRONMENT = 'development'
 
+
 class Config:
     CURRENT_LANGUAGE = "zh"
     TBK_NODE_NAME = "TBK-Client"
@@ -10,7 +11,6 @@ class Config:
     # FONT_FILE = "static/font/Minecraft.ttf"
     # FONT_FILE = "static/font/FiraCode-Regular.ttf"
     LOG_DIR = "logs/ui_logs"
-
 
 
 class DevelopmentConfig(Config):

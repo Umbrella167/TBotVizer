@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 
 from utils.Utils import get_mouse_relative_pos
 
+
 class BaseFunc:
     def __init__(self, parent, label=None, pos=None):
         self.input_data = {}

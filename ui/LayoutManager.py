@@ -7,7 +7,8 @@ from static.Params import language
 
 
 class LayoutManager:
-    def __init__(self, theme="Dark", font_size=20, init_file="static/layout/ui_layout.ini", settings_file="layout_settings.json"):
+    def __init__(self, theme="Dark", font_size=20, init_file="static/layout/ui_layout.ini",
+                 settings_file="layout_settings.json"):
         # 初始化布局管理器，设置保存布局的文件名
         self.settings_file = settings_file
         self.init_file = init_file
@@ -128,6 +129,7 @@ class LayoutManager:
                     dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered, (90, 90, 90, 255))
                     dpg.add_theme_color(dpg.mvThemeCol_HeaderActive, (110, 110, 110, 255))
                     dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 5, 5)
+
                 if theme == "Light":
                     dpg.add_theme_color(dpg.mvThemeCol_WindowBg, (240, 240, 240, 255))
                     dpg.add_theme_color(dpg.mvThemeCol_TitleBg, (220, 220, 220, 255))
@@ -180,4 +182,3 @@ class LayoutManager:
         dpg.set_item_label("chineseS_menu", label["chineseS_menu"])
         dpg.set_item_label("english_menu", label["english_menu"])
         dpg.set_item_label("english_menu", label["english_menu"])
-

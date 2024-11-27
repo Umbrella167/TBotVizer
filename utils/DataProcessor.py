@@ -1,6 +1,8 @@
-from api.TBKApi import TBKApi
-from utils.ClientLogManager import client_logger
 import tbkpy._core as tbkpy
+
+from api.TBKApi import TBKApi
+from config.SystemConfig import config
+from utils.ClientLogManager import client_logger
 
 
 class UiData:
@@ -104,7 +106,11 @@ class TBKData:
             elif node_type == "pubs":
                 data = self.message_data[node_type]
                 for uuid in data:
-                    puuid = f"{data[uuid].ep_info.node_name}_{data[uuid].puuid}"
+                    node_name = data[uuid].ep_info.node_name
+                    if node_name == config.TBK_NODE_NAME:
+                        puuid = node_name
+                    else:
+                        puuid = f"{node_name}_{data[uuid].puuid}"
                     if puuid not in tree:
                         tree[puuid] = {}
                     tree[puuid][uuid] = data[uuid]
