@@ -3,7 +3,6 @@ import time
 
 import dearpygui.dearpygui as dpg
 
-from config.SystemConfig import run_time
 from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
@@ -19,13 +18,13 @@ class MessageBaseBox(BaseBox):
         self.puuid_tags = {}
         self.table_tags = {}
         self.uuid_tags = {}
+        self.create_time = time.time()
 
         self.msg_logger = Logger("logs/msg_log")
         self._callback = MessageBoxCallBack(self.msg_logger)
         self.tree_item_tag_dict = {}
         self.tbk_data = tbk_data
         self.data = {}
-        self.current_time = 0
 
     def create(self):
         self.check_and_create_window()
@@ -34,10 +33,9 @@ class MessageBaseBox(BaseBox):
         self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag)
 
     def update(self):
-        if not (time.time() - run_time) % 2 < 0.01:
+        if not (time.time() - self.create_time) % 2 < 0.01:
             # 每两秒更新一次数据
             return
-        self.start_time = self.current_time
         new_data = self.tbk_data.message_tree["pubs"]
         # 如果数据没有变化，则不更新
         if self.data == new_data:

@@ -14,6 +14,7 @@ class ParamBaseBox(BaseBox):
         self.tbk_data = tbk_data
         self.data = {}
         self.table_tag = None
+        self.create_time = time.time()
 
         self.tb = None
         self.table_title = ["Param", "Info", "Type", "Value"]
@@ -46,7 +47,7 @@ class ParamBaseBox(BaseBox):
 
     # 更新表格中内容
     def update(self):
-        if not (time.time() - run_time) % 2 < 0.01:
+        if not (time.time() - self.create_time) % 2 < 0.01:
             # 每两秒更新一次数据
             return
         new_data = self.tbk_data.param_data
