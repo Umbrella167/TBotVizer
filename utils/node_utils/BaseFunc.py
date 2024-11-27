@@ -46,6 +46,10 @@ class BaseFunc:
             dpg.set_item_user_data(self.attribute[o], self.output_text[o])
             # print(o, self.output_text[o])
             self.output_text[self.output_text[o]] = o
+        self.extra()
+
+    def extra(self):
+        pass
 
     def calc(self):
         if self.old_input_data != self.input_data:

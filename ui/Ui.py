@@ -25,6 +25,9 @@ class UICallback:
             x - y for x, y in zip(ui_data.draw_mouse_pos, ui_data.draw_mouse_pos_last)
         )
 
+    def on_right_click(self, sender, app_data, user_data):
+        pass
+
 
 class UI:
     def __init__(self):
@@ -81,7 +84,6 @@ class UI:
                 client_logger.log("ERROR", f"Loop Failed! {e}")
             finally:
                 self.destroy_all_boxes()
-
         else:
             dpg.start_dearpygui()
 
@@ -89,3 +91,6 @@ class UI:
         # 创建全局监听
         with dpg.handler_registry() as global_hander:
             dpg.add_key_release_handler(callback=self._ui_callback.on_key_release, user_data=self.config)
+
+        with dpg.handler_registry():
+            dpg.add_mouse_click_handler(button=dpg.mvMouseButton_Right, callback=self._ui_callback.on_right_click)

@@ -18,7 +18,7 @@ class MessageBaseBox(BaseBox):
         self.puuid_tags = {}
         self.table_tags = {}
         self.uuid_tags = {}
-        self.create_time = time.time()
+        self.create_time = None
 
         self.msg_logger = Logger("logs/msg_log")
         self._callback = MessageBoxCallBack(self.msg_logger)
@@ -31,6 +31,8 @@ class MessageBaseBox(BaseBox):
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
         self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag)
+        self.create_time = time.time()
+        self.update()
 
     def update(self):
         if not (time.time() - self.create_time) % 2 < 0.01:

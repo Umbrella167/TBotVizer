@@ -1,6 +1,11 @@
+import threading
+import time
+
+
 import dearpygui.dearpygui as dpg
 
 from ui.boxes.BaseBox import BaseBox
+from utils.ClientLogManager import client_logger
 from utils.Utils import item_auto_resize, get_all_subclasses
 from utils.node_utils import *
 
@@ -21,6 +26,8 @@ class NodeBaseBox(BaseBox):
         self.nodes = {}
         self.box_count = {}
         self.link_func = {}
+        self.node_threads = {}
+        self.input_mutex = {}
 
     def create(self):
         self.check_and_create_window()
@@ -61,31 +68,28 @@ class NodeBaseBox(BaseBox):
             minimap_location=dpg.mvNodeMiniMap_Location_BottomRight,
             parent=self.node_group,
         )
-
         with dpg.node(label="Tips: 拖动左侧节点到视窗以使用函数", parent=self.node_editor, use_internal_label=True,
                       show=True, draggable=False):
             with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
                 dpg.add_spacer(width=1)
-
-        # with dpg.node(label="Node 2", pos=[300, 10], parent=self.node_editor):
-        #     with dpg.node_attribute() as na2:
-        #         dpg.add_input_float(label="F3", width=200)
-        #
-        #     with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Output):
-        #         dpg.add_input_float(label="F4", width=200)
-        #
-        # with dpg.node(label="Node 3", pos=[25, 150], parent=self.node_editor):
-        #     with dpg.node_attribute():
-        #         dpg.add_input_text(label="T5", width=200)
-        #     with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
-        #         dpg.add_simple_plot(label="Node Plot", default_value=(0.3, 0.9, 2.5, 8.9), width=200, height=80,
-        #                             histogram=True)
-
         item_auto_resize(self.func_window, self.tag, 0, 0.15, 200, 300)
 
     def update(self):
         for k, node in self.nodes.items():
-            node.calc()
+            if node not in self.node_threads:
+                def node_thread():
+                    while True:
+                        node.calc()
+                        time.sleep(0.01)
+                # 创建线程并启动
+                thread = threading.Thread(target=node_thread)
+                thread.daemon = True  # 设置为守护线程，确保主程序退出时线程自动结束
+                self.node_threads[node] = thread
+                try:
+                    thread.start()
+                except:
+                    client_logger.log("INFO", "Node thread stop!")
+
         for k, func in self.link_func.items():
             func()
 
@@ -101,27 +105,29 @@ class NodeBaseBox(BaseBox):
         def create_link_function(input_ins, input_label, output_ins, output_label):
             def link_function():
                 input_ins.input_data[input_label] = output_ins.output_data[output_label]
-
             return link_function
 
+        if app_data[1] in self.input_mutex.values():
+            # 如果input已被连接，则不连接
+            client_logger.log("ERROR", "Node input has been connected!")
+            return
         # 0是output,1是input
         # node的实例化类
         output_ins = self.nodes[dpg.get_item_parent(app_data[0])]
         input_ins = self.nodes[dpg.get_item_parent(app_data[1])]
-
         # text 的 tag
         output_tag = dpg.get_item_user_data(app_data[0])
         input_tag = dpg.get_item_user_data(app_data[1])
-
         # 标签
         output_label = output_ins.output_text[output_tag]
         input_label = input_ins.input_text[input_tag]
-
         link = dpg.add_node_link(app_data[0], app_data[1], parent=sender)
         # 建立函数
         self.link_func[link] = create_link_function(input_ins, input_label, output_ins, output_label)
+        self.input_mutex[link] = app_data[1]
 
     def delink_callback(self, sender, app_data):
         # 删除函数
         del self.link_func[app_data]
+        del self.input_mutex[app_data]
         dpg.delete_item(app_data)
