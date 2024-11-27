@@ -5,7 +5,6 @@ import pygfx as gfx
 import pylinalg as la
 from math import pi
 from utils.DataProcessor import MsgSubscriberManager
-from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
 from tzcp.ros.sensor_pb2 import IMU
 from utils.DataProcessor import tbk_data

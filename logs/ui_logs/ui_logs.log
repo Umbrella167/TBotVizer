@@ -1,4 +1,1 @@
-2024-11-26 09:37:50.041 | ERROR    | utils.ClientLogManager:log:48 - Unknown msg_type: UNKNOWN
-2024-11-26 09:39:57.772 | ERROR    | utils.ClientLogManager:log:48 - Loop Failed! Error: etcd connection failed, occurred on line 32 in file /home/turingzero/.local/lib/python3.10/site-packages/etcd3/client.py
-2024-11-26 10:01:09.448 | ERROR    | utils.ClientLogManager:log:48 - Loop Failed! Error: etcd connection failed, occurred on line 32 in file /home/turingzero/.local/lib/python3.10/site-packages/etcd3/client.py
-2024-11-26 10:09:14.504 | ERROR    | utils.ClientLogManager:log:48 - Loop Failed! Error: etcd connection failed, occurred on line 32 in file /home/turingzero/.local/lib/python3.10/site-packages/etcd3/client.py
+2024-11-27 10:14:46.359 | ERROR    | utils.ClientLogManager:log:48 - Loop Failed! Error: 'list' object has no attribute 'local', occurred on line 95 in file /home/turingzero/Downloads/TBK-Client/ui/boxes/IMUBox.py
