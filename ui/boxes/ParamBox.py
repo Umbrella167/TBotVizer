@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
-
+import time
+from config.SystemConfig import run_time
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
@@ -45,6 +46,9 @@ class ParamBaseBox(BaseBox):
 
     # 更新表格中内容
     def update(self):
+        if not (time.time() - run_time) % 2 < 0.01:
+            # 每两秒更新一次数据
+            return
         new_data = self.tbk_data.param_data
         # 如果数据没有变化，则不更新
         if self.data == new_data:

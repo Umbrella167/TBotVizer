@@ -5,6 +5,7 @@ import pygfx as gfx
 from wgpu.gui.offscreen import WgpuCanvas
 
 
+
 class Camera:
     def __init__(self):
         self.camera = gfx.PerspectiveCamera(fov=60, aspect=16 / 9, zoom=1)
@@ -18,14 +19,13 @@ class GfxEngine:
             max_fps=max_fps,
         )
         self.renderer = gfx.renderers.WgpuRenderer(self.canvas)
-
-    def create_renderer(self):
-        self.renderer = gfx.renderers.WgpuRenderer(self.canvas)
+        self.viewport = gfx.Viewport.from_viewport_or_renderer(self.renderer)
 
     def new_world(self):
         return World(self)
 
     def draw(self):
+
         image = np.array(self.canvas.draw())
         return image
 
@@ -72,21 +72,34 @@ class World:
         )
         self.world.add(plane)
 
-    def add_cube(self, size=1, position=(0, 0, 0), rotation=(0, 0, 0), flat_shading=True, color=(1, 1, 1, 1)):
+    def add_cube(
+        self,
+        width=1,
+        height=1,
+        depth=1,
+        width_segments=1,
+        height_segments=1,
+        depth_segments=1,
+        position=(0, 0, 0),
+        rotation=(0, 0, 0),
+        flat_shading=True,
+        color=(1, 1, 1, 1),
+    ):
         cube = gfx.Mesh(
-            gfx.box_geometry(size),
+            gfx.box_geometry(width=1, height=1, depth=1, width_segments=1, height_segments=1, depth_segments=1),
             gfx.MeshBasicMaterial(color=color, flat_shading=flat_shading),
         )
         self.world.add(cube)
+        return self.world
 
-    def add_object(self, obj: gfx.Mesh):
+    def add_object(self, obj):
         self.world.add(obj)
 
     def draw_image(self):
         return self.gfx_engine.draw()
 
     def draw(self):
-        return self.gfx_engine.draw().ravel().astype('float32') / 255
+        return self.gfx_engine.draw().ravel().astype("float32") / 255
 
 
 _engine = GfxEngine()

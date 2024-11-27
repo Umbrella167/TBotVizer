@@ -1,4 +1,3 @@
-from tzcp.ros.ackermann_pb2 import AckermannDrive, AckermannDriveStamped
 from tzcp.ros.geometry_pb2 import (
     Vector3,
     Point,
@@ -13,7 +12,6 @@ from tzcp.ros.geometry_pb2 import (
     Accel,
     Wrench,
 )
-from tzcp.ros.sensor_pb2 import LaserScan, RegionOfInterest, CameraInfo, Image, IMU
 from tzcp.ros.std_pb2 import (
     Float64,
     Int8,
@@ -40,8 +38,8 @@ from tzcp.ros.std_pb2 import (
     Float32MultiArray,
     Float64MultiArray,
 )
-
-
+from tzcp.ros.ackermann_pb2 import AckermannDrive, AckermannDriveStamped
+from tzcp.ros.sensor_pb2 import LaserScan,RegionOfInterest,CameraInfo,Image,IMU
 class TypeParams:
     TBK_TYPES = {
         'Vector3': Vector3(),
@@ -93,6 +91,7 @@ class TypeParams:
         'Point',
         'Quaternion',
         'Float64',
+        'IMU',
         'Int8',
         'Int16',
         'Int32',

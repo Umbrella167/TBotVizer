@@ -20,17 +20,15 @@ def initialize_node(node, f):
     ep.msg_type = "int"
 
 
-def create_nodes(node_len):
-    # 定义线程任务
-    def initialize_node(node, f):
-        node = 1
-        if f == 2:
-            node = random.randint(0, 100)
-        tbkpy.init(f"Node {node}")
-        ep = tbkpy.EPInfo()
-        ep.name = f"Node {node}"
-        ep.msg_name = f"Node {node}_pub"
-        ep.msg_type = "int"
+def initialize_node(node, f):
+    node = 1
+    if f == 2:
+        node = random.randint(0, 100)
+    tbkpy.init(f"Node {node}")
+    ep = tbkpy.EPInfo()
+    ep.name = f"Node {node}"
+    ep.msg_name = f"Node {node}_pub"
+    ep.msg_type = "int"
 
     puber = tbkpy.Publisher(ep)
 
@@ -44,7 +42,6 @@ def create_nodes(node_len):
 
 
 def create_nodes(node_len):
-    # Create and start processes
     processes = []
     f = 2
     for node in range(node_len):

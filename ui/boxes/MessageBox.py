@@ -1,9 +1,14 @@
+import threading
+import time
+
 import dearpygui.dearpygui as dpg
+
+from config.SystemConfig import run_time
+from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
-from logger.logger import Logger
-import threading
+
 
 class MessageBaseBox(BaseBox):
     only = True
@@ -20,14 +25,19 @@ class MessageBaseBox(BaseBox):
         self.tree_item_tag_dict = {}
         self.tbk_data = tbk_data
         self.data = {}
+        self.current_time = 0
 
     def create(self):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
-        self.header = dpg.add_collapsing_header(label="Message List",parent=self.tag)
+        self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag)
 
     def update(self):
+        if not (time.time() - run_time) % 2 < 0.01:
+            # 每两秒更新一次数据
+            return
+        self.start_time = self.current_time
         new_data = self.tbk_data.message_tree["pubs"]
         # 如果数据没有变化，则不更新
         if self.data == new_data:
@@ -103,7 +113,7 @@ class MessageBaseBox(BaseBox):
             user_data=(msg_info_dict, item_dict, self.tag),
             parent=self.uuid_tags[uuid],
         )
-        item_dict["log_checkbox"] = dpg.add_checkbox(parent=self.uuid_tags[uuid],)
+        item_dict["log_checkbox"] = dpg.add_checkbox(parent=self.uuid_tags[uuid], )
         item_dict["value_checkbox"] = dpg.add_checkbox(
             default_value=True,
             parent=self.uuid_tags[uuid],
@@ -112,10 +122,11 @@ class MessageBaseBox(BaseBox):
                 parent=self.tree_item_tag_dict[puuid][msg_name][name][
                     "sub_checkbox"
                 ],
-                payload_type="plot_data",
+                # payload_type="plot_data",
                 drag_data=(msg_info_dict, item_dict),
         ):
             dpg.add_text(f"{msg_name}({name})")
+
     def destroy(self):
         self.msg_logger.close()
         super().destroy()
@@ -166,11 +177,13 @@ class MessageBaseBox(BaseBox):
     #                 ):
     #                     dpg.add_text(f"{msg_name}({name})")
 
+
 class MessageBoxCallBack:
-    def __init__(self,msg_logger:Logger):
+    def __init__(self, msg_logger: Logger):
         self.msg_logger = msg_logger
         self.msg_subscriber_dict = {}
         self.lock = threading.Lock()
+
     def subscriber_msg(self, msg, msg_info):
         puuid, name, msg_name, msg_type, tree_item_tag_dict = msg_info
         value_checkbox_tag = tree_item_tag_dict["value_checkbox"]
@@ -179,9 +192,7 @@ class MessageBoxCallBack:
             dpg.configure_item(item=value_checkbox_tag, label=msg)
         if dpg.get_value(log_checkbox_tag):
             with self.lock:
-                self.msg_logger.record(msg,puuid, msg_name, name, msg_type)
-            
-
+                self.msg_logger.record(msg, puuid, msg_name, name, msg_type)
 
     def checkbox_record_msg(self, sender, app_data, user_data):
         is_checked = app_data
@@ -201,15 +212,20 @@ class MessageBoxCallBack:
                     msg, (puuid, name, msg_name, msg_type, tree_item_tag_dict)
                 ),
             )
+            # tbk_data.Subscriber(
+            #     msg_info,
+            #     lambda msg: self.subscriber_msg(
+            #         msg, (puuid, name, msg_name, msg_type, tree_item_tag_dict)
+            #     ),
+            # )
         else:
-            self.msg_logger.save()
+            if dpg.get_value(tree_item_tag_dict["log_checkbox"]):
+                self.msg_logger.save()
             if puuid in self.msg_subscriber_dict and msg_name in self.msg_subscriber_dict[puuid]:
                 if name in self.msg_subscriber_dict[puuid][msg_name]:
                     tbk_data.unsubscribe(msg_info, True)
-                    del self.msg_subscriber_dict[puuid][msg_name][name]
-                    del self.msg_subscriber_dict[puuid][msg_name]
-                    dpg.configure_item(
-                        item=tree_item_tag_dict["value_checkbox"], label=""
-                    )
-
-
+                    # del self.msg_subscriber_dict[puuid][msg_name][name]
+                    # del self.msg_subscriber_dict[puuid][msg_name]
+                    # dpg.configure_item(
+                    #     item=tree_item_tag_dict["value_checkbox"], label=""
+                    # )
