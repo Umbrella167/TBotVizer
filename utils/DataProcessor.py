@@ -13,8 +13,8 @@ class UiData:
 class TBKData:
     def __init__(self, tbkapi: TBKApi):
         self.TBKApi = tbkapi
-        self._param_data = self.TBKApi.get_param()
-        self._message_data = self.TBKApi.get_message()
+        self._param_data = None
+        self._message_data = None
         self._message_node_tree = None
         self.callback_dict = {}
         self.subscriber_dict = {}
