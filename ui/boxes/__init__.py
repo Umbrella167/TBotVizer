@@ -7,4 +7,5 @@ from ui.boxes.ParamBox import ParamBaseBox
 from ui.boxes.PlotVzBox import PlotVzBaseBox
 from ui.boxes.LogReaderBox import LogReaderBaseBox
 from ui.boxes.NodeBox import NodeBaseBox
-from ui.boxes.IMU3DBox import IMU3DBox
+from ui.boxes.GfxEngine3DBox import GfxEngine3DBox
+from ui.boxes.IMUBox import IMUBox

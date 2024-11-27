@@ -6,4 +6,4 @@ __pycache__
 
 ./logs/*
 ./static/font/BLACK-NORMAL.ttf
-
+./static/model/car.STL

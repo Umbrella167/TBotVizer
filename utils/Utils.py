@@ -5,7 +5,6 @@ import traceback
 import pickle
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
-
 def new_texture(image):
     height,width, _ = image.shape
     texture_data = image.ravel().astype("float32") / 255

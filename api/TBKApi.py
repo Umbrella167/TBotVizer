@@ -79,7 +79,6 @@ class TBKApi:
         else:
             self.param_change_data = {"added": {}, "removed": {}, "modified": {}}
             self.param_is_change = False
-
     def get_message(self):
         processes = {}
         publishers = {}

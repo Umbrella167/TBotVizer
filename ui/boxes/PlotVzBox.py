@@ -48,7 +48,7 @@ class PlotVzBaseBox(BaseBox):
             width=-1,
             height=-1,
             label="Plot Tools",
-            payload_type="plot_data",
+            # payload_type="plot_data",
             # drop_callback=self.plot_drop_callback,
             drop_callback=self.plot_drop_callback,
             parent=self.tag,
@@ -125,28 +125,23 @@ class PlotVzBaseBox(BaseBox):
         msg_info, msg_checkbox_tag = app_data
         msg_type = msg_info["msg_type"]
         sub_checkbox = msg_checkbox_tag["sub_checkbox"]
+        
         if not dpg.get_value(sub_checkbox):
+            client_logger.log("warning", f"Please subscribe to this msg")
             return
         if not PlotUitls.is_plot_supported(msg_type):
-            client_logger.log("ERROR", f"Unknown msg_type: {msg_type}")
+            client_logger.log("error", f"Unknown msg_type: {msg_type}")
             return
-
+    
         name = msg_info["name"]
         msg_name = msg_info["msg_name"]
         puuid = msg_info["puuid"]
-        message_data = f"{puuid}_{msg_name}:{name}"
         series_tag = f"{puuid}:{msg_name}:{name}"
         self.checkbox_bind[sub_checkbox] = (series_tag, puuid, msg_name, name)
-        if puuid not in self.message_subscriber_dict:
-            # 如果节点不在表内则添加该节点进表
-            self.message_subscriber_dict[puuid] = {}
-
-        if msg_name not in self.message_subscriber_dict[puuid]:
-            # 如果消息不在表内，则添加消息进表
-            self.message_subscriber_dict[puuid][msg_name] = {}
-
+            
+        self.message_subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})
+            
         if name not in self.message_subscriber_dict[puuid][msg_name]:
-            # 如果消息不在表内则添加消息进表
             msg_info["tag"] = self.tag
             self.message_subscriber_dict[puuid][msg_name][name] = tbk_data.Subscriber(
                 msg_info,
@@ -154,8 +149,8 @@ class PlotVzBaseBox(BaseBox):
                     msg, (puuid, name, msg_name, msg_type, series_tag)
                 ),
             )
-            return
-        client_logger.log("WARNING", f"{message_data} was drawn.")
+        else:
+            client_logger.log("WARNING", f"{puuid}_{msg_name}:{name} was drawn.")
 
     def checkbox_is_checked(self):
         for tag in self.checkbox_bind:
@@ -198,20 +193,40 @@ class PlotUitls:
         if not PlotUitls.is_plot_supported(data_type):
             uilogger.error("Unsupported data type")
             return
+
+        def process_nested_dict(d, prefix=""):
+            """
+            递归处理嵌套字典，将其扁平化。
+            prefix: 用于记录当前层级的键路径。
+            """
+            flattened = {}
+            for key, value in d.items():
+                # 构建当前键路径
+                new_key = f"{prefix}.{key}" if prefix else key
+
+                if isinstance(value, dict):
+                    # 如果值是字典，递归调用
+                    flattened.update(process_nested_dict(value, new_key))
+                else:
+                    # 如果值不是字典，直接添加到结果中
+                    flattened[new_key] = value
+            return flattened
+
         if data_type in TypeParams.PYTHON_TYPES:
-            # TODO: 如果字典有多层，则迭代每一层
             if data_type == "int" or data_type == "float":
                 res = {"0": data}
             elif data_type == "list" or data_type == "tuple":
                 res = {}
                 for i in range(len(data)):
                     res[str(i)] = data[i]
-            else:
-                res = data
+            elif data_type == "dict":
+                # 处理嵌套字典
+                res = process_nested_dict(data)
         else:
             res = MessageToDict(data, preserving_proto_field_name=True)
-        return res
+            res = process_nested_dict(res)
 
+        return res
 
 class TimedDeque:
     def __init__(self, max_age_seconds):

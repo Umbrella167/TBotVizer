@@ -1,8 +1,10 @@
 import pygfx as gfx
 from wgpu.gui.offscreen import WgpuCanvas
 import numpy as np
+
 # import imageio.v3 as iio
 import cv2
+
 
 class Camera:
     def __init__(self):
@@ -17,14 +19,13 @@ class GfxEngine:
             max_fps=max_fps,
         )
         self.renderer = gfx.renderers.WgpuRenderer(self.canvas)
-    def create_renderer(self):
-        self.renderer = gfx.renderers.WgpuRenderer(self.canvas)
+        self.viewport = gfx.Viewport.from_viewport_or_renderer(self.renderer)
 
     def new_world(self):
         return World(self)
 
     def draw(self):
-        
+
         image = np.array(self.canvas.draw())
         return image
 
@@ -37,6 +38,7 @@ class World:
         self.world.add(self.directional_light)
         self.gfx_engine = gfx_engine
         self.gfx_engine.canvas.request_draw(lambda: self.gfx_engine.renderer.render(self.world, self.camera))
+
     def load_image(self, path):  # 读取并调整图像形状
         im = cv2.imread(path, cv2.IMREAD_UNCHANGED)  # 读取图像，保留所有通道信息
         im = cv2.flip(im, 0)  # 翻转图像
@@ -70,21 +72,36 @@ class World:
         )
         self.world.add(plane)
 
-    def add_cube(self, size=1, position=(0, 0, 0), rotation=(0, 0, 0), flat_shading=True, color=(1, 1, 1, 1)):
+    def add_cube(
+        self,
+        width=1,
+        height=1,
+        depth=1,
+        width_segments=1,
+        height_segments=1,
+        depth_segments=1,
+        position=(0, 0, 0),
+        rotation=(0, 0, 0),
+        flat_shading=True,
+        color=(1, 1, 1, 1),
+    ):
         cube = gfx.Mesh(
-            gfx.box_geometry(size),
+            gfx.box_geometry(width=1, height=1, depth=1, width_segments=1, height_segments=1, depth_segments=1),
             gfx.MeshBasicMaterial(color=color, flat_shading=flat_shading),
         )
         self.world.add(cube)
+        return self.world
 
-    def add_object(self, obj: gfx.Mesh):
+    def add_object(self, obj):
         self.world.add(obj)
 
     def draw_image(self):
         return self.gfx_engine.draw()
+
     def draw(self):
-        return self.gfx_engine.draw().ravel().astype('float32') / 255
-        
+        return self.gfx_engine.draw().ravel().astype("float32") / 255
+
+
 _engine = GfxEngine()
 
 if __name__ == "__main__":

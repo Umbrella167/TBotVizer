@@ -91,6 +91,7 @@ class TypeParams:
         'Point',
         'Quaternion',
         'Float64',
+        'IMU',
         'Int8',
         'Int16',
         'Int32',
@@ -107,6 +108,7 @@ class TypeParams:
         'array',
     ]
     PYTHON_TYPES = ['int', 'float', 'list', 'tuple', 'dict']
+    
 class LanguageParams:
     def __init__(self):
         self._language_settings = {

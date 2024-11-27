@@ -55,14 +55,16 @@ class BaseBox(object):
 
     def destroy(self):
         # 销毁盒子
-        global sub_box_x, sub_box_y, pos_offset
-        self.parent.boxes.remove(self)
-        self.parent.box_count[self.__class__] -= 1
-        dpg.delete_item(self.tag)
-        sub_box_x -= pos_offset
-        sub_box_y -= pos_offset
-        client_logger.log("INFO", f"{self} has been destroyed.")
-
+        try:
+            global sub_box_x, sub_box_y, pos_offset
+            self.parent.boxes.remove(self)
+            self.parent.box_count[self.__class__] -= 1
+            dpg.delete_item(self.tag)
+            sub_box_x -= pos_offset
+            sub_box_y -= pos_offset
+            client_logger.log("INFO", f"{self} has been destroyed.")
+        except Exception as e:
+            pass
 
     @property
     def x(self):

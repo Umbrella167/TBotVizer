@@ -2,13 +2,12 @@ from api.TBKApi import TBKApi
 from utils.ClientLogManager import client_logger
 import tbkpy._core as tbkpy
 from config.SystemConfig import config
-
-
 class UiData:
     def __init__(self):
         self.draw_mouse_pos = (0, 0)
         self.draw_mouse_pos_last = (0, 0)
         self.mouse_move_pos = (0, 0)
+ui_data = UiData()
 
 
 class TBKData:
@@ -19,7 +18,6 @@ class TBKData:
         self._message_node_tree = None
         self.callback_dict = {}
         self.subscriber_dict = {}
-
     def update(self):
         pass
 
@@ -28,7 +26,6 @@ class TBKData:
         name = info["name"]
         msg_name = info["msg_name"]
         tag = info["tag"]
-
         if tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
             del self.callback_dict[puuid][msg_name][name][tag]
 
@@ -118,7 +115,48 @@ class TBKData:
             message_tree[node_type] = tree
         return message_tree
 
-
-ui_data = UiData()
 tbk_api = TBKApi()
 tbk_data = TBKData(tbk_api)
+
+
+
+class MsgSubscriberManager:
+    def __init__(self):
+        self.subscriber_data = {}
+
+    def add_subscriber(self, puuid: str, msg_name: str, name: str, item_tag: str, subscriber):
+        """
+        添加订阅者到嵌套字典中。
+        """
+        # 使用 `setdefault` 简化嵌套字典的初始化
+        self.subscriber_data.setdefault(puuid, {}).setdefault(msg_name, {}).setdefault(name, {})[item_tag] = subscriber
+    def remove_subscriber(self, puuid: str, msg_name: str, name: str, item_tag: str):
+        """
+        删除嵌套字典中的订阅者。
+        """
+        # 检查是否存在对应的订阅者
+        if puuid in self.subscriber_data and msg_name in self.subscriber_data[puuid]:
+            if name in self.subscriber_data[puuid][msg_name] and item_tag in self.subscriber_data[puuid][msg_name][name]:
+                del self.subscriber_data[puuid][msg_name][name][item_tag]  # 删除具体的 item_tag
+                # 如果 name 下没有任何订阅者，则删除 name
+                if not self.subscriber_data[puuid][msg_name][name]:
+                    del self.subscriber_data[puuid][msg_name][name]
+                # 如果 msg_name 下没有任何订阅者，则删除 msg_name
+                if not self.subscriber_data[puuid][msg_name]:
+                    del self.subscriber_data[puuid][msg_name]
+                # 如果 puuid 下没有任何消息，则删除 puuid
+                if not self.subscriber_data[puuid]:
+                    del self.subscriber_data[puuid]
+                return True
+        return False  # 如果订阅者不存在，则返回 False
+
+    def clear(self):
+        """
+        清空所有订阅者。
+        """
+        for puuid, msg_names in self.subscriber_data.items():
+            for msg_name, names in msg_names.items():
+                for name, item_tags in names.items():
+                    for item_tag, subscriber in item_tags.items():
+                        tbk_data.unsubscribe({"puuid": puuid, "msg_name": msg_name, "name": name, "tag": item_tag})
+        self.subscriber_data.clear()

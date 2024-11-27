@@ -4,7 +4,7 @@ from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 from logger.logger import Logger
 import threading
-
+from time import time
 class MessageBaseBox(BaseBox):
     only = True
 
@@ -20,14 +20,21 @@ class MessageBaseBox(BaseBox):
         self.tree_item_tag_dict = {}
         self.tbk_data = tbk_data
         self.data = {}
-
+        self.start_time = time()
+        self.current_time = 0
     def create(self):
         self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
         self.header = dpg.add_collapsing_header(label="Message List",parent=self.tag)
-
+        self._update()
     def update(self):
+        self.current_time = time()
+        if self.current_time - self.start_time < 2:
+            return
+        self._update()
+    def _update(self):
+        self.start_time = self.current_time
         new_data = self.tbk_data.message_tree["pubs"]
         # 如果数据没有变化，则不更新
         if self.data == new_data:
@@ -112,10 +119,12 @@ class MessageBaseBox(BaseBox):
                 parent=self.tree_item_tag_dict[puuid][msg_name][name][
                     "sub_checkbox"
                 ],
-                payload_type="plot_data",
+                # payload_type="plot_data",
                 drag_data=(msg_info_dict, item_dict),
         ):
             dpg.add_text(f"{msg_name}({name})")
+
+        
     def destroy(self):
         self.msg_logger.close()
         super().destroy()
@@ -201,15 +210,21 @@ class MessageBoxCallBack:
                     msg, (puuid, name, msg_name, msg_type, tree_item_tag_dict)
                 ),
             )
+            # tbk_data.Subscriber(
+            #     msg_info,
+            #     lambda msg: self.subscriber_msg(
+            #         msg, (puuid, name, msg_name, msg_type, tree_item_tag_dict)
+            #     ),
+            # )
         else:
-            self.msg_logger.save()
+            if dpg.get_value(tree_item_tag_dict["log_checkbox"]):
+                self.msg_logger.save()
             if puuid in self.msg_subscriber_dict and msg_name in self.msg_subscriber_dict[puuid]:
                 if name in self.msg_subscriber_dict[puuid][msg_name]:
                     tbk_data.unsubscribe(msg_info, True)
-                    del self.msg_subscriber_dict[puuid][msg_name][name]
-                    del self.msg_subscriber_dict[puuid][msg_name]
-                    dpg.configure_item(
-                        item=tree_item_tag_dict["value_checkbox"], label=""
-                    )
-
+                    # del self.msg_subscriber_dict[puuid][msg_name][name]
+                    # del self.msg_subscriber_dict[puuid][msg_name]
+                    # dpg.configure_item(
+                    #     item=tree_item_tag_dict["value_checkbox"], label=""
+                    # )
 
