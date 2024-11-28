@@ -1,58 +1,99 @@
-import time
-
+from utils.Utils import convert_to_float
 from utils.node_utils.BaseFunc import BaseFunc
 
 
-class PID(BaseFunc):
+class IncrementalPID(BaseFunc):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # 输入数据
         self.input_data = {
-            "setpoint": None,  # 目标值
-            "process_variable": None,  # 当前值
-            "kp": None,  # 比例增益
-            "ki": None,  # 积分增益
-            "kd": None,  # 微分增益
+            "measurement": None,
+            "setpoint": None,
+            "kp": None,
+            "ki": None,
+            "kd": None,
+            "max_output": 1  # 默认最大输出值
         }
-        # 输出数据
         self.output_data = {"control_output": None}
-        # 内部变量
-        self._prev_error = 0  # 前一次误差
-        self._integral = 0  # 积分项
-        self._prev_time = None  # 前一次计算时间
+        self.previous_error = 0.0
+        self.previous_previous_error = 0.0
+        self.control_output = 0.0
 
     def calc(self):
         super().calc()
-        # 获取当前时间
-        current_time = time.time()
-        dt = 0
-        if self._prev_time is not None:
-            dt = current_time - self._prev_time
-        self._prev_time = current_time
-        # 获取输入数据
-        setpoint = self._convert_to_float(self.input_data["setpoint"])
-        process_variable = self._convert_to_float(self.input_data["process_variable"])
-        kp = self._convert_to_float(self.input_data["kp"])
-        ki = self._convert_to_float(self.input_data["ki"])
-        kd = self._convert_to_float(self.input_data["kd"])
+        measurement = convert_to_float(self.input_data["measurement"])
+        setpoint = convert_to_float(self.input_data["setpoint"])
+        kp = convert_to_float(self.input_data["kp"])
+        ki = convert_to_float(self.input_data["ki"])
+        kd = convert_to_float(self.input_data["kd"])
+        max_output = convert_to_float(self.input_data["max_output"])
         # 计算误差
-        error = setpoint - process_variable
-        # 计算积分项
-        if dt > 0:
-            self._integral += error * dt
-        # 计算微分项
-        derivative = 0
-        if dt > 0:
-            derivative = (error - self._prev_error) / dt
-        # 计算控制输出
-        control_output = kp * error + ki * self._integral + kd * derivative
-        # 更新输出
-        self.output_data["control_output"] = control_output
-        # 存储当前误差作为下一次的前一次误差
-        self._prev_error = error
+        error = setpoint - measurement
+        error = 0 if abs(error) < 1.8 else error
+        # 增量计算
+        delta_output = (
+                kp * (error - self.previous_error) +
+                ki * error +
+                kd * (error - 2 * self.previous_error + self.previous_previous_error)
+        )
+        # 更新控制输出
+        self.control_output += delta_output
+        if self.control_output > max_output:
+            self.control_output = max_output
+        elif self.control_output < -max_output:
+            self.control_output = -max_output
+        # 更新历史误差
+        self.previous_previous_error = self.previous_error
+        self.previous_error = error
+        # 设置输出
+        self.output_data["control_output"] = self.control_output
 
-    def _convert_to_float(self, value):
-        try:
-            return float(value)
-        except (ValueError, TypeError):
-            return 0
+
+class PositionalPID(BaseFunc):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.input_data = {
+            "measurement": None,
+            "setpoint": None,
+            "kp": None,
+            "ki": None,
+            "kd": None,
+            "max_output": 1  # 默认最大输出值
+        }
+        self.output_data = {"control_output": None}
+        self.previous_error = 0.0
+        self.integral = 0.0
+
+    def calc(self):
+        super().calc()
+        measurement = convert_to_float(self.input_data["measurement"])
+        setpoint = convert_to_float(self.input_data["setpoint"])
+        kp = convert_to_float(self.input_data["kp"])
+        ki = convert_to_float(self.input_data["ki"])
+        kd = convert_to_float(self.input_data["kd"])
+        max_output = convert_to_float(self.input_data["max_output"])
+        # 计算误差
+        error = setpoint - measurement
+        if abs(error) < 1:
+            error = 0
+        # 积分清零逻辑：当误差符号变化时
+        if (error > 0 and self.previous_error < 0) or (error < 0 and self.previous_error > 0):
+            self.integral = self.integral / 2
+        # 积分累加
+        self.integral += error
+        # 微分计算
+        derivative = error - self.previous_error
+        # PID计算
+        control_output = (
+                kp * error +
+                ki * self.integral +
+                kd * derivative
+        )
+        # 限制控制输出
+        if control_output > max_output:
+            control_output = max_output
+        elif control_output < -max_output:
+            control_output = -max_output
+        # 更新历史误差
+        self.previous_error = error
+        # 设置输出
+        self.output_data["control_output"] = control_output

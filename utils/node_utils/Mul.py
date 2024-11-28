@@ -1,8 +1,7 @@
 from utils.Utils import convert_to_float
 from utils.node_utils.BaseFunc import BaseFunc
 
-
-class Add(BaseFunc):
+class Mul(BaseFunc):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_data = {"x": None, "y": None}
@@ -10,5 +9,4 @@ class Add(BaseFunc):
 
     def calc(self):
         super().calc()
-        self.output_data["res"] = sum(convert_to_float(self.input_data[key]) for key in self.input_data)
-
+        self.output_data["res"] = convert_to_float(self.input_data["x"]) * convert_to_float(self.input_data["y"])
