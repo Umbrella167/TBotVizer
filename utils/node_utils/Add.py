@@ -1,8 +1,8 @@
 from utils.Utils import convert_to_float
-from utils.node_utils.BaseFunc import BaseFunc
+from utils.node_utils.BaseNode import BaseNode
 import dearpygui.dearpygui as dpg
 
-class Add(BaseFunc):
+class Add(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_data = {"x": None, "y": None}
@@ -13,6 +13,6 @@ class Add(BaseFunc):
         self.output_data["res"] = sum(convert_to_float(self.input_data[key]) for key in self.input_data)
 
 
-    def extra(self):
-        self.attribute["test"] = dpg.add_node_attribute(parent=self.tag)
-        dpg.add_plot(width=self.width,height=300, parent=self.attribute["test"])
+    # def extra(self):
+    #     self.attribute["test"] = dpg.add_node_attribute(parent=self.tag)
+    #     dpg.add_plot(width=self.width,height=300, parent=self.attribute["test"])

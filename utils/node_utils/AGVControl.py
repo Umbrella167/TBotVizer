@@ -2,12 +2,13 @@ from time import sleep
 
 import pygame
 import time
-from utils.node_utils.BaseFunc import BaseFunc
+from utils.node_utils.BaseNode import BaseNode
 
-class AGVControl(BaseFunc):
+
+class AGVControl(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.output_data = {"vx": None, "vy": None, "alphax":None}
+        self.output_data = {"vx": None, "vy": None, "alphax": None}
 
         pygame.init()
         pygame.joystick.init()
@@ -17,7 +18,6 @@ class AGVControl(BaseFunc):
             joystick.init()
 
         self.done = False
-
 
     def calc(self):
         if not self.done:
@@ -43,8 +43,8 @@ class AGVControl(BaseFunc):
                 self.output_data["vx"] = vx
                 self.output_data["vy"] = vy
                 self.output_data["alphax"] = alphax
+
+                self.done = False
                 # 数据检查
                 super().calc()
                 # print(f"vx: {vx}, vy: {vy}")  # 输出结果
-
-

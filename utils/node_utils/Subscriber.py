@@ -1,10 +1,10 @@
 import dearpygui.dearpygui as dpg
 
 from utils.DataProcessor import tbk_data
-from utils.node_utils.BaseFunc import BaseFunc
+from utils.node_utils.BaseNode import BaseNode
 
 
-class Subscriber(BaseFunc):
+class Subscriber(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_data = {"puuid": None, "name": None, "msg_name": None}

@@ -33,8 +33,9 @@ class UI:
     def __init__(self):
         self.config = UiConfig()
         self.config.instance = self
-        self.console = ConsoleBox()
-        self.boxes = self.console.boxes
+        self.console = None
+        self.boxes = []
+        self.box_count = {}
         self.is_created = False
         self._ui_callback = UICallback()
 
@@ -50,6 +51,7 @@ class UI:
         )
         dpg.setup_dearpygui()
         dpg.show_viewport()
+        self.console = ConsoleBox(ui=self)
         # 显示控制台
         self.console.create()
         self.is_created = True
@@ -81,7 +83,7 @@ class UI:
                     func()
                     dpg.render_dearpygui_frame()
             except Exception as e:
-                client_logger.log("ERROR", f"Loop Failed! {e}")
+                client_logger.log("ERROR", f"Loop Failed??? {e}")
             finally:
                 self.destroy_all_boxes()
         else:

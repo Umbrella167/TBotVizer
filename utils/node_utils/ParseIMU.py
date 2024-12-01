@@ -1,10 +1,10 @@
 from tzcp.ros.sensor_pb2 import IMU
 
 from utils.Utils import convert_to_float
-from utils.node_utils.BaseFunc import BaseFunc
+from utils.node_utils.BaseNode import BaseNode
 import pylinalg as la
 
-class ParseIMU(BaseFunc):
+class ParseIMU(BaseNode):
     """
     解析序列化的 IMU 消息并提取四元数、加速度和角速度。
     """

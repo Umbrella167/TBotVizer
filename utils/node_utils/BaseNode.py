@@ -3,7 +3,7 @@ import dearpygui.dearpygui as dpg
 from utils.Utils import get_mouse_relative_pos
 
 
-class BaseFunc:
+class BaseNode:
     def __init__(self, parent, label=None, pos=None):
         self.input_data = {}
         self.input_type = {}
@@ -24,13 +24,13 @@ class BaseFunc:
             self.label = self.__class__.__name__
         if pos is None:
             # 获取鼠标拖拽位置
-            self.pos = get_mouse_relative_pos(self.parent)
+            self.pos = get_mouse_relative_pos(self.parent.node_editor)
 
     # 默认的生成方式
     def create(self):
         input_params = [key for key in self.input_data.keys()]
         output_params = [key for key in self.output_data.keys()]
-        self.tag = dpg.add_node(label=self.label, pos=self.pos, parent=self.parent)
+        self.tag = dpg.add_node(label=self.label, pos=self.pos, parent=self.parent.node_editor)
         for i in input_params:
             self.attribute[i] = dpg.add_node_attribute(parent=self.tag)
             self.input_text[i] = dpg.add_input_text(label=i, width=self.width, callback=self.input_callback,

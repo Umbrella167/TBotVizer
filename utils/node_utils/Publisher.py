@@ -5,10 +5,10 @@ import tbkpy._core as tbkpy
 
 from config.SystemConfig import run_time
 from utils.Utils import convert_to_float
-from utils.node_utils.BaseFunc import BaseFunc
+from utils.node_utils.BaseNode import BaseNode
 
 
-class Publisher(BaseFunc):
+class Publisher(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_data = {"name": "MOTOR_CONTROL", "msg_name": "RPM", "msg_type": "list", "frequency(s)": None,
@@ -44,5 +44,5 @@ class Publisher(BaseFunc):
             self.puber = None
             self.is_create = False
 
-        if (time.time() - run_time) % frequency < 0.01 and self.is_create and msg is not None:
+        if (self.parent.now_time - run_time) % frequency < 0.01 and self.is_create and msg is not None:
             self.puber.publish(pickle.dumps(msg))

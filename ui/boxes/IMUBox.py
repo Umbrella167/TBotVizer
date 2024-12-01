@@ -78,7 +78,7 @@ class IMUBox(BaseBox):
         self.checkbox_bind = {}
 
     def create(self):
-        self.check_and_create_window()
+        super().create()
         if self.label is None:
             dpg.configure_item(self.tag, label="IMU3DBox")
             self.canvas3D = Canvas3D(self.tag)

@@ -21,7 +21,7 @@ class ParamBox(BaseBox):
         self.row_tags = {}
 
     def create(self):
-        self.check_and_create_window()
+        super().create()
 
         if self.label is None:
             dpg.configure_item(self.tag, label="Param_box")

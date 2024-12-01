@@ -10,15 +10,13 @@ class ConsoleBox(BaseBox):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._boxes = []
         self.button_tags = []
         self.all_classes = get_all_subclasses(BaseBox)
         self.generate_add_methods()
-        self.box_count = {}
 
     def create(self):
+        super().create()
         # 初始化设置
-        self.check_and_create_window()
         if self.label is None:
             dpg.configure_item(self.tag, label="ConsoleBox")
         dpg.configure_item(
@@ -34,7 +32,6 @@ class ConsoleBox(BaseBox):
             no_saved_settings=True,
             no_title_bar=True,
         )
-        self.boxes.append(self)
         self.fps_text = dpg.add_text(f"FPS:{dpg.get_frame_rate()}", parent=self.tag)
         # 实例化按钮
         self.generate_add_bottom()
@@ -58,7 +55,7 @@ class ConsoleBox(BaseBox):
         instance_func_name = user_data
         instance_func = getattr(self, instance_func_name, None)
         # instance_func 中有将新创建的实例添加进 self.boxes
-        instance_func(parent=self)
+        instance_func(ui=self.ui)
 
     # 生成添加类方法
     def generate_add_methods(self):
@@ -74,8 +71,8 @@ class ConsoleBox(BaseBox):
                         # 如果盒子已经创建则不重复创建
                         raise Exception("This box can only be created once")
                     instance = cls(**kwargs)
-                    self.boxes.append(instance)
-                    self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
+                    # self.boxes.append(instance)
+                    # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
                     client_logger.log("INFO", f"{instance} instance has been added to the boxes list.")
                 except Exception as e:
                     client_logger.log("ERROR", f"Unable to instantiate {cls}: {e}")
@@ -89,4 +86,8 @@ class ConsoleBox(BaseBox):
 
     @property
     def boxes(self):
-        return self._boxes
+        return self.ui.boxes
+
+    @property
+    def box_count(self):
+        return self.ui.box_count

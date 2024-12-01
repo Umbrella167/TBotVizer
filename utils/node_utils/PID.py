@@ -1,8 +1,8 @@
 from utils.Utils import convert_to_float
-from utils.node_utils.BaseFunc import BaseFunc
+from utils.node_utils.BaseNode import BaseNode
 
 
-class IncrementalPID(BaseFunc):
+class IncrementalPID(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_data = {
@@ -48,7 +48,7 @@ class IncrementalPID(BaseFunc):
         self.output_data["control_output"] = self.control_output
 
 
-class PositionalPID(BaseFunc):
+class PositionalPID(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_data = {

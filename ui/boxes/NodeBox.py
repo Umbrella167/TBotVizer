@@ -1,4 +1,3 @@
-import threading
 import time
 
 import dearpygui.dearpygui as dpg
@@ -16,7 +15,7 @@ class NodeBox(BaseBox):
         super().__init__(**kwargs)
         self.static_node = None
         self.handler = None
-        self.funcs = get_all_subclasses(BaseFunc)
+        self.funcs = get_all_subclasses(BaseNode)
         self.group = None
         self.collapsing_header = None
         self.func_window = None
@@ -27,11 +26,11 @@ class NodeBox(BaseBox):
         self.nodes = {}
         # self.box_count = {}
         self.link_func = {}
-        self.node_threads = {}
+        self.now_time = time.time()
         # self.input_mutex = {}
 
     def create(self):
-        self.check_and_create_window()
+        super().create()
         if self.label is None:
             dpg.configure_item(self.tag, label="NodeBox")
 
@@ -86,51 +85,39 @@ class NodeBox(BaseBox):
         for node_tag in dpg.get_selected_nodes(self.node_editor):
             if node_tag == self.static_node:
                 continue
-            # 删除这个tag的链接
-            for link_tag, link in list(self.link_func.items()):  # 使用 list() 创建副本
-                parent_items = [dpg.get_item_parent(i) for i in dpg.get_item_user_data(link_tag)]
-                if node_tag in parent_items:
-                    client_logger.log("INFO", f"Delete the node link {link_tag}")
-                    del self.link_func[link_tag]
-                    dpg.delete_item(link_tag)
-            # 删除node
-            del self.nodes[node_tag]
-            dpg.delete_item(node_tag)
+            self.delete_node(node_tag)
 
     def update(self):
+        self.now_time = time.time()
         for tag, node in self.nodes.items():
-            if tag not in self.node_threads:
-                def node_thread(tag):
-                    error_times = 0
-                    while tag in self.nodes:  # 检查是否退出
-                        try:
-                            node.calc()
-                        except Exception as e:
-                            # error_times += 1
-                            # # 如果报错超过3次则退出线程
-                            # if error_times >= 3:
-                            #     break
-                            client_logger.log("ERROR", f"{node} calc failed!", e=e)
-                            time.sleep(5)
-                        time.sleep(0.01)
-                    del self.node_threads[tag]
-                    client_logger.log("INFO", f"{node} thread stop")
-                thread = threading.Thread(target=node_thread, args=(tag,))
-                thread.daemon = True
-                client_logger.log("INFO", f"{node} thread start")
-                self.node_threads[tag] = thread
-                thread.start()
+            try:
+                node.calc()
+            except Exception as e:
+                # self.delete_node(tag)
+                client_logger.log("ERROR", f"{node} calc failed!",e=e)
 
         for tag, func in self.link_func.items():
             func()
 
     def new_node(self, sender, cls, user_data):
-        instance = cls(parent=self.node_editor)
+        instance = cls(parent=self)
         instance.create()
-
-        # node的tag和实例的对应表
+        # node_tag和实例的对应表
         self.nodes[instance.tag] = instance
         # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
+
+    def delete_node(self, node_tag):
+        # 删除这个node的链接
+        for link_tag, link in list(self.link_func.items()):  # 使用 list() 创建副本
+            parent_items = [dpg.get_item_parent(i) for i in dpg.get_item_user_data(link_tag)]
+            if node_tag in parent_items:
+                # client_logger.log("INFO", f"Delete the node link {link_tag}")
+                del self.link_func[link_tag]
+                dpg.delete_item(link_tag)
+        # 删除node
+        client_logger.log("INFO", f"Delete the node {dpg.get_item_label(node_tag)}:{node_tag}")
+        del self.nodes[node_tag]
+        dpg.delete_item(node_tag)
 
     def link_callback(self, sender, app_data):
         def create_link_function(input_ins, input_label, output_ins, output_label):

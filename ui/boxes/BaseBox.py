@@ -10,15 +10,17 @@ pos_offset = 20
 class BaseBox(object):
     only = False
 
-    def __init__(self, tag=None, parent=None, label=None, callback=None):
+    def __init__(self, ui, tag=None, label=None, callback=None):
+        self.ui = ui
         self.tag = tag
-        self.parent = parent
         self.label = label
         self.callback = callback
         self.is_created = False
         self.only = True
+        self.handler = dpg.add_handler_registry()
 
-    def check_and_create_window(self):
+    def create(self):
+        # 创建
         global sub_box_x, sub_box_y, pos_offset
         if self.is_created:
             client_logger.log("ERROR", "BaseBox has already been created")
@@ -31,12 +33,9 @@ class BaseBox(object):
                                       on_close=self.destroy)
         sub_box_x += pos_offset
         sub_box_y += pos_offset
+        self.ui.boxes.append(self)
+        self.ui.box_count[self.__class__] = self.ui.box_count.setdefault(self.__class__, 0) + 1
         self.is_created = True
-
-    def create(self):
-        # 创建
-        self.check_and_create_window()
-        raise f"{self.__name__} does not implement create()"
 
     def show(self):
         # 显示盒子
@@ -55,16 +54,13 @@ class BaseBox(object):
 
     def destroy(self):
         # 销毁盒子
-        try:
-            global sub_box_x, sub_box_y, pos_offset
-            self.parent.boxes.remove(self)
-            self.parent.box_count[self.__class__] -= 1
-            dpg.delete_item(self.tag)
-            sub_box_x -= pos_offset
-            sub_box_y -= pos_offset
-            client_logger.log("INFO", f"{self} has been destroyed.")
-        except Exception as e:
-            pass
+        global sub_box_x, sub_box_y, pos_offset
+        self.ui.boxes.remove(self)
+        self.ui.box_count[self.__class__] -= 1
+        dpg.delete_item(self.tag)
+        sub_box_x -= pos_offset
+        sub_box_y -= pos_offset
+        client_logger.log("INFO", f"{self} has been destroyed.")
 
     @property
     def x(self):

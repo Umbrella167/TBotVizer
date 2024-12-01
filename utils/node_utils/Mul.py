@@ -1,7 +1,7 @@
 from utils.Utils import convert_to_float
-from utils.node_utils.BaseFunc import BaseFunc
+from utils.node_utils.BaseNode import BaseNode
 
-class Mul(BaseFunc):
+class Mul(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_data = {"x": None, "y": None}
