@@ -37,8 +37,7 @@ class PlotVzBox(BaseBox):
             return
         self.is_axis_move = not self.is_axis_move
 
-    def create(self):
-        super().create()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="Plot Visualizer")
         # 添加标题

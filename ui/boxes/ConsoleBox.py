@@ -14,8 +14,7 @@ class ConsoleBox(BaseBox):
         self.all_classes = get_all_subclasses(BaseBox)
         self.generate_add_methods()
 
-    def create(self):
-        super().create()
+    def on_create(self):
         # 初始化设置
         if self.label is None:
             dpg.configure_item(self.tag, label="ConsoleBox")
@@ -57,6 +56,7 @@ class ConsoleBox(BaseBox):
         # instance_func 中有将新创建的实例添加进 self.boxes
         instance_func(ui=self.ui)
 
+
     # 生成添加类方法
     def generate_add_methods(self):
         for cls in self.all_classes:
@@ -67,27 +67,19 @@ class ConsoleBox(BaseBox):
             # 使用闭包捕获cls
             def add_method(self, cls=cls, **kwargs):
                 try:
-                    if cls.only and self.box_count.get(cls, 0) >= 1:
+                    if cls.only and self.ui.box_count.get(cls, 0) >= 1:
                         # 如果盒子已经创建则不重复创建
                         raise Exception("This box can only be created once")
                     instance = cls(**kwargs)
+                    instance.create()
                     # self.boxes.append(instance)
                     # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
-                    client_logger.log("INFO", f"{instance} instance has been added to the boxes list.")
+                    # client_logger.log("INFO", f"{instance} instance has been added to the boxes list.")
                 except Exception as e:
-                    client_logger.log("ERROR", f"Unable to instantiate {cls}: {e}")
+                    client_logger.log("ERROR", f"Unable to instantiate {cls}", e=e)
 
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
 
     def update(self):
-        super().update()
         dpg.set_value(self.fps_text, f"FPS:{dpg.get_frame_rate()}")
-
-    @property
-    def boxes(self):
-        return self.ui.boxes
-
-    @property
-    def box_count(self):
-        return self.ui.box_count

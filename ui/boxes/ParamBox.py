@@ -20,9 +20,7 @@ class ParamBox(BaseBox):
         self.table_title = ["Param", "Info", "Type", "Value"]
         self.row_tags = {}
 
-    def create(self):
-        super().create()
-
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="Param_box")
         # 添加表格

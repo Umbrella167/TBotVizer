@@ -18,8 +18,7 @@ class LogReaderBox(BaseBox):
         self.is_play = False
         self.start_button_tag = None
 
-    def create(self):
-        super().create()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="LogReaderBox", height=250, width=500)
         with dpg.texture_registry():

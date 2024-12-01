@@ -29,8 +29,7 @@ class NodeBox(BaseBox):
         self.now_time = time.time()
         # self.input_mutex = {}
 
-    def create(self):
-        super().create()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="NodeBox")
 
@@ -101,7 +100,7 @@ class NodeBox(BaseBox):
 
     def new_node(self, sender, cls, user_data):
         instance = cls(parent=self)
-        instance.create()
+        instance.on_create()
         # node_tag和实例的对应表
         self.nodes[instance.tag] = instance
         # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
@@ -154,6 +153,4 @@ class NodeBox(BaseBox):
     def destroy(self):
         # 销毁监听
         dpg.delete_item(self.handler)
-        # 销毁线程
-        self.nodes = {}
         super().destroy()

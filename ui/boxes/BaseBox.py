@@ -17,7 +17,7 @@ class BaseBox(object):
         self.callback = callback
         self.is_created = False
         self.only = True
-        self.handler = dpg.add_handler_registry()
+        # self.handler = dpg.add_handler_registry()
 
     def create(self):
         # 创建
@@ -35,18 +35,24 @@ class BaseBox(object):
         sub_box_y += pos_offset
         self.ui.boxes.append(self)
         self.ui.box_count[self.__class__] = self.ui.box_count.setdefault(self.__class__, 0) + 1
+        client_logger.log("INFO", f"{self} instance has been added to the boxes list.")
+
+        self.on_create()
+
         self.is_created = True
+
+    def on_create(self):
+        pass
 
     def show(self):
         # 显示盒子
         if not dpg.does_item_exist(self.tag):
-            self.create()
+            self.on_create()
         dpg.show_item(self.tag)
 
     def hide(self):
         # 隐藏盒子
         dpg.hide_item(self.tag)
-        pass
 
     def update(self):
         # raise f"{self.__name__} does not implement update()"

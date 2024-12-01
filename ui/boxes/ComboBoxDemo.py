@@ -14,8 +14,7 @@ class ComboBaseBoxDemo(BaseBox):
         self.cbl_tag = None
         self.btn_tag = None
 
-    def create(self):
-        super().create()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="ComboBaseBoxDemo")
 
