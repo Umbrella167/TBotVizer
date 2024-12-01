@@ -1,7 +1,6 @@
 import threading
 import time
 
-
 import dearpygui.dearpygui as dpg
 
 from ui.boxes.BaseBox import BaseBox
@@ -10,11 +9,13 @@ from utils.Utils import item_auto_resize, get_all_subclasses
 from utils.node_utils import *
 
 
-class NodeBaseBox(BaseBox):
+class NodeBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.static_node = None
+        self.handler = None
         self.funcs = get_all_subclasses(BaseFunc)
         self.group = None
         self.collapsing_header = None
@@ -24,15 +25,15 @@ class NodeBaseBox(BaseBox):
         self.node_group = None
         self.node_editor = None
         self.nodes = {}
-        self.box_count = {}
+        # self.box_count = {}
         self.link_func = {}
         self.node_threads = {}
-        self.input_mutex = {}
+        # self.input_mutex = {}
 
     def create(self):
         self.check_and_create_window()
         if self.label is None:
-            dpg.configure_item(self.tag, label="NodeBaseBox")
+            dpg.configure_item(self.tag, label="NodeBox")
 
         self.group = dpg.add_group(horizontal=True, parent=self.tag)
         # 添加方法列表
@@ -68,29 +69,59 @@ class NodeBaseBox(BaseBox):
             minimap_location=dpg.mvNodeMiniMap_Location_BottomRight,
             parent=self.node_group,
         )
-        with dpg.node(label="Tips: 拖动左侧节点到视窗以使用函数", parent=self.node_editor, use_internal_label=True,
-                      show=True, draggable=False):
-            with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
-                dpg.add_spacer(width=1)
+        # 创建固定节点（用于定位）
+        self.static_node = dpg.add_node(
+            label="Tips: 拖动左侧节点到视窗以使用函数",
+            parent=self.node_editor,
+            use_internal_label=True,
+            show=True, draggable=False)
+        with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static, parent=self.static_node):
+            dpg.add_spacer(width=1)
         item_auto_resize(self.func_window, self.tag, 0, 0.15, 200, 300)
+        # 创建监听
+        self.handler = dpg.add_handler_registry()
+        dpg.add_key_release_handler(key=dpg.mvKey_Delete, callback=self.delete_callback, parent=self.handler)
+
+    def delete_callback(self, sender, app_data, user_data):
+        for node_tag in dpg.get_selected_nodes(self.node_editor):
+            if node_tag == self.static_node:
+                continue
+            # 删除这个tag的链接
+            for link_tag, link in list(self.link_func.items()):  # 使用 list() 创建副本
+                parent_items = [dpg.get_item_parent(i) for i in dpg.get_item_user_data(link_tag)]
+                if node_tag in parent_items:
+                    client_logger.log("INFO", f"Delete the node link {link_tag}")
+                    del self.link_func[link_tag]
+                    dpg.delete_item(link_tag)
+            # 删除node
+            del self.nodes[node_tag]
+            dpg.delete_item(node_tag)
 
     def update(self):
-        for k, node in self.nodes.items():
-            if node not in self.node_threads:
-                def node_thread():
-                    while True:
-                        node.calc()
+        for tag, node in self.nodes.items():
+            if tag not in self.node_threads:
+                def node_thread(tag):
+                    error_times = 0
+                    while tag in self.nodes:  # 检查是否退出
+                        try:
+                            node.calc()
+                        except Exception as e:
+                            # error_times += 1
+                            # # 如果报错超过3次则退出线程
+                            # if error_times >= 3:
+                            #     break
+                            client_logger.log("ERROR", f"{node} calc failed!", e=e)
+                            time.sleep(5)
                         time.sleep(0.01)
-                # 创建线程并启动
-                thread = threading.Thread(target=node_thread)
-                thread.daemon = True  # 设置为守护线程，确保主程序退出时线程自动结束
-                self.node_threads[node] = thread
-                try:
-                    thread.start()
-                except:
-                    client_logger.log("INFO", "Node thread stop!")
+                    del self.node_threads[tag]
+                    client_logger.log("INFO", f"{node} thread stop")
+                thread = threading.Thread(target=node_thread, args=(tag,))
+                thread.daemon = True
+                client_logger.log("INFO", f"{node} thread start")
+                self.node_threads[tag] = thread
+                thread.start()
 
-        for k, func in self.link_func.items():
+        for tag, func in self.link_func.items():
             func()
 
     def new_node(self, sender, cls, user_data):
@@ -99,7 +130,7 @@ class NodeBaseBox(BaseBox):
 
         # node的tag和实例的对应表
         self.nodes[instance.tag] = instance
-        self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
+        # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
 
     def link_callback(self, sender, app_data):
         def create_link_function(input_ins, input_label, output_ins, output_label):
@@ -107,10 +138,11 @@ class NodeBaseBox(BaseBox):
                 input_ins.input_data[input_label] = output_ins.output_data[output_label]
             return link_function
 
-        if app_data[1] in self.input_mutex.values():
-            # 如果input已被连接，则不连接
-            client_logger.log("ERROR", "Node input has been connected!")
-            return
+        # if app_data[1] in self.input_mutex.values():
+        #     # 如果input已被连接，则不连接
+        #     client_logger.log("ERROR", "Node input has been connected!")
+        #     return
+
         # 0是output,1是input
         # node的实例化类
         output_ins = self.nodes[dpg.get_item_parent(app_data[0])]
@@ -121,13 +153,20 @@ class NodeBaseBox(BaseBox):
         # 标签
         output_label = output_ins.output_text[output_tag]
         input_label = input_ins.input_text[input_tag]
-        link = dpg.add_node_link(app_data[0], app_data[1], parent=sender)
+        link = dpg.add_node_link(app_data[0], app_data[1], parent=sender, user_data=(app_data[0], app_data[1]))
         # 建立函数
         self.link_func[link] = create_link_function(input_ins, input_label, output_ins, output_label)
-        self.input_mutex[link] = app_data[1]
+        # self.input_mutex[link] = app_data[1]
 
     def delink_callback(self, sender, app_data):
         # 删除函数
         del self.link_func[app_data]
-        del self.input_mutex[app_data]
+        # del self.input_mutex[app_data]
         dpg.delete_item(app_data)
+
+    def destroy(self):
+        # 销毁监听
+        dpg.delete_item(self.handler)
+        # 销毁线程
+        self.nodes = {}
+        super().destroy()

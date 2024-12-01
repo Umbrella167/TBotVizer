@@ -6,7 +6,7 @@ from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 
 
-class ParamBaseBox(BaseBox):
+class ParamBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -88,7 +88,7 @@ class ParamBaseBox(BaseBox):
                 cell_tag = dpg.get_item_children(row_tag)[1][cell_index + 1]
                 dpg.set_value(cell_tag, cell_value)
         # 更新完后将当前数据保存
-        client_logger.log("INFO", "ParamBaseBox updated!")
+        client_logger.log("INFO", "ParamBox updated!")
         self.data = new_data.copy()
 
         # _info = value["info"]

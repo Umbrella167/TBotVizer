@@ -7,7 +7,7 @@ from utils.ClientLogManager import client_logger
 from utils.Utils import set_itme_text_color
 
 
-class LogReaderBaseBox(BaseBox):
+class LogReaderBox(BaseBox):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._logger = Logger()

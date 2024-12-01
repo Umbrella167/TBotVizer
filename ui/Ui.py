@@ -1,7 +1,7 @@
 import dearpygui.dearpygui as dpg
 
 from config.UiConfig import UiConfig
-from ui.boxes.ConsoleBox import ConsoleBaseBox
+from ui.boxes.ConsoleBox import ConsoleBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import ui_data
 
@@ -33,7 +33,7 @@ class UI:
     def __init__(self):
         self.config = UiConfig()
         self.config.instance = self
-        self.console = ConsoleBaseBox()
+        self.console = ConsoleBox()
         self.boxes = self.console.boxes
         self.is_created = False
         self._ui_callback = UICallback()
@@ -94,3 +94,11 @@ class UI:
 
         with dpg.handler_registry():
             dpg.add_mouse_click_handler(button=dpg.mvMouseButton_Right, callback=self._ui_callback.on_right_click)
+
+    #     with dpg.handler_registry():
+    #         dpg.add_key_release_handler(key=dpg.mvKey_Delete, callback=self.delete_callback)
+    #
+    # def delete_callback(self, sender, app_data, user_data):
+    #     print(dpg.get_selected_nodes())
+    #     print(sender, app_data, user_data)
+    #     print(dpg.does_item_exist(sender))

@@ -11,7 +11,7 @@ from utils.DataProcessor import tbk_data
 from utils.Utils import msg_serializer
 
 
-class PlotVzBaseBox(BaseBox):
+class PlotVzBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):

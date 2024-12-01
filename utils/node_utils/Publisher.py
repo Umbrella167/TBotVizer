@@ -32,7 +32,7 @@ class Publisher(BaseFunc):
             # 如果三者接不为空则创建
             info = (name, msg_name, msg_type)
             ep = tbkpy.EPInfo()
-            ep.name = name
+            ep.name = str(name)
             ep.msg_name = msg_name
             ep.msg_type = msg_type
             if self.info != info:

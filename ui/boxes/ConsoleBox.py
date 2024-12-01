@@ -5,7 +5,7 @@ from utils.ClientLogManager import client_logger
 from utils.Utils import get_all_subclasses
 
 
-class ConsoleBaseBox(BaseBox):
+class ConsoleBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -20,7 +20,7 @@ class ConsoleBaseBox(BaseBox):
         # 初始化设置
         self.check_and_create_window()
         if self.label is None:
-            dpg.configure_item(self.tag, label="ConsoleBaseBox")
+            dpg.configure_item(self.tag, label="ConsoleBox")
         dpg.configure_item(
             self.tag,
             pos=[0, 0],
