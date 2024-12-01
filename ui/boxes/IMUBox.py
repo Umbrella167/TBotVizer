@@ -57,14 +57,12 @@ class IMUBoxCallback:
             imu_msg.angular_velocity.y,
             imu_msg.angular_velocity.z,
         ]
-
         # 构建原始字典
         imu_data = {
             "quat": quat,
             "acc": acc,
             "gyro": gyro,
         }
-
         return imu_data
 
 class IMUBox(BaseBox):

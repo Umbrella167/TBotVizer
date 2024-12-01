@@ -59,14 +59,15 @@ class UI:
     def show(self):
         if not self.is_created:
             self.create()
-        for box in self.boxes:
-            if not box.is_created:
-                box.create()
+        # for box in self.boxes:
+        #     if not box.is_created:
+        #         box.create()
 
     def update(self):
         self.show()
         for box in self.boxes:
-            box.update()
+            if box.is_created:
+                box.update()
 
     def destroy_all_boxes(self):
         for box in self.boxes:

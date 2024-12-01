@@ -30,5 +30,5 @@ class GfxEngine3DBox(BaseBox):
     def update(self):
         dpg.set_value(self.texture_tag, self.imu_world.draw())
         self.count += 0.05
-        # position = [0, 0, self.count]
-        # self.imu_world.camera.local.position = position
+        position = [0, 0, self.count]
+        self.imu_world.camera.local.position = position
