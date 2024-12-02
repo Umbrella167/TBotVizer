@@ -19,6 +19,8 @@ def main():
     dpg.create_context()
     ui = UI()
     ui.show()
+    # demo.show_demo()
+
     ui.run_loop(lambda: loop(ui))
 
 

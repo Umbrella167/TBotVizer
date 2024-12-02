@@ -1,16 +1,20 @@
+import time
+
 import dearpygui.dearpygui as dpg
 
 from ui.boxes.BaseBox import BaseBox
+from utils.ClientLogManager import client_logger
 from utils.Utils import item_auto_resize, get_all_subclasses
 from utils.node_utils import *
 
 
-class NodeBaseBox(BaseBox):
+class NodeBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.funcs = get_all_subclasses(BaseFunc)
+        self.static_node = None
+        self.funcs = get_all_subclasses(BaseNode)
         self.group = None
         self.collapsing_header = None
         self.func_window = None
@@ -19,13 +23,14 @@ class NodeBaseBox(BaseBox):
         self.node_group = None
         self.node_editor = None
         self.nodes = {}
-        self.box_count = {}
+        # self.box_count = {}
         self.link_func = {}
+        self.now_time = time.time()
+        # self.input_mutex = {}
 
-    def create(self):
-        self.check_and_create_window()
+    def on_create(self):
         if self.label is None:
-            dpg.configure_item(self.tag, label="NodeBaseBox")
+            dpg.configure_item(self.tag, label="NodeBox")
 
         self.group = dpg.add_group(horizontal=True, parent=self.tag)
         # 添加方法列表
@@ -61,67 +66,90 @@ class NodeBaseBox(BaseBox):
             minimap_location=dpg.mvNodeMiniMap_Location_BottomRight,
             parent=self.node_group,
         )
-
-        with dpg.node(label="Tips: 拖动左侧节点到视窗以使用函数", parent=self.node_editor, use_internal_label=True,
-                      show=True, draggable=False):
-            with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
-                dpg.add_spacer(width=1)
-
-        # with dpg.node(label="Node 2", pos=[300, 10], parent=self.node_editor):
-        #     with dpg.node_attribute() as na2:
-        #         dpg.add_input_float(label="F3", width=200)
-        #
-        #     with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Output):
-        #         dpg.add_input_float(label="F4", width=200)
-        #
-        # with dpg.node(label="Node 3", pos=[25, 150], parent=self.node_editor):
-        #     with dpg.node_attribute():
-        #         dpg.add_input_text(label="T5", width=200)
-        #     with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static):
-        #         dpg.add_simple_plot(label="Node Plot", default_value=(0.3, 0.9, 2.5, 8.9), width=200, height=80,
-        #                             histogram=True)
-
+        # 创建固定节点（用于定位）
+        self.static_node = dpg.add_node(
+            label="Tips: 拖动左侧节点到视窗以使用函数",
+            parent=self.node_editor,
+            use_internal_label=True,
+            show=True, draggable=False)
+        with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static, parent=self.static_node):
+            dpg.add_spacer(width=1)
         item_auto_resize(self.func_window, self.tag, 0, 0.15, 200, 300)
 
+    def key_release_handler(self, sender, app_data, user_data):
+        if dpg.is_key_released(dpg.mvKey_Delete):
+            for node_tag in dpg.get_selected_nodes(self.node_editor):
+                if node_tag == self.static_node:
+                    continue
+                self.delete_node(node_tag)
+
+    # def delete_callback(self, sender, app_data, user_data):
+    #     for node_tag in dpg.get_selected_nodes(self.node_editor):
+    #         if node_tag == self.static_node:
+    #             continue
+    #         self.delete_node(node_tag)
+
     def update(self):
-        for k, node in self.nodes.items():
-            node.calc()
-        for k, func in self.link_func.items():
+        self.now_time = time.time()
+        for tag, node in self.nodes.items():
+            try:
+                node.calc()
+            except Exception as e:
+                # self.delete_node(tag)
+                client_logger.log("ERROR", f"{node} calc failed!",e=e)
+
+        for tag, func in self.link_func.items():
             func()
 
     def new_node(self, sender, cls, user_data):
-        instance = cls(parent=self.node_editor)
+        instance = cls(parent=self)
         instance.create()
-
-        # node的tag和实例的对应表
+        # node_tag和实例的对应表
         self.nodes[instance.tag] = instance
-        self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
+        # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
+
+    def delete_node(self, node_tag):
+        # 删除这个node的链接
+        for link_tag, link in list(self.link_func.items()):  # 使用 list() 创建副本
+            parent_items = [dpg.get_item_parent(i) for i in dpg.get_item_user_data(link_tag)]
+            if node_tag in parent_items:
+                # client_logger.log("INFO", f"Delete the node link {link_tag}")
+                del self.link_func[link_tag]
+                dpg.delete_item(link_tag)
+        # 删除node
+        client_logger.log("INFO", f"Delete the node {dpg.get_item_label(node_tag)}:{node_tag}")
+        del self.nodes[node_tag]
+        dpg.delete_item(node_tag)
 
     def link_callback(self, sender, app_data):
         def create_link_function(input_ins, input_label, output_ins, output_label):
             def link_function():
                 input_ins.input_data[input_label] = output_ins.output_data[output_label]
-
             return link_function
+
+        # if app_data[1] in self.input_mutex.values():
+        #     # 如果input已被连接，则不连接
+        #     client_logger.log("ERROR", "Node input has been connected!")
+        #     return
 
         # 0是output,1是input
         # node的实例化类
         output_ins = self.nodes[dpg.get_item_parent(app_data[0])]
         input_ins = self.nodes[dpg.get_item_parent(app_data[1])]
-
         # text 的 tag
         output_tag = dpg.get_item_user_data(app_data[0])
         input_tag = dpg.get_item_user_data(app_data[1])
-
         # 标签
         output_label = output_ins.output_text[output_tag]
         input_label = input_ins.input_text[input_tag]
-
-        link = dpg.add_node_link(app_data[0], app_data[1], parent=sender)
+        link = dpg.add_node_link(app_data[0], app_data[1], parent=sender, user_data=(app_data[0], app_data[1]))
         # 建立函数
         self.link_func[link] = create_link_function(input_ins, input_label, output_ins, output_label)
+        # self.input_mutex[link] = app_data[1]
 
     def delink_callback(self, sender, app_data):
         # 删除函数
         del self.link_func[app_data]
+        # del self.input_mutex[app_data]
         dpg.delete_item(app_data)
+

@@ -124,7 +124,6 @@ tbk_api = TBKApi()
 tbk_data = TBKData(tbk_api)
 
 
-
 class MsgSubscriberManager:
     def __init__(self):
         self.subscriber_data = {}

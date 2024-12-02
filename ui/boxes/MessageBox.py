@@ -9,7 +9,7 @@ from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 
 
-class MessageBaseBox(BaseBox):
+class MessageBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -18,7 +18,7 @@ class MessageBaseBox(BaseBox):
         self.puuid_tags = {}
         self.table_tags = {}
         self.uuid_tags = {}
-        self.create_time = time.time()
+        self.create_time = None
 
         self.msg_logger = Logger("logs/msg_log")
         self._callback = MessageBoxCallBack(self.msg_logger)
@@ -26,11 +26,12 @@ class MessageBaseBox(BaseBox):
         self.tbk_data = tbk_data
         self.data = {}
 
-    def create(self):
-        self.check_and_create_window()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="Message")
         self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag)
+        self.create_time = time.time()
+        self.update()
 
     def update(self):
         if not (time.time() - self.create_time) % 2 < 0.01:
@@ -72,7 +73,7 @@ class MessageBaseBox(BaseBox):
             # 添加新的行
             for uuid in uuids_to_add:
                 self.add_row(new_data, puuid, uuid)
-        client_logger.log("INFO", "MessageBaseBox updated!")
+        client_logger.log("INFO", "MessageBox updated!")
         self.data = new_data.copy()
 
     def add_node(self, data, puuid):

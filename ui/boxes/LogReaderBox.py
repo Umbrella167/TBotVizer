@@ -7,7 +7,7 @@ from utils.ClientLogManager import client_logger
 from utils.Utils import set_itme_text_color
 
 
-class LogReaderBaseBox(BaseBox):
+class LogReaderBox(BaseBox):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._logger = Logger()
@@ -18,8 +18,7 @@ class LogReaderBaseBox(BaseBox):
         self.is_play = False
         self.start_button_tag = None
 
-    def create(self):
-        self.check_and_create_window()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="LogReaderBox", height=250, width=500)
         with dpg.texture_registry():

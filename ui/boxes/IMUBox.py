@@ -56,14 +56,12 @@ class IMUBoxCallback:
             imu_msg.angular_velocity.y,
             imu_msg.angular_velocity.z,
         ]
-
         # 构建原始字典
         imu_data = {
             "quat": quat,
             "acc": acc,
             "gyro": gyro,
         }
-
         return imu_data
 
 class IMUBox(BaseBox):
@@ -76,13 +74,11 @@ class IMUBox(BaseBox):
         self._callback = IMUBoxCallback()
         self.checkbox_bind = {}
 
-    def create(self):
-        self.check_and_create_window()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="IMU3DBox")
             self.canvas3D = Canvas3D(self.tag)
             dpg.set_item_drop_callback(self.canvas3D.canvas.group_tag, callback=self.drop_callback)
-
         scene = self.imu_scene()
         self.canvas3D.add(scene)
 
@@ -96,7 +92,6 @@ class IMUBox(BaseBox):
 
         self.AxesHelper = gfx.AxesHelper(1500, 5)
 
-        self.AxesHelper = gfx.AxesHelper(1500, 5)
         self.AxesHelper.local.position = (-150, 0, 0)
         self.car_meshes.local.scale_x = 20
         self.car_meshes.local.scale_y = 20

@@ -6,7 +6,7 @@ from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 
 
-class ParamBaseBox(BaseBox):
+class ParamBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -14,15 +14,13 @@ class ParamBaseBox(BaseBox):
         self.tbk_data = tbk_data
         self.data = {}
         self.table_tag = None
-        self.create_time = time.time()
+        self.create_time = None
 
         self.tb = None
         self.table_title = ["Param", "Info", "Type", "Value"]
         self.row_tags = {}
 
-    def create(self):
-        self.check_and_create_window()
-
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="Param_box")
         # 添加表格
@@ -44,6 +42,8 @@ class ParamBaseBox(BaseBox):
         # 表格标题
         for t in self.table_title:
             dpg.add_table_column(label=t, width_fixed=True, parent=self.table_tag)
+        self.create_time = time.time()
+        self.update()
 
     # 更新表格中内容
     def update(self):
@@ -86,7 +86,7 @@ class ParamBaseBox(BaseBox):
                 cell_tag = dpg.get_item_children(row_tag)[1][cell_index + 1]
                 dpg.set_value(cell_tag, cell_value)
         # 更新完后将当前数据保存
-        client_logger.log("INFO", "ParamBaseBox updated!")
+        client_logger.log("INFO", "ParamBox updated!")
         self.data = new_data.copy()
 
         # _info = value["info"]
@@ -133,7 +133,7 @@ class ParamBaseBox(BaseBox):
         #     # 添加表格行和内容
         #
         #
-        #     for row_index, (param, value) in enumerate(self.tbk_data.param_data.items()):
+        #     for row_index, (param, value) in enumerate(self.tbk_data._param_data.items()):
         #         with dpg.table_row(parent=table_tag, tag=param):
         #             dpg.add_text(default_value=param, tag=param + "_param")
         #             _info = value["info"]
@@ -156,7 +156,7 @@ class ParamBaseBox(BaseBox):
 
     # TODO： 只会更改已有的条目，无法插入新数据，也没有做类型的检查，如果类型错误则会报错
     # def update(self):
-    #     for k, v in self.tbk_data.param_data.items():
+    #     for k, v in self.tbk_data._param_data.items():
     #         # 这句暂时有点问题
     #         # dpg.set_value(k + '_value', v['value'])
     #         pass

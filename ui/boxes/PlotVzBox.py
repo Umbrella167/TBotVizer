@@ -11,7 +11,7 @@ from utils.DataProcessor import tbk_data
 from utils.Utils import msg_serializer
 
 
-class PlotVzBaseBox(BaseBox):
+class PlotVzBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):
@@ -37,8 +37,7 @@ class PlotVzBaseBox(BaseBox):
             return
         self.is_axis_move = not self.is_axis_move
 
-    def create(self):
-        self.check_and_create_window()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="Plot Visualizer")
         # 添加标题
@@ -96,7 +95,6 @@ class PlotVzBaseBox(BaseBox):
                     y=[0],
                     parent=self.plot_x_tag,
                 )
-
         # 更新数据
         self.subscription_data[series_tag]["time"].append(
             self.now_time - self.data_start_time
@@ -125,22 +123,20 @@ class PlotVzBaseBox(BaseBox):
         msg_info, msg_checkbox_tag = app_data
         msg_type = msg_info["msg_type"]
         sub_checkbox = msg_checkbox_tag["sub_checkbox"]
-        
+
         if not dpg.get_value(sub_checkbox):
             client_logger.log("warning", f"Please subscribe to this msg")
             return
         if not PlotUitls.is_plot_supported(msg_type):
             client_logger.log("error", f"Unknown msg_type: {msg_type}")
             return
-    
+
         name = msg_info["name"]
         msg_name = msg_info["msg_name"]
         puuid = msg_info["puuid"]
         series_tag = f"{puuid}:{msg_name}:{name}"
         self.checkbox_bind[sub_checkbox] = (series_tag, puuid, msg_name, name)
-            
         self.message_subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})
-            
         if name not in self.message_subscriber_dict[puuid][msg_name]:
             msg_info["tag"] = self.tag
             self.message_subscriber_dict[puuid][msg_name][name] = tbk_data.Subscriber(
@@ -225,6 +221,7 @@ class PlotUitls:
             res = process_nested_dict(res)
 
         return res
+
 
 class TimedDeque:
     def __init__(self, max_age_seconds):

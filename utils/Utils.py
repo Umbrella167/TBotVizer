@@ -17,6 +17,11 @@ def new_texture(image):
                                           format=dpg.mvFormat_Float_rgba)
     return texture_tag
 
+def convert_to_float(value):
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return 0
 
 def set_itme_text_color(item, color):
     with dpg.theme() as input_text:

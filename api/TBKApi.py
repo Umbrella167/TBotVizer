@@ -40,15 +40,7 @@ class TBKApi:
         return data
 
     def get_param(self, _prefix=None):
-        prefix = self.PARAM_PREFIX + (_prefix if _prefix else "")
-        raw_data = self.etcd.get_prefix(prefix)
-
-        data = dict(
-            [
-                (r[1].key.decode('utf-8', errors='ignore')[12:], r[0].decode('utf-8', errors='ignore'))
-                for r in raw_data
-            ]
-        )
+        data = self.get_original_param(_prefix)
         result = {}
         # 遍历原始字典并分类存储
         for key, value in data.items():
@@ -80,6 +72,7 @@ class TBKApi:
         else:
             self.param_change_data = {"added": {}, "removed": {}, "modified": {}}
             self.param_is_change = False
+
     def get_message(self):
         processes = {}
         publishers = {}
@@ -108,14 +101,14 @@ class TBKApi:
         self.message_data = res
         return res
 
-    def update_message(self):
-        self.message_data_last = self.message_data
-        self.get_message()
-        if self.message_data_last != self.message_data:
-            self.message_change_data = uitls.compare_dicts(
-                self.message_data, self.message_data_last
-            )
-            self.message_is_change = True
-        else:
-            self.message_change_data = {"added": {}, "removed": {}, "modified": {}}
-            self.message_is_change = False
+    # def update_message(self):
+    #     self.message_data_last = self._message_data
+    #     self.get_message()
+    #     if self.message_data_last != self._message_data:
+    #         self.message_change_data = uitls.compare_dicts(
+    #             self._message_data, self.message_data_last
+    #         )
+    #         self.message_is_change = True
+    #     else:
+    #         self.message_change_data = {"added": {}, "removed": {}, "modified": {}}
+    #         self.message_is_change = False

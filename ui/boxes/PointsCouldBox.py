@@ -114,8 +114,7 @@ class PointsCouldBox(BaseBox):
         self.points_manager = PointManager(self.max_points)
         #np.zeros((self.max_points, 3), dtype=np.float32)
         self.geometry = None
-    def create(self):
-        self.check_and_create_window()
+    def on_create(self):
         if self.label is None:
             dpg.configure_item(self.tag, label="IMU3DBox")
         dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])

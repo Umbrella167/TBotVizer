@@ -66,7 +66,7 @@ class Table:
                 t_row.append(cell_tag)
             self.tag_table.append(t_row)
 
-            # for row_index, (param, value) in enumerate(self.tbk_data.param_data.items()):
+            # for row_index, (param, value) in enumerate(self.tbk_data._param_data.items()):
         #         with dpg.table_row(parent=table_tag, tag=param):
         #             dpg.add_text(default_value=param, tag=param + "_param")
         #             _info = value["info"]
