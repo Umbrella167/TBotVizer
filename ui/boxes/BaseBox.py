@@ -10,14 +10,14 @@ pos_offset = 20
 class BaseBox(object):
     only = False
 
-    def __init__(self, ui, tag=None, label=None, callback=None):
+    def __init__(self, ui, **kwargs):
         self.ui = ui
-        self.tag = tag
-        self.label = label
-        self.callback = callback
+        self.tag = None
+        self.label = None
         self.is_created = False
         self.only = True
-        # self.handler = dpg.add_handler_registry()
+        self.window_settings = kwargs
+        self.handler = dpg.add_handler_registry()
 
     def create(self):
         # 创建
@@ -25,12 +25,13 @@ class BaseBox(object):
         if self.is_created:
             client_logger.log("ERROR", "BaseBox has already been created")
             return
-        if self.tag:
-            dpg.add_window(tag=self.tag, label=self.label, width=800, height=800, pos=(sub_box_x, sub_box_y),
-                           on_close=self.destroy)
-        else:
-            self.tag = dpg.add_window(label=self.label, width=800, height=800, pos=(sub_box_x, sub_box_y),
-                                      on_close=self.destroy)
+        self.tag = dpg.add_window(
+            width=800,
+            height=800,
+            pos=(sub_box_x, sub_box_y),
+            on_close=self.destroy,
+            **self.window_settings
+        )
         sub_box_x += pos_offset
         sub_box_y += pos_offset
         self.ui.boxes.append(self)
@@ -39,6 +40,7 @@ class BaseBox(object):
 
         self.on_create()
 
+        dpg.add_key_release_handler(callback=self.key_release_handler, parent=self.handler)
         self.is_created = True
 
     def on_create(self):
@@ -58,12 +60,16 @@ class BaseBox(object):
         # raise f"{self.__name__} does not implement update()"
         pass
 
+    def key_release_handler(self, sender, app_data, user_data):
+        pass
+
     def destroy(self):
         # 销毁盒子
         global sub_box_x, sub_box_y, pos_offset
         self.ui.boxes.remove(self)
         self.ui.box_count[self.__class__] -= 1
         dpg.delete_item(self.tag)
+        dpg.delete_item(self.handler)
         sub_box_x -= pos_offset
         sub_box_y -= pos_offset
         client_logger.log("INFO", f"{self} has been destroyed.")

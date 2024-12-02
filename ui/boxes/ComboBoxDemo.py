@@ -3,7 +3,7 @@ import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import BaseBox
 
 
-class ComboBaseBoxDemo(BaseBox):
+class ComboBoxDemo(BaseBox):
     only = False
 
     def __init__(self, data=None, **kwargs):
@@ -16,8 +16,7 @@ class ComboBaseBoxDemo(BaseBox):
 
     def on_create(self):
         if self.label is None:
-            dpg.configure_item(self.tag, label="ComboBaseBoxDemo")
-
+            dpg.configure_item(self.tag, label="ComboBoxDemo")
         # 创建按钮
         self.btn_tag = dpg.add_button(label="Options     V", parent=self.tag)
         # 创建点击后列表

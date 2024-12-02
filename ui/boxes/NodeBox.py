@@ -14,7 +14,6 @@ class NodeBox(BaseBox):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.static_node = None
-        self.handler = None
         self.funcs = get_all_subclasses(BaseNode)
         self.group = None
         self.collapsing_header = None
@@ -76,15 +75,19 @@ class NodeBox(BaseBox):
         with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static, parent=self.static_node):
             dpg.add_spacer(width=1)
         item_auto_resize(self.func_window, self.tag, 0, 0.15, 200, 300)
-        # 创建监听
-        self.handler = dpg.add_handler_registry()
-        dpg.add_key_release_handler(key=dpg.mvKey_Delete, callback=self.delete_callback, parent=self.handler)
 
-    def delete_callback(self, sender, app_data, user_data):
-        for node_tag in dpg.get_selected_nodes(self.node_editor):
-            if node_tag == self.static_node:
-                continue
-            self.delete_node(node_tag)
+    def key_release_handler(self, sender, app_data, user_data):
+        if dpg.is_key_released(dpg.mvKey_Delete):
+            for node_tag in dpg.get_selected_nodes(self.node_editor):
+                if node_tag == self.static_node:
+                    continue
+                self.delete_node(node_tag)
+
+    # def delete_callback(self, sender, app_data, user_data):
+    #     for node_tag in dpg.get_selected_nodes(self.node_editor):
+    #         if node_tag == self.static_node:
+    #             continue
+    #         self.delete_node(node_tag)
 
     def update(self):
         self.now_time = time.time()
@@ -100,7 +103,7 @@ class NodeBox(BaseBox):
 
     def new_node(self, sender, cls, user_data):
         instance = cls(parent=self)
-        instance.on_create()
+        instance.create()
         # node_tag和实例的对应表
         self.nodes[instance.tag] = instance
         # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
@@ -150,7 +153,3 @@ class NodeBox(BaseBox):
         # del self.input_mutex[app_data]
         dpg.delete_item(app_data)
 
-    def destroy(self):
-        # 销毁监听
-        dpg.delete_item(self.handler)
-        super().destroy()

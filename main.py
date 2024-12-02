@@ -4,10 +4,8 @@ import dearpygui.dearpygui as dpg
 from ui.Ui import UI
 from utils.ClientLogManager import client_logger
 
-import pickle
 
-
-# import dearpygui.demo as demo
+import dearpygui.demo as demo
 
 
 def loop(UI):
@@ -21,6 +19,7 @@ def main():
     dpg.create_context()
     ui = UI()
     ui.show()
+    # demo.show_demo()
 
     ui.run_loop(lambda: loop(ui))
 

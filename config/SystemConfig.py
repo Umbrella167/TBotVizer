@@ -33,3 +33,4 @@ configurations = {
 
 config = configurations[ENVIRONMENT]
 run_time = time.time()
+PROHIBITED_BOXES = ["ConsoleBox", "InputConsoleBox"]
