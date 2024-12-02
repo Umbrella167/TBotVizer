@@ -34,7 +34,7 @@ class UI:
         self.boxes = self.console.boxes
         self.is_created = False
         self._ui_callback = UICallback()
-
+        dpg.filter_set
     def create(self):
         # 创建主窗口
         self.create_global_handler()

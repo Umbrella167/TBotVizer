@@ -9,3 +9,4 @@ from ui.boxes.LogReaderBox import LogReaderBaseBox
 from ui.boxes.NodeBox import NodeBaseBox
 from ui.boxes.GfxEngine3DBox import GfxEngine3DBox
 from ui.boxes.IMUBox import IMUBox
+from ui.boxes.PointsCouldBox import PointsCouldBox

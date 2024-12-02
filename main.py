@@ -5,7 +5,7 @@ from ui.Ui import UI
 from utils.ClientLogManager import client_logger
 
 
-# import dearpygui.demo as demo
+import dearpygui.demo as demo
 
 
 def loop(UI):

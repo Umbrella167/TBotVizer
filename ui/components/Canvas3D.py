@@ -5,7 +5,6 @@ from ui.components.Canvas2D import Canvas2D
 import math
 import numpy as np
 import pylinalg as la
-
 class BaseScene(gfx.Scene):
     def __init__(self, a_cube=False):
         super().__init__()
@@ -32,8 +31,8 @@ class BaseScene(gfx.Scene):
         self.add(self.direct_light2)
 
 class World:
-    def __init__(self, size=(800, 600)):
-        self.gfx_engine = GfxEngine()
+    def __init__(self, SIZE=(800, 600)):
+        self.gfx_engine = GfxEngine(size=SIZE)
         self.world = self.gfx_engine.new_world()
         self._canvas = self.gfx_engine.canvas
         self._renderer = self.gfx_engine.renderer
@@ -60,7 +59,6 @@ class World:
             )
         )
         value = (self.gfx_engine.draw()).ravel().astype(np.float32) / 255.0
-        # value = np.array(self._canvas.draw()).ravel().astype(np.float32) / 255.0
         return value
 
     def handle_event(self, event: gfx.objects.Event):
@@ -68,9 +66,9 @@ class World:
 
 
 class Handler:
-    def __init__(self):
+    def __init__(self,SIZE = (800,600)):
         self.pressedDown = {}
-        self.world = World()
+        self.world = World(SIZE)
         self.BUTTON_MAP = {
             0: 1,  # MOUSE_LEFT
             1: 2,  # MOUSE_RIGHT
@@ -143,12 +141,12 @@ class Canvas3D:
         self.size = SIZE
         self.is_mouse_controller = is_mouse_controller
         self.canvas = Canvas2D(parent=parent, auto_mouse_transfrom=False)
-        self.handler = Handler()
+        self.handler = Handler(SIZE)
         self.handler_registry()
         self.texture_data = self.texture_registry(SIZE)
         with self.canvas.draw():
             dpg.draw_image(self.texture_data, pmin=[0, 0], pmax=SIZE)
-
+            
     def handler_registry(self):
         if not self.is_mouse_controller:
             return 
@@ -160,6 +158,9 @@ class Canvas3D:
 
     def add(self,obj):
         self.handler.world._scene.add(obj)
+
+    def remove(self,obj):
+        self.handler.world._scene.remove(obj)
     def texture_registry(self,size):
         width, height = self.size
         texture = np.zeros((size[1], size[0], 4),dtype=np.float32).reshape(-1)
