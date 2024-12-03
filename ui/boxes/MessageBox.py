@@ -27,8 +27,7 @@ class MessageBox(BaseBox):
         self.data = {}
 
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="Message")
+        dpg.configure_item(self.tag, label="Message")
         self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag)
         self.create_time = time.time()
         self.update()

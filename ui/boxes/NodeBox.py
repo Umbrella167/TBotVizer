@@ -29,9 +29,7 @@ class NodeBox(BaseBox):
         # self.input_mutex = {}
 
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="NodeBox")
-
+        dpg.configure_item(self.tag, label="NodeBox")
         self.group = dpg.add_group(horizontal=True, parent=self.tag)
         # 添加方法列表
         self.func_window = dpg.add_child_window(parent=self.group)

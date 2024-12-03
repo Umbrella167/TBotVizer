@@ -12,8 +12,7 @@ class CanvasDemoBox(BaseBox):
         self._canvas = None
 
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="CANVAS")
+        dpg.configure_item(self.tag, label="CANVAS")
         with dpg.group(drop_callback=lambda:print(1),parent=self.tag) as a :
             self._canvas = Canvas2D(a,auto_mouse_transfrom=False)
         with self._canvas.draw():

@@ -75,10 +75,9 @@ class IMUBox(BaseBox):
         self.checkbox_bind = {}
 
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="IMU3DBox")
-            self.canvas3D = Canvas3D(self.tag)
-            dpg.set_item_drop_callback(self.canvas3D.canvas.group_tag, callback=self.drop_callback)
+        dpg.configure_item(self.tag, label="IMU3DBox")
+        self.canvas3D = Canvas3D(self.tag)
+        dpg.set_item_drop_callback(self.canvas3D.canvas.group_tag, callback=self.drop_callback)
         scene = self.imu_scene()
         self.canvas3D.add(scene)
 

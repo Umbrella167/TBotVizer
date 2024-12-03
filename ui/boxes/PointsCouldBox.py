@@ -100,7 +100,7 @@ class PointsGetter:
                 self.count = 0
 
 class PointsCouldBox(BaseBox):
-    only = False
+    only = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
