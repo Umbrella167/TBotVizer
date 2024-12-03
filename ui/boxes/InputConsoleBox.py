@@ -68,7 +68,7 @@ class InputConsoleBox(BaseBox):
 
     def key_release_handler(self, sender, app_data, user_data):
         key = app_data
-        if not dpg.is_item_visible(self.tag) and key == dpg.mvKey_Spacebar:
+        if not dpg.is_item_visible(self.tag) and dpg.is_key_down(dpg.mvKey_LControl) and dpg.is_key_released(dpg.mvKey_T):
             dpg.set_item_pos(
                 self.tag,
                 [dpg.get_viewport_width() / 2 - self.width / 2, dpg.get_viewport_height() / 2 - self.height / 2],
