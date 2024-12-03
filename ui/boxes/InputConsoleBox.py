@@ -39,10 +39,13 @@ class InputConsoleBox(BaseBox):
             popup=not self.is_sticky,
             show=False,
         )
-        self.input_text = dpg.add_input_text(width=self.width, height=self.height, callback=self.filter_res,
-                                             parent=self.tag)
+        self.input_text = dpg.add_input_text(
+            width=self.width, height=self.height, callback=self.filter_res, parent=self.tag
+        )
         for cls_name in self.all_class_name:
-            self.selectables[cls_name] = dpg.add_selectable(label=cls_name, filter_key=cls_name, parent=self.tag, callback=None)
+            self.selectables[cls_name] = dpg.add_selectable(
+                label=cls_name, filter_key=cls_name, parent=self.tag, callback=None
+            )
 
     def filter_res(self, sender, app_data):
         self.select_index = 0
@@ -62,31 +65,43 @@ class InputConsoleBox(BaseBox):
                 self.filter_list.append(cls_name)
 
     def key_release_handler(self, sender, app_data, user_data):
-        if not dpg.is_item_visible(self.tag) and dpg.is_key_released(dpg.mvKey_Spacebar):
-            dpg.set_item_pos(self.tag, [dpg.get_viewport_width() / 2 - self.width / 2,
-                                        dpg.get_viewport_height() / 2 - self.height / 2])
+
+        key = app_data
+        if not dpg.is_item_visible(self.tag) and key == dpg.mvKey_Spacebar:
+            dpg.set_item_pos(
+                self.tag,
+                [dpg.get_viewport_width() / 2 - self.width / 2, dpg.get_viewport_height() / 2 - self.height / 2],
+            )
             dpg.configure_item(self.input_text, default_value="")
             self.filter_res(None, "")
             self.show()
-        if dpg.is_key_released(dpg.mvKey_Escape) and not self.is_sticky:
+        if key == dpg.mvKey_Escape and not self.is_sticky:
             self.hide()
+        if self.filter_list:
+            cls_name = self.filter_list[self.select_index]
+            if dpg.is_item_visible(self.tag) and key == dpg.mvKey_Return:
+                func_name = f"add_{cls_name}"
+                self.instantiate_box(func_name)
+ 
+        dpg.focus_item(self.input_text)
+
+    def key_press_handler(self, sender, app_data, user_data):
+        key = app_data
         if self.filter_list:
             for selectable in self.selectables.values():
                 dpg.configure_item(selectable, default_value=False)
-            if dpg.is_key_released(dpg.mvKey_Up):
+            if key == dpg.mvKey_Up:
                 self.select_index -= 1
                 if self.select_index < 0:
                     self.select_index = len(self.filter_list) - 1
-            if dpg.is_key_released(dpg.mvKey_Down):
+            if key == dpg.mvKey_Down:
                 self.select_index += 1
                 if self.select_index == len(self.filter_list):
                     self.select_index = 0
             cls_name = self.filter_list[self.select_index]
             dpg.configure_item(self.selectables[cls_name], default_value=True)
             dpg.configure_item(self.input_text, hint=cls_name)
-            if dpg.is_item_visible(self.tag) and dpg.is_key_released(dpg.mvKey_Return):
-                func_name = f"add_{cls_name}"
-                self.instantiate_box(func_name)
+
         dpg.focus_item(self.input_text)
 
     def instantiate_box(self, func_name):
@@ -94,7 +109,6 @@ class InputConsoleBox(BaseBox):
         instance_func = getattr(self.ui, instance_func_name, None)
         # instance_func 中有将新创建的实例添加进 self.boxes
         instance_func(ui=self.ui)
-
 
     def destroy(self):
         dpg.delete_item(self.handler)

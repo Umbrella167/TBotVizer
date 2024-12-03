@@ -41,6 +41,7 @@ class BaseBox(object):
         self.on_create()
 
         dpg.add_key_release_handler(callback=self.key_release_handler, parent=self.handler)
+        dpg.add_key_press_handler(callback=self.key_press_handler, parent=self.handler)
         self.is_created = True
 
     def on_create(self):
@@ -62,7 +63,8 @@ class BaseBox(object):
 
     def key_release_handler(self, sender, app_data, user_data):
         pass
-
+    def key_press_handler(self, sender, app_data, user_data):
+        pass
     def destroy(self):
         # 销毁盒子
         global sub_box_x, sub_box_y, pos_offset
