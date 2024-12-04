@@ -1,5 +1,5 @@
 import pickle
-import time
+import dearpygui.dearpygui as dpg
 
 import tbkpy._core as tbkpy
 
@@ -11,8 +11,13 @@ from utils.node_utils.BaseNode import BaseNode
 class Publisher(BaseNode):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.input_data = {"name": "MOTOR_CONTROL", "msg_name": "RPM", "msg_type": "list", "frequency(s)": None,
-                           "msg": None}
+        self.input_data = {
+            "name": "RPM",
+            "msg_name": "MOTOR_CONTROL_",
+            "msg_type": "list",
+            "frequency(s)": 0.01,
+            "msg": None
+        }
         self.is_create = False
         self.puber = None
         self.info = None
@@ -39,10 +44,11 @@ class Publisher(BaseNode):
                 self.puber = tbkpy.Publisher(ep)
                 self.info = info
             self.is_create = True
+            dpg.configure_item(self.input_text["msg"], multiline=True, width=400)
         else:
             # 如果有一个为空则删除
             self.puber = None
             self.is_create = False
 
-        if (self.parent.now_time - run_time) % frequency < 0.01 and self.is_create and msg is not None:
+        if (self.parent.now_time - run_time) % frequency < 0.01 and self.is_create:
             self.puber.publish(pickle.dumps(msg))

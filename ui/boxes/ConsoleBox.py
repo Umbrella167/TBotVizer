@@ -11,7 +11,7 @@ class ConsoleBox(BaseBox):
         self.fps_text = None
         self.button_tags = []
         self.all_classes = self.ui.all_classes
-        self.is_sticky = True
+        self.is_sticky = False
         self.sticky_button = None
         # self.generate_add_methods()
 

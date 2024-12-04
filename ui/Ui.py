@@ -69,6 +69,9 @@ class UI:
         # self.console.create()
         self.console_box = self.add_ConsoleBox(ui=self)
         self.input_box = self.add_InputConsoleBox(ui=self)
+        # 测试界面
+        self.add_NodeBox(ui=self)
+        self.add_MessageBox(ui=self)
 
     def show(self):
         if not self.is_created:
