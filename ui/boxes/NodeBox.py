@@ -33,7 +33,7 @@ class NodeBox(BaseBox):
         self.group = dpg.add_group(horizontal=True, parent=self.tag)
         # 添加方法列表
         self.func_window = dpg.add_child_window(parent=self.group)
-        self.collapsing_header = dpg.add_collapsing_header(label="Math Functions", parent=self.func_window)
+        self.collapsing_header = dpg.add_collapsing_header(label="Math Functions", parent=self.func_window, default_open=True)
         # 添加cls按钮，并设置拖拽事件
         for cls in self.funcs:
             cls_name = cls.__name__

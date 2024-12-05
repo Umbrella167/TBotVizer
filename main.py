@@ -7,6 +7,8 @@ from utils.ClientLogManager import client_logger
 
 import dearpygui.demo as demo
 
+from utils.DataProcessor import tbk_api
+
 
 def loop(UI):
     try:
@@ -18,6 +20,7 @@ def loop(UI):
 def main():
     dpg.create_context()
     ui = UI()
+
     ui.show()
     # demo.show_demo()
 

@@ -28,7 +28,7 @@ class MessageBox(BaseBox):
 
     def on_create(self):
         dpg.configure_item(self.tag, label="Message")
-        self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag)
+        self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag, default_open=True)
         self.create_time = time.time()
         self.update()
 
@@ -77,7 +77,7 @@ class MessageBox(BaseBox):
 
     def add_node(self, data, puuid):
         # 添加节点列表
-        self.puuid_tags[puuid] = dpg.add_tree_node(label=puuid, parent=self.header)
+        self.puuid_tags[puuid] = dpg.add_tree_node(label=puuid, parent=self.header, default_open=True)
         self.table_tags[puuid] = dpg.add_table(parent=self.puuid_tags[puuid], resizable=True)
         # 创建表标题
         dpg.add_table_column(label="Name", init_width_or_weight=0, parent=self.table_tags[puuid])

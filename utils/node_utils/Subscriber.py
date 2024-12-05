@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 import pickle
 import json
 
+from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 from utils.node_utils.BaseNode import BaseNode
 
@@ -67,5 +68,10 @@ class Subscriber(BaseNode):
         self.input_data["msg_name"] = app_data["msg_name"]
 
     def decode_msg(self, msg):
-        return json.dumps(pickle.loads(msg), indent=4, ensure_ascii=False)
+        try:
+            res = json.dumps(pickle.loads(msg), indent=4, ensure_ascii=False)
+        except Exception as e:
+            client_logger.log("ERROR", "Msg decode error", e)
+            return "ERROR"
+        return res
 
