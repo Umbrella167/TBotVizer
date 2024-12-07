@@ -4,14 +4,33 @@ from utils.new_node_test.BaseNode import BaseNode
 
 class Add(BaseNode):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.data = {
-            "x": {"attribute_type": "INPUT", "data_type": "FLOAT", "data": 0},
-            "y": {"attribute_type": "INPUT", "data_type": "FLOAT", "data": 0},
-            "res": {"attribute_type": "OUTPUT", "data_type": "FLOAT", "data": 0},
-            "pos": {"attribute_type": None, "data_type": "CONFIG", "data": [0, 0]},
+        default_init_data = {
+            "x": {
+                "attribute_type": "INPUT",
+                "data_type": "FLOAT",
+                "user_data":
+                    {"value": 0}
+            },
+            "y": {
+                "attribute_type": "INPUT",
+                "data_type": "FLOAT",
+                "user_data":
+                    {"value": 0}
+            },
+            "res": {
+                "attribute_type": "OUTPUT",
+                "data_type": "FLOAT",
+                "user_data": {"value": 0}
+            },
+            "pos": {
+                "attribute_type": "CONFIG",
+                "data_type": "CONFIG",
+                "user_data":
+                    {"value": None}
+            }
         }
+        kwargs["init_data"] = kwargs["init_data"] or default_init_data
+        super().__init__(**kwargs)
 
     def func(self):
-        self.data["res"]["data"] = convert_to_float(self.data["x"]["data"]) + convert_to_float(self.data["y"]["data"])
-
+        self.data["res"]["user_data"]["value"] = convert_to_float(self.data["x"]["user_data"]["value"]) + convert_to_float(self.data["y"]["user_data"]["value"])

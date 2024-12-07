@@ -13,15 +13,15 @@ class FLOAT(BaseType):
             label=self.name,
             width=200,
             callback=self.input_callback,
-            parent=self.attr,
+            parent=self.tag,
             readonly=self.is_output
         )
-        dpg.set_item_user_data(self.attr, self)
-        dpg.set_value(self.input_text, self.info["data"])
+        dpg.set_item_user_data(self.tag, self)
+        dpg.set_value(self.input_text, self.info["user_data"]["value"])
 
     # 当input被手动改变触发的callback
     def input_callback(self, sender, app_data):
-        self.parent.data[self.name]["data"] = app_data
+        self.parent.data[self.name]["user_data"]["value"] = app_data
 
     def update(self):
-        dpg.set_value(self.input_text, self.info["data"])
+        dpg.set_value(self.input_text, self.parent.data[self.name]["user_data"]["value"])

@@ -1,4 +1,6 @@
+import json
 import time
+import copy
 
 import dearpygui.dearpygui as dpg
 
@@ -26,10 +28,15 @@ class NewNodeBox(BaseBox):
         self.static_node = None
         # 基础属性
         self.all_node_class = get_all_subclasses(BaseNode)
+        self.generate_add_methods()
         # 当前时间(用于时间同步)
         self.now_time = time.time()
         # 记录节点
         self.nodes = {}
+        # 记录链接
+        self.links = {}
+        # 布局文件
+        self.layout_file = "static/layout/node_layout.json"
 
     def on_create(self):
         dpg.configure_item(self.tag, label="NewNodeBox")
@@ -47,8 +54,8 @@ class NewNodeBox(BaseBox):
                 width=-1,
             )
             # 设置拖拽传输的数据和标签
-            with dpg.drag_payload(parent=self.func_button[cls_name], drag_data=cls, payload_type="Function"):
-                dpg.add_text(cls.__name__)
+            with dpg.drag_payload(parent=self.func_button[cls_name], drag_data=cls_name, payload_type="Function"):
+                dpg.add_text(cls_name)
 
         # 绘制节点图像
         self.node_window = dpg.add_child_window(parent=self.group)
@@ -61,7 +68,7 @@ class NewNodeBox(BaseBox):
 
         self.node_editor = dpg.add_node_editor(
             # 链接两个节点时的回调
-            callback=self.link_callback,
+            callback=self.new_link,
             # 断开两个节点时的回调
             # delink_callback=lambda sender, app_data: dpg.delete_item(app_data),
             delink_callback=self.delink_callback,
@@ -78,6 +85,27 @@ class NewNodeBox(BaseBox):
         with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Static, parent=self.static_node):
             dpg.add_spacer(width=1)
         item_auto_resize(self.func_window, self.tag, 0, 0.15, 200, 300)
+        self.init_nodes()
+
+    def init_nodes(self):
+        try:
+            with open(self.layout_file, "r") as f:
+                node_layout = json.loads(f.read())
+                for identifier, node_info in node_layout["node"].items():
+                    cls_name, data = node_info
+                    self.new_node("system", cls_name, (identifier, data))
+                self.update()
+                for link in node_layout["link"]:
+                    output_id, output_name, input_id, input_name = link
+                    for n in self.nodes.values():
+                        if n.identifier == output_id:
+                            output_node = n
+                        if n.identifier == input_id:
+                            input_node = n
+                    self.new_link("system", (output_node.instanced_item[output_name].tag, input_node.instanced_item[input_name].tag))
+        except Exception as e:
+            client_logger.log("WARNING", "Node layout init file not found")
+            pass
 
     def key_release_handler(self, sender, app_data, user_data):
         if dpg.is_key_released(dpg.mvKey_Delete):
@@ -85,9 +113,25 @@ class NewNodeBox(BaseBox):
                 if node_tag == self.static_node:
                     continue
                 self.delete_node(node_tag)
+        if dpg.is_key_down(dpg.mvKey_LControl) and dpg.is_key_released(dpg.mvKey_S):
+            node_layout = {
+                "node": {},
+                "link": []
+            }
+            for node in self.nodes.values():
+                node.data["pos"]["user_data"]["value"] = dpg.get_item_pos(node.tag)
+                node_layout["node"][node.identifier] = (node.__class__.__name__, node.data)
+            for link in self.links.values():
+                node_layout["link"].append(link)
+            with open(self.layout_file, "w+") as f:
+                f.write(json.dumps(node_layout))
 
     def update(self):
         self.now_time = time.time()
+        self.update_node_editor()
+
+    def update_node_editor(self):
+        # 更新节点
         for tag, node in self.nodes.items():
             try:
                 node.calc()
@@ -95,13 +139,12 @@ class NewNodeBox(BaseBox):
                 # self.delete_node(tag)
                 client_logger.log("ERROR", f"{node} calc failed!", e=e)
 
-
-    def new_node(self, sender, cls, user_data):
-        instance = cls(parent=self)
-        instance.update()
-        # node_tag和实例的对应表
+    def new_node(self, sender, cls_name, user_data):
+        identifier, init_data = user_data or (None, None)
+        method_name = f"add_{cls_name}"
+        instance_func = getattr(self, method_name, None)
+        instance = instance_func(parent=self, identifier=identifier, init_data=init_data)
         self.nodes[instance.tag] = instance
-        # self.box_count[cls] = self.box_count.setdefault(cls, 0) + 1
 
     def delete_node(self, node_tag):
         # 删除node
@@ -109,19 +152,37 @@ class NewNodeBox(BaseBox):
         del self.nodes[node_tag]
         dpg.delete_item(node_tag)
 
-    def link_callback(self, sender, app_data):
+    def new_link(self, sender, app_data):
+        output_tag = app_data[0]
+        input_tag = app_data[1]
         # 输入输出
-        output = dpg.get_item_user_data(app_data[0])
-        input = dpg.get_item_user_data(app_data[1])
+        output_attr = dpg.get_item_user_data(output_tag)
+        input_attr = dpg.get_item_user_data(input_tag)
         # node的实例化类
-        output_node = self.nodes[dpg.get_item_parent(app_data[0])]
-        output_node.link_item.setdefault(output.name, []).append(input)
-        # 链接时刷新一次数据
-        input.info["data"] = output.info["data"]
-        link = dpg.add_node_link(app_data[0], app_data[1], parent=sender, user_data=(output_node, output, input))
-
+        output_node = self.nodes[dpg.get_item_parent(output_tag)]
+        input_node = self.nodes[dpg.get_item_parent(input_tag)]
+        link = dpg.add_node_link(output_tag, input_tag, parent=self.node_editor,
+                                 user_data=(input_node, input_attr.name))
+        self.links[link] = (output_node.identifier, output_attr.name, input_node.identifier, input_attr.name)
+        input_node.data[input_attr.name]["user_data"] = output_node.data[output_attr.name]["user_data"]
 
     def delink_callback(self, sender, app_data):
-        output_node, output, input = dpg.get_item_user_data(app_data)
-        output_node.link_item[output.name] = [i for i in output_node.link_item[output.name] if i != input]
+        input_node, name = dpg.get_item_user_data(app_data)
+        input_node.data[name] = copy.deepcopy(input_node.data[name])
+        del self.links[app_data]
         dpg.delete_item(app_data)
+
+    def generate_add_methods(self):
+        for cls in self.all_node_class:
+            method_name = f"add_{cls.__name__}"
+
+            # 使用闭包捕获cls
+            def add_method(self, cls=cls, **kwargs):
+                try:
+                    instance = cls(**kwargs)
+                    return instance
+                except Exception as e:
+                    client_logger.log("WARNING", f"Unable to instantiate node {cls}", e=e)
+
+            # 将生成的方法绑定到当前实例
+            setattr(self, method_name, add_method.__get__(self))
