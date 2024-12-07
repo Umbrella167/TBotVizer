@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-
+import tzcp.ros.sensor_pb2
 from config.SystemConfig import PROHIBITED_BOXES
 from ui.boxes import *
 

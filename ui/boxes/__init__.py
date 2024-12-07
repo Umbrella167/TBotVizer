@@ -8,6 +8,5 @@ from ui.boxes.ParamBox import ParamBox
 from ui.boxes.PlotVzBox import PlotVzBox
 from ui.boxes.LogReaderBox import LogReaderBox
 from ui.boxes.NodeBox import NodeBox
-from ui.boxes.GfxEngine3DBox import GfxEngine3DBox
 from ui.boxes.IMUBox import IMUBox
 from ui.boxes.PointsCouldBox import PointsCouldBox

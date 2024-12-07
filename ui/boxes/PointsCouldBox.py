@@ -5,8 +5,6 @@ import pygfx as gfx
 import numpy as np
 from tbkpy.socket.udp import UDPMultiCastReceiver
 import struct
-from collections import deque
-
 import numpy as np
 
 class PointManager:
@@ -100,8 +98,7 @@ class PointsGetter:
                 self.count = 0
 
 class PointsCouldBox(BaseBox):
-    only = False
-
+    only = True
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.canvas3D = None
