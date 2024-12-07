@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
 
+from config.SystemConfig import PROHIBITED_BOXES
 from config.UiConfig import UiConfig
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import ui_data
@@ -68,7 +69,14 @@ class UI:
         # self.console.create()
         self.console_box = self.add_ConsoleBox(ui=self)
         self.input_box = self.add_InputConsoleBox(ui=self)
+        # 测试界面
+        # self.add_NodeBox(ui=self)
+        # self.add_MessageBox(ui=self)
+        self.add_MessageBox(ui=self)
+        self.add_FastLioBox(ui=self)
+        # self.add_PointsFaceBox(ui=self)
 
+        
     def show(self):
         if not self.is_created:
             self.create()
@@ -114,7 +122,6 @@ class UI:
     def generate_add_methods(self):
         for cls in self.all_classes:
             method_name = f"add_{cls.__name__}"
-
             # 使用闭包捕获cls
             def add_method(self, cls=cls, **kwargs):
                 try:
@@ -129,7 +136,6 @@ class UI:
                     return instance
                 except Exception as e:
                     client_logger.log("WARNING", f"Unable to instantiate {cls}", e=e)
-
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
 
@@ -140,6 +146,10 @@ class UI:
             client_logger.log("SUCCESS", "Layout saved successfully!")
         if dpg.is_key_released(dpg.mvKey_F11):
             dpg.toggle_viewport_fullscreen()
+        # if dpg.is_key_down(dpg.mvKey_LControl) and dpg.is_key_released(dpg.mvKey_W):
+        #     for box in self.boxes.copy():
+        #         if dpg.is_item_focused(box.tag) and box.__class__.__name__ not in PROHIBITED_BOXES:
+        #             box.destroy()
 
         # if dpg.is_key_released(dpg.mvKey_Spacebar):
         #     self.console_box.show()

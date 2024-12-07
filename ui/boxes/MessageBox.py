@@ -2,6 +2,7 @@ import threading
 import time
 
 import dearpygui.dearpygui as dpg
+import tbkpy._core as tbkpy
 
 from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
@@ -27,9 +28,8 @@ class MessageBox(BaseBox):
         self.data = {}
 
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="Message")
-        self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag)
+        dpg.configure_item(self.tag, label="Message")
+        self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag, default_open=True)
         self.create_time = time.time()
         self.update()
 
@@ -78,7 +78,7 @@ class MessageBox(BaseBox):
 
     def add_node(self, data, puuid):
         # 添加节点列表
-        self.puuid_tags[puuid] = dpg.add_tree_node(label=puuid, parent=self.header)
+        self.puuid_tags[puuid] = dpg.add_tree_node(label=puuid, parent=self.header, default_open=True)
         self.table_tags[puuid] = dpg.add_table(parent=self.puuid_tags[puuid], resizable=True)
         # 创建表标题
         dpg.add_table_column(label="Name", init_width_or_weight=0, parent=self.table_tags[puuid])

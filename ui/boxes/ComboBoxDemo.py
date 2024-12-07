@@ -15,8 +15,7 @@ class ComboBoxDemo(BaseBox):
         self.btn_tag = None
 
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="ComboBoxDemo")
+        dpg.configure_item(self.tag, label="ComboBoxDemo")
         # 创建按钮
         self.btn_tag = dpg.add_button(label="Options     V", parent=self.tag)
         # 创建点击后列表

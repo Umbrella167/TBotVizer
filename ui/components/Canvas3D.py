@@ -6,45 +6,36 @@ import math
 import numpy as np
 import pylinalg as la
 class BaseScene(gfx.Scene):
-    def __init__(self, a_cube=False):
+    def __init__(self,scale=1):
         super().__init__()
+        self.scale = scale
         self.world.rotation = la.quat_from_euler((-math.pi / 2, 0, -math.pi / 2))
         self.light = gfx.AmbientLight("#ffffff", 3)
         self.add(self.light)
-        self.grid = gfx.GridHelper(10000, 30, color1="#444444", color2="#222222")
+        self.grid = gfx.GridHelper(10000 * self.scale, 30, color1="#444444", color2="#222222")
         self.grid.local.up = (0, 0, 1)
-        # self.axes = gfx.AxesHelper(100)
         self.add(self.grid)
-        # self.add(self.axes)
-
-        # self.direct_light = gfx.DirectionalLight("#ffffff", 2).add(
-        #     gfx.Mesh(gfx.box_geometry(10, 10, 10), gfx.MeshBasicMaterial(color="#ff0000"))
-        # )
-        # self.direct_light.local.x = 100
-        # self.direct_light.local.y = 200
-
         self.direct_light2 = gfx.DirectionalLight("#ffffff", 1)
         self.direct_light2.local.x = -100
         self.direct_light2.local.y = -200
-
-        # self.add(self.direct_light)
         self.add(self.direct_light2)
 
 class World:
-    def __init__(self, SIZE=(800, 600)):
+    def __init__(self, SIZE=(800, 600),scale=1):
+        self.scale = scale
         self.gfx_engine = GfxEngine(size=SIZE)
         self.world = self.gfx_engine.new_world()
         self._canvas = self.gfx_engine.canvas
         self._renderer = self.gfx_engine.renderer
         self._viewport = self.gfx_engine.viewport
-        self._scene = BaseScene()
+        self._scene = BaseScene(scale=self.scale)
         self._scene.add(gfx.AmbientLight())
         directional_light = gfx.DirectionalLight()
         directional_light.world.z = 1
         self._scene.add(directional_light)
 
         self._camera = gfx.PerspectiveCamera(fov=70, aspect = 16 / 9)
-        self._camera.world.z = 400
+        self._camera.world.z = 400 * self.scale
 
         self._controller = gfx.OrbitController(self._camera)
 
@@ -66,15 +57,16 @@ class World:
 
 
 class Handler:
-    def __init__(self,SIZE = (800,600)):
+    def __init__(self,SIZE = (800,600),scale=1):
+        self.scale = scale
         self.pressedDown = {}
-        self.world = World(SIZE)
+        self.world = World(SIZE,self.scale)
         self.BUTTON_MAP = {
             0: 1,  # MOUSE_LEFT
             1: 2,  # MOUSE_RIGHT
             2: 3,  # MOUSE_MIDDLE
         }
-        self.WHEEL_RATIO = 500
+        self.WHEEL_RATIO = 500 - (1 - self.scale) * 350
 
     def callback(self, sender, app_data,user_data):
         try:
@@ -136,14 +128,19 @@ class Canvas3D:
         self,
         parent,
         SIZE=(800, 600),
+        scale=1,
         is_mouse_controller=True,
     ):
+        self.scale = scale
         self.size = SIZE
         self.is_mouse_controller = is_mouse_controller
         self.canvas = Canvas2D(parent=parent, auto_mouse_transfrom=False)
-        self.handler = Handler(SIZE)
+        self.tag = self.canvas.group_tag
+        self.handler = Handler(SIZE,self.scale)
         self.handler_registry()
         self.texture_data = self.texture_registry(SIZE)
+        self.camera = self.handler.world._camera
+        self.viewport = self.handler.world._viewport
         with self.canvas.draw():
             dpg.draw_image(self.texture_data, pmin=[0, 0], pmax=SIZE)
             

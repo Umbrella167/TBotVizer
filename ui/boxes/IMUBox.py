@@ -75,10 +75,9 @@ class IMUBox(BaseBox):
         self.checkbox_bind = {}
 
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="IMU3DBox")
-            self.canvas3D = Canvas3D(self.tag)
-            dpg.set_item_drop_callback(self.canvas3D.canvas.group_tag, callback=self.drop_callback)
+        dpg.configure_item(self.tag, label="IMU3DBox")
+        self.canvas3D = Canvas3D(self.tag)
+        dpg.set_item_drop_callback(self.canvas3D.canvas.group_tag, callback=self.drop_callback)
         scene = self.imu_scene()
         self.canvas3D.add(scene)
 
@@ -86,6 +85,8 @@ class IMUBox(BaseBox):
         self.grid = gfx.GridHelper(5000, 50, color1="#444444", color2="#222222")
         self.imu_group = gfx.Group()
         self.car_meshes = gfx.load_mesh("static/model/car.STL")[0]
+        # self.car_meshes = gfx.load_mesh("static/model/mid360.STL")[0]
+
         rot = la.quat_from_euler([-pi / 2, 0, -pi],order='XYZ')
         self.car_meshes.local.rotation = rot
         self.car_meshes.local.position = (0, -120, 0)

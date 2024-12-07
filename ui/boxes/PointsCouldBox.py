@@ -5,7 +5,6 @@ import pygfx as gfx
 import numpy as np
 from tbkpy.socket.udp import UDPMultiCastReceiver
 import struct
-import numpy as np
 
 class PointManager:
     def __init__(self, max_points):
@@ -99,6 +98,7 @@ class PointsGetter:
 
 class PointsCouldBox(BaseBox):
     only = True
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.canvas3D = None
@@ -112,8 +112,7 @@ class PointsCouldBox(BaseBox):
         #np.zeros((self.max_points, 3), dtype=np.float32)
         self.geometry = None
     def on_create(self):
-        if self.label is None:
-            dpg.configure_item(self.tag, label="IMU3DBox")
+        dpg.configure_item(self.tag, label="PointsCouldBox")
         dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
         self.canvas3D = Canvas3D(self.tag, SIZE=self.SIZE)
         self.canvas3D.add(self.create_points_could_scene())

@@ -7,6 +7,41 @@ import numpy as np
 
 from static.Params import TypeParams
 from utils.ClientLogManager import client_logger
+from pylinalg import vec_transform, vec_unproject
+
+def ScreenToWorldPoint(screen_pos, camera, viewport):
+    """
+    Convert a point from screen/canvas space to world space.
+
+    Parameters:
+        screen_pos (tuple or list): 2D point in screen/canvas space (x, y).
+        camera (gfx.Camera): The camera used for the conversion.
+        viewport (gfx.Viewport): The viewport within which the point is rendered.
+
+    Returns:
+        tuple: The 3D world coordinates (x, y, z).
+    """
+    # Step 1: Get screen position relative to the viewport
+    pos_rel = (
+        screen_pos[0] - viewport.rect[0],
+        screen_pos[1] - viewport.rect[1],
+    )
+
+    # Ensure the point is inside the viewport
+    if not (0 <= pos_rel[0] <= viewport.logical_size[0] and 
+            0 <= pos_rel[1] <= viewport.logical_size[1]):
+        raise ValueError("Screen position is outside the viewport bounds.")
+
+    # Step 2: Convert relative position to NDC (Normalized Device Coordinates)
+    viewport_width, viewport_height = viewport.logical_size
+    x_ndc = pos_rel[0] / viewport_width * 2 - 1
+    y_ndc = -(pos_rel[1] / viewport_height * 2 - 1)  # Flip Y to match NDC convention
+    pos_ndc = (x_ndc, y_ndc, 0)  # Z=0 for now (can be adjusted if needed)
+
+    # Step 3: Transform from NDC to world space
+    pos_world = vec_unproject(pos_ndc[:2], camera.camera_matrix)
+
+    return pos_world
 
 
 def new_texture(image):
