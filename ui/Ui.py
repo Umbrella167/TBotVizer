@@ -1,3 +1,5 @@
+import json
+
 import dearpygui.dearpygui as dpg
 
 from config.UiConfig import UiConfig
@@ -19,6 +21,7 @@ class UI:
         # self._ui_callback = UICallback()
         self.all_classes = get_all_subclasses(BaseBox)
         self.generate_add_methods()
+        self.boxes_init_file = "static/layout/boxes_init.json"
 
     def create(self):
         # 创建主窗口
@@ -32,19 +35,30 @@ class UI:
         )
         dpg.setup_dearpygui()
         dpg.show_viewport()
-        self.layout_init()
-        self.is_created = True
+        # self.layout_init()
+        self.init_boxes()
+        self.is_created =- True
 
-    def layout_init(self):
-        # 显示控制台
-        # self.console = ConsoleBox(ui=self)
-        # self.console.create()
-        self.console_box = self.add_ConsoleBox(ui=self)
-        self.input_box = self.add_InputConsoleBox(ui=self)
-        # 测试界面
-        self.add_NodeBox(ui=self)
-        self.add_MessageBox(ui=self)
-        # self.add_FastLioBox(ui=self)
+    def init_boxes(self):
+        try:
+            with open(self.boxes_init_file, "r") as f:
+                boxes_config = json.loads(f.read())
+                for box_name in boxes_config:
+                    self.new_box(box_name)
+        except Exception as e:
+            client_logger.log("WARNING", "Box init file not found")
+
+
+    # def layout_init(self):
+    #     # 显示控制台
+    #     # self.console = ConsoleBox(ui=self)
+    #     # self.console.create()
+    #     self.console_box = self.add_ConsoleBox(ui=self)
+    #     self.input_box = self.add_InputConsoleBox(ui=self)
+    #     # 测试界面
+    #     self.add_NodeBox(ui=self)
+    #     self.add_MessageBox(ui=self)
+    #     # self.add_FastLioBox(ui=self)
 
 
     def show(self):
@@ -59,6 +73,11 @@ class UI:
         for box in self.boxes:
             if box.is_created:
                 box.update()
+
+    def new_box(self, box_name):
+        method = f"add_{box_name}"
+        func = getattr(self, method)
+        func(ui=self)
 
     def destroy_all_boxes(self):
         for box in self.boxes:
@@ -109,9 +128,17 @@ class UI:
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
 
+    def save_boxes(self):
+        with open(self.boxes_init_file, "w+") as f:
+            boxes_config = [box.__class__.__name__ for box in self.boxes]
+            f.write(json.dumps(boxes_config))
+            f.flush()
+
+
     def on_key_release(self, sender, app_data, user_data):
         config = user_data
         if dpg.is_key_down(dpg.mvKey_LControl) and app_data == dpg.mvKey_S:
+            self.save_boxes()
             config.layout.save()
             client_logger.log("SUCCESS", "Layout saved successfully!")
         if dpg.is_key_released(dpg.mvKey_F11):
@@ -130,3 +157,5 @@ class UI:
         ui_data.mouse_move_pos = tuple(
             x - y for x, y in zip(ui_data.draw_mouse_pos, ui_data.draw_mouse_pos_last)
         )
+
+

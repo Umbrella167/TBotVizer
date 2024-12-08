@@ -105,7 +105,6 @@ class NodeBox(BaseBox):
                     self.new_link("system", (output_node.instanced_item[output_name].tag, input_node.instanced_item[input_name].tag))
         except Exception as e:
             client_logger.log("WARNING", "Node layout init file not found")
-            pass
 
     def key_release_handler(self, sender, app_data, user_data):
         if dpg.is_key_released(dpg.mvKey_Delete):
@@ -125,6 +124,7 @@ class NodeBox(BaseBox):
                 node_layout["link"].append(link)
             with open(self.layout_file, "w+") as f:
                 f.write(json.dumps(node_layout))
+                f.flush()
 
     def update(self):
         self.now_time = time.time()
