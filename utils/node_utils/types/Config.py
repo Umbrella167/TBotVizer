@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 
-from utils.new_node_test.types.BaseType import BaseType
+from utils.node_utils.types.BaseType import BaseType
 
 
 class CONFIG(BaseType):

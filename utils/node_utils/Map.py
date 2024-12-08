@@ -4,48 +4,42 @@ from utils.node_utils.BaseNode import BaseNode
 
 class Map(BaseNode):
     def __init__(self, **kwargs):
+        default_init_data = {
+            "vx":                   {"attribute_type": "INPUT", "data_type": "FLOAT", "user_data": {"value": 0}},
+            "vy":                   {"attribute_type": "INPUT", "data_type": "FLOAT", "user_data": {"value": 0}},
+            "alphax":               {"attribute_type": "INPUT", "data_type": "FLOAT", "user_data": {"value": 0}},
+            "original_upper":       {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": 1}},
+            "original_lower":       {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": -1}},
+            "upper":                {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": 5000}},
+            "lower":                {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": -5000}},
+            "mapped_value":         {"attribute_type": "OUTPUT", "data_type": "FLOAT", "user_data": {"value": []}},
+            "pos":                  {"attribute_type": "CONFIG","data_type": "CONFIG","user_data":{"value": None}},
+        }
+        kwargs["init_data"] = kwargs["init_data"] or default_init_data
         super().__init__(**kwargs)
-        self.input_data = {
-            "vx": None,  # 输入值 vx
-            "vy": None,  # 输入值 vy
-            "alphax": None,  # 输入值 alphax
-            "original_upper": 1,
-            "original_lower": -1,
-            "upper": 5000,  # 映射区间上限
-            "lower": -5000  # 映射区间下限
-        }
-        self.output_data = {
-            "mapped_value": None  # 映射后的值
-        }
 
-    def calc(self):
-        super().calc()
-        # 获取输入值并转换为浮点数
-        vx = convert_to_float(self.input_data["vx"])
-        vy = convert_to_float(self.input_data["vy"])
-        alphax = convert_to_float(self.input_data["alphax"])
-        original_upper = convert_to_float(self.input_data["original_upper"])
-        original_lower = convert_to_float(self.input_data["original_lower"])
-        upper = convert_to_float(self.input_data["upper"])
-        lower = convert_to_float(self.input_data["lower"])
+    def func(self):
+        vx = convert_to_float(self.data["vx"]["user_data"]["value"])
+        vy = convert_to_float(self.data["vy"]["user_data"]["value"])
+        alphax = convert_to_float(self.data["alphax"]["user_data"]["value"])
+        original_upper = convert_to_float(self.data["original_upper"]["user_data"]["value"])
+        original_lower = convert_to_float(self.data["original_lower"]["user_data"]["value"])
+        upper = convert_to_float(self.data["upper"]["user_data"]["value"])
+        lower = convert_to_float(self.data["lower"]["user_data"]["value"])
 
-        # 检查输入区间是否有效。如果无效，直接退出，输出保持为 None
         if original_upper <= original_lower or upper < lower:
-            self.output_data["mapped_value"] = None
+            self.data["mapped_value"]["user_data"]["value"] = None
             return
 
-        # 定义映射方法
         def map_value(value):
             if value is None:
                 return None
-            # 将值归一化到 [0, 1] 的范围
             normalized_value = (value - original_lower) / (original_upper - original_lower)
-            if normalized_value < 0:
-                normalized_value = 0
-            elif normalized_value > 1:
-                normalized_value = 1
-            # 将归一化后的值映射到目标区间 [lower, upper]
+            normalized_value = max(0, min(1, normalized_value))
             return lower + normalized_value * (upper - lower)
 
-        # 对 vx, vy, 和 alphax 分别进行映射
-        self.output_data["mapped_value"] = [map_value(vx), map_value(vy), map_value(alphax)]
+        self.data["mapped_value"]["user_data"]["value"] = [
+            map_value(vx),
+            map_value(vy),
+            map_value(alphax),
+        ]

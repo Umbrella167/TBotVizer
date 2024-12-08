@@ -1,38 +1,10 @@
 import dearpygui.dearpygui as dpg
 
-from config.SystemConfig import PROHIBITED_BOXES
 from config.UiConfig import UiConfig
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import ui_data
 from utils.Utils import get_all_subclasses
 from ui.boxes import *
-
-
-# class UICallback:
-#     def __init__(self):
-#         pass
-#
-#     def on_key_release(self, sender, app_data, user_data):
-#         config = user_data
-#         if dpg.is_key_down(dpg.mvKey_LControl) and app_data == dpg.mvKey_S:
-#             config.layout.save()
-#             client_logger.log("SUCCESS", "Layout saved successfully!")
-#         if dpg.is_key_released(dpg.mvKey_F11):
-#             dpg.toggle_viewport_fullscreen()
-#
-#         if dpg.is_key_down(dpg.mvKey_LControl) and dpg.is_key_released(dpg.mvKey_Return):
-#             print(123)
-#
-#     def on_mouse_move(self):
-#         ui_data.draw_mouse_pos_last = ui_data.draw_mouse_pos
-#         ui_data.draw_mouse_pos = dpg.get_drawing_mouse_pos()
-#         ui_data.mouse_move_pos = tuple(
-#             x - y for x, y in zip(ui_data.draw_mouse_pos, ui_data.draw_mouse_pos_last)
-#         )
-#
-#     def on_right_click(self, sender, app_data, user_data):
-#         pass
-
 
 class UI:
     def __init__(self):
@@ -70,7 +42,7 @@ class UI:
         self.console_box = self.add_ConsoleBox(ui=self)
         self.input_box = self.add_InputConsoleBox(ui=self)
         # 测试界面
-        self.add_NewNodeBox(ui=self)
+        self.add_NodeBox(ui=self)
         # self.add_NodeBox(ui=self)
         # self.add_MessageBox(ui=self)
 

@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 
-from utils.new_node_test.types.BaseType import BaseType
+from utils.node_utils.types.BaseType import BaseType
 
 
 class FLOAT(BaseType):
@@ -14,7 +14,7 @@ class FLOAT(BaseType):
             width=200,
             callback=self.input_callback,
             parent=self.tag,
-            readonly=self.is_output
+            readonly=True if self.is_output else False,
         )
         dpg.set_item_user_data(self.tag, self)
         dpg.set_value(self.input_text, self.info["user_data"]["value"])

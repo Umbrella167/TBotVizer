@@ -11,4 +11,3 @@ from ui.boxes.NodeBox import NodeBox
 from ui.boxes.GfxEngine3DBox import GfxEngine3DBox
 from ui.boxes.IMUBox import IMUBox
 from ui.boxes.PointsCouldBox import PointsCouldBox
-from ui.boxes.NewNodeBox import NewNodeBox
