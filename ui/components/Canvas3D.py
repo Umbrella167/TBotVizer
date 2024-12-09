@@ -5,6 +5,7 @@ from ui.components.Canvas2D import Canvas2D
 import math
 import numpy as np
 import pylinalg as la
+from utils.DataProcessor import ui_data 
 class BaseScene(gfx.Scene):
     def __init__(self,scale=1):
         super().__init__()
@@ -33,7 +34,7 @@ class World:
         directional_light = gfx.DirectionalLight()
         directional_light.world.z = 1
         self._scene.add(directional_light)
-
+        self.mouse_world_position = [0,0,0]
         self._camera = gfx.PerspectiveCamera(fov=70, aspect = 16 / 9)
         self._camera.world.z = 400 * self.scale
 
@@ -49,11 +50,25 @@ class World:
                 }
             )
         )
+        self.sreen_to_world()
         value = (self.gfx_engine.draw()).ravel().astype(np.float32) / 255.0
         return value
-
+    def sreen_to_world(self):
+        pos = ui_data.draw_mouse_pos
+        pos_rel = (
+            pos[0] - self._viewport.rect[0],
+            pos[1] - self._viewport.rect[1],
+        )
+        vs = self._viewport.logical_size
+        x = pos_rel[0] / vs[0] * 2 - 1
+        y = -(pos_rel[1] / vs[1] * 2 - 1)
+        pos_ndc = (x, y, 0)
+        pos_ndc += la.vec_transform(self._camera.world.position, self._camera.camera_matrix)
+        pos_world = la.vec_unproject(pos_ndc[:2], self._camera.camera_matrix)
+        point_data = np.array([[pos_world[0], pos_world[1], 0]], dtype=np.float32)
+        self.mouse_world_position = point_data
     def handle_event(self, event: gfx.objects.Event):
-        self._controller.handle_event(event, self._viewport) 
+        self._controller.handle_event(event, self._viewport)
 
 
 class Handler:
