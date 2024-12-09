@@ -1,11 +1,9 @@
 .vscode
 .idea
-
 __pycache__
 **/__pycache__
-*.lprof
-./static/model/car.STL
 logs/*
-!logs/.gitkeep
-static/font/BLACK-NORMAL.ttf
+static/layout/*
+*.lprof
+
 

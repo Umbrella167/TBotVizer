@@ -1,28 +1,25 @@
+from time import sleep
+
 import pygame
+import time
 from utils.node_utils.BaseNode import BaseNode
 
 
 class AGVControl(BaseNode):
     def __init__(self, **kwargs):
-        default_init_data = {
-            "vx": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
-            "vy": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
-            "alphax": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
-            # "pos": {"attribute_type": "CONFIG", "data_type": "CONFIG", "user_data": {"value": None}},
-        }
-        kwargs["init_data"] = kwargs["init_data"] or default_init_data
         super().__init__(**kwargs)
+        self.output_data = {"vx": None, "vy": None, "alphax": None}
 
         pygame.init()
         pygame.joystick.init()
+        # 初始化所有操纵杆
         self.joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
         for joystick in self.joysticks:
             joystick.init()
 
         self.done = False
-        self.automatic = True
 
-    def func(self):
+    def calc(self):
         if not self.done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -42,8 +39,12 @@ class AGVControl(BaseNode):
                 vy = vy * (abs(vy) >= 0.1)
                 alphax = alphax * (abs(alphax) >= 0.1)
 
-                self.data["vx"]["user_data"]["value"] = vx
-                self.data["vy"]["user_data"]["value"] = vy
-                self.data["alphax"]["user_data"]["value"] = alphax
+                # 更新输出数据
+                self.output_data["vx"] = vx
+                self.output_data["vy"] = vy
+                self.output_data["alphax"] = alphax
 
-
+                self.done = False
+                # 数据检查
+                super().calc()
+                # print(f"vx: {vx}, vy: {vy}")  # 输出结果

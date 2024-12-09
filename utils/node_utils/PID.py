@@ -1,99 +1,96 @@
 from utils.Utils import convert_to_float
 from utils.node_utils.BaseNode import BaseNode
 
-
-class IncrementalPID(BaseNode):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.input_data = {
-            "measurement": None,
-            "setpoint": None,
-            "kp": None,
-            "ki": None,
-            "kd": None,
-            "max_output": 1  # 默认最大输出值
-        }
-        self.output_data = {"control_output": None}
-        self.previous_error = 0.0
-        self.previous_previous_error = 0.0
-        self.control_output = 0.0
-
-    def calc(self):
-        super().calc()
-        measurement = convert_to_float(self.input_data["measurement"])
-        setpoint = convert_to_float(self.input_data["setpoint"])
-        kp = convert_to_float(self.input_data["kp"])
-        ki = convert_to_float(self.input_data["ki"])
-        kd = convert_to_float(self.input_data["kd"])
-        max_output = convert_to_float(self.input_data["max_output"])
-        # 计算误差
-        error = setpoint - measurement
-        error = 0 if abs(error) < 1.8 else error
-        # 增量计算
-        delta_output = (
-                kp * (error - self.previous_error) +
-                ki * error +
-                kd * (error - 2 * self.previous_error + self.previous_previous_error)
-        )
-        # 更新控制输出
-        self.control_output += delta_output
-        if self.control_output > max_output:
-            self.control_output = max_output
-        elif self.control_output < -max_output:
-            self.control_output = -max_output
-        # 更新历史误差
-        self.previous_previous_error = self.previous_error
-        self.previous_error = error
-        # 设置输出
-        self.output_data["control_output"] = self.control_output
-
-
 class PositionalPID(BaseNode):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.input_data = {
-            "measurement": None,
-            "setpoint": None,
-            "kp": None,
-            "ki": None,
-            "kd": None,
-            "max_output": 1  # 默认最大输出值
+        default_init_data = {
+            "measurement": {
+                "attribute_type": "INPUT",
+                "data_type": "STRINPUT",
+                "user_data": {"value": 0}
+            },
+            "setpoint": {
+                "attribute_type": "INPUT",
+                "data_type": "STRINPUT",
+                "user_data": {"value": 0}
+            },
+            "kp": {
+                "attribute_type": "INPUT",
+                "data_type": "STRINPUT",
+                "user_data": {"value": 0}
+            },
+            "ki": {
+                "attribute_type": "INPUT",
+                "data_type": "STRINPUT",
+                "user_data": {"value": 0}
+            },
+            "kd": {
+                "attribute_type": "INPUT",
+                "data_type": "STRINPUT",
+                "user_data": {"value": 0}
+            },
+            # "max_output": {
+            #     "attribute_type": "INPUT",
+            #     "data_type": "STRINPUT",
+            #     "user_data": {"value": 1}
+            # },
+            "control_output": {
+                "attribute_type": "OUTPUT",
+                "data_type": "STRINPUT",
+                "user_data": {"value": 0}
+            },
+            "pos": {
+                "attribute_type": "CONFIG",
+                "data_type": "CONFIG",
+                "user_data": {"value": None}
+            }
         }
-        self.output_data = {"control_output": None}
+        kwargs["init_data"] = kwargs["init_data"] or default_init_data
+        super().__init__(**kwargs)
         self.previous_error = 0.0
         self.integral = 0.0
+        self.automatic = True
 
-    def calc(self):
-        super().calc()
-        measurement = convert_to_float(self.input_data["measurement"])
-        setpoint = convert_to_float(self.input_data["setpoint"])
-        kp = convert_to_float(self.input_data["kp"])
-        ki = convert_to_float(self.input_data["ki"])
-        kd = convert_to_float(self.input_data["kd"])
-        max_output = convert_to_float(self.input_data["max_output"])
+    def func(self):
+        # 获取输入值
+        measurement = convert_to_float(self.data["measurement"]["user_data"]["value"])
+        setpoint = convert_to_float(self.data["setpoint"]["user_data"]["value"])
+        kp = convert_to_float(self.data["kp"]["user_data"]["value"])
+        ki = convert_to_float(self.data["ki"]["user_data"]["value"])
+        kd = convert_to_float(self.data["kd"]["user_data"]["value"])
+        # max_output = convert_to_float(self.data["max_output"]["user_data"]["value"])
+        max_output = 1e9
+
         # 计算误差
         error = setpoint - measurement
-        if abs(error) < 1:
+        if abs(error) < 1:  # 死区范围
             error = 0
+
         # 积分清零逻辑：当误差符号变化时
         if (error > 0 and self.previous_error < 0) or (error < 0 and self.previous_error > 0):
             self.integral = self.integral / 2
+
         # 积分累加
         self.integral += error
+
         # 微分计算
         derivative = error - self.previous_error
+
         # PID计算
         control_output = (
-                kp * error +
-                ki * self.integral +
-                kd * derivative
+            kp * error +
+            ki * self.integral +
+            kd * derivative
         )
+
         # 限制控制输出
         if control_output > max_output:
             control_output = max_output
         elif control_output < -max_output:
             control_output = -max_output
+
         # 更新历史误差
         self.previous_error = error
-        # 设置输出
-        self.output_data["control_output"] = control_output
+
+        # 设置输出值
+        self.data["control_output"]["user_data"]["value"] = control_output
