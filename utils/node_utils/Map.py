@@ -5,14 +5,14 @@ from utils.node_utils.BaseNode import BaseNode
 class Map(BaseNode):
     def __init__(self, **kwargs):
         default_init_data = {
-            "vx":                   {"attribute_type": "INPUT", "data_type": "FLOAT", "user_data": {"value": 0}},
-            "vy":                   {"attribute_type": "INPUT", "data_type": "FLOAT", "user_data": {"value": 0}},
-            "alphax":               {"attribute_type": "INPUT", "data_type": "FLOAT", "user_data": {"value": 0}},
-            "original_upper":       {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": 1}},
-            "original_lower":       {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": -1}},
-            "upper":                {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": 5000}},
-            "lower":                {"attribute_type": "CONFIG", "data_type": "FLOAT", "user_data": {"value": -5000}},
-            "mapped_value":         {"attribute_type": "OUTPUT", "data_type": "FLOAT", "user_data": {"value": []}},
+            "vx":                   {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": 0}},
+            "vy":                   {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": 0}},
+            "alphax":               {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": 0}},
+            "original_upper":       {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": 1}},
+            "original_lower":       {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": -1}},
+            "upper":                {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": 5000}},
+            "lower":                {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": -5000}},
+            "mapped_value":         {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": []}},
             "pos":                  {"attribute_type": "CONFIG","data_type": "CONFIG","user_data":{"value": None}},
         }
         kwargs["init_data"] = kwargs["init_data"] or default_init_data
@@ -41,5 +41,5 @@ class Map(BaseNode):
         self.data["mapped_value"]["user_data"]["value"] = [
             map_value(vx),
             map_value(vy),
-            map_value(alphax),
+            alphax*6,
         ]

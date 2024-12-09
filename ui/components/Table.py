@@ -74,7 +74,7 @@ class Table:
         #             for item in value:
         #                 if item == "value":
         #                     tag = param + "_" + item
-        #                     Input(tbk_data=TypeParams(), tbkdata=self.tbk_data).new_input(
+        #                     StrInput(tbk_data=TypeParams(), tbkdata=self.tbk_data).new_input(
         #                         tag=tag,
         #                         value=value[item],
         #                         type=_type,

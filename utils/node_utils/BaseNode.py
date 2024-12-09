@@ -13,17 +13,18 @@ class BaseNode:
         self.width = 200
         self.parent = parent
         self.label = self.__class__.__name__
+        self.automatic = False
         """
         data = {
             "x": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "StrInput",
                 "user_data":
                     {"value": 0}
             },
             "res": {
                 "attribute_type": "OUTPUT",
-                "data_type": "FLOAT",
+                "data_type": "StrInput",
                 "user_data": {"value": 0}
             },
             "pos": {
@@ -80,15 +81,19 @@ class BaseNode:
         pass
 
     def calc(self):
-        self.func()
-        if self.old_data == self.data:
+        # TODO:这个func会一直运算，如果要节省计算资源则需要自行在node内判断
+
+        if not self.automatic and self.old_data == self.data:
             return
+        self.func()
         self.update()
         self.old_data = copy.deepcopy(self.data)
 
 
 TYPES = {
-    "FLOAT": types.FLOAT,
+    "STRINPUT": types.StrInput,
+    "MULTILINEINPUT": types.MultilineInput,
     "CONFIG": types.CONFIG,
+    "SLIDER": types.Slider,
     "DEL": None,
 }

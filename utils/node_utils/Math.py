@@ -7,19 +7,19 @@ class Add(BaseNode):
         default_init_data = {
             "x": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data":
                     {"value": 0}
             },
             "y": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data":
                     {"value": 0}
             },
             "res": {
                 "attribute_type": "OUTPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": 0}
             },
             "pos": {
@@ -42,19 +42,19 @@ class Mul(BaseNode):
         default_init_data = {
             "x": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data":
                     {"value": 0}
             },
             "y": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data":
                     {"value": 0}
             },
             "res": {
                 "attribute_type": "OUTPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": 0}
             },
             "pos": {

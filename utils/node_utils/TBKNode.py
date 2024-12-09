@@ -16,22 +16,22 @@ class Subscriber(BaseNode):
         default_init_data = {
             "puuid": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": None}
             },
             "name": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": None}
             },
             "msg_name": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": None}
             },
             "msg": {
                 "attribute_type": "OUTPUT",
-                "data_type": "FLOAT",
+                "data_type": "MULTILINEINPUT",
                 "user_data": {"value": None}
             },
             "pos": {
@@ -45,6 +45,7 @@ class Subscriber(BaseNode):
         self.suber = None
         self.current_subscription = None
         self.callback_manager = {}
+        self.automatic = True
 
     def func(self):
         # 获取输入数据
@@ -111,27 +112,27 @@ class Publisher(BaseNode):
         default_init_data = {
             "name": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": "RPM"}
             },
             "msg_name": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": "MOTOR_CONTROL_"}
             },
             "msg_type": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": "list"}
             },
             "frequency": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": 0.01}
             },
             "msg": {
                 "attribute_type": "INPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data": {"value": None}
             },
             "pos": {
@@ -145,6 +146,7 @@ class Publisher(BaseNode):
         self.is_create = False
         self.puber = None
         self.info = None
+        self.automatic = True
 
     def func(self):
         # 获取输入数据

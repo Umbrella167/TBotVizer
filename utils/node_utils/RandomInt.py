@@ -9,7 +9,7 @@ class RandomInt(BaseNode):
         default_init_data = {
             "res": {
                 "attribute_type": "OUTPUT",
-                "data_type": "FLOAT",
+                "data_type": "STRINPUT",
                 "user_data":
                     {"value": 0}
             },
@@ -21,5 +21,5 @@ class RandomInt(BaseNode):
 
 
     def func(self):
-        if self.automatic and (self.parent.now_time - run_time) % 0.5 < 0.01:
+        if (self.parent.now_time - run_time) % 0.5 < 0.01:
             self.data["res"]["user_data"]["value"] = random.randint(0, 100)

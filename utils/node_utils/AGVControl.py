@@ -5,9 +5,9 @@ from utils.node_utils.BaseNode import BaseNode
 class AGVControl(BaseNode):
     def __init__(self, **kwargs):
         default_init_data = {
-            "vx": {"attribute_type": "OUTPUT", "data_type": "FLOAT", "user_data": {"value": None}},
-            "vy": {"attribute_type": "OUTPUT", "data_type": "FLOAT", "user_data": {"value": None}},
-            "alphax": {"attribute_type": "OUTPUT", "data_type": "FLOAT", "user_data": {"value": None}},
+            "vx": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
+            "vy": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
+            "alphax": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
             # "pos": {"attribute_type": "CONFIG", "data_type": "CONFIG", "user_data": {"value": None}},
         }
         kwargs["init_data"] = kwargs["init_data"] or default_init_data
@@ -20,6 +20,7 @@ class AGVControl(BaseNode):
             joystick.init()
 
         self.done = False
+        self.automatic = True
 
     def func(self):
         if not self.done:

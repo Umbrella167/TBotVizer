@@ -6,6 +6,4 @@ logs/*
 static/layout/*
 *.lprof
 
-./static/model/car.STL
-static/font/BLACK-NORMAL.ttf
 

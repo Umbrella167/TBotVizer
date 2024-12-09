@@ -93,7 +93,7 @@ class ParamBox(BaseBox):
         # for item in value:
         #     if item == "value":
         #         tag = param + "_" + item
-        #         Input(data=TypeParams(), tbkdata=self.tbk_data).new_input(
+        #         StrInput(data=TypeParams(), tbkdata=self.tbk_data).new_input(
         #             tag=tag,
         #             value=value[item],
         #             type=_type,
@@ -140,7 +140,7 @@ class ParamBox(BaseBox):
         #             for item in value:
         #                 if item == "value":
         #                     tag = param + "_" + item
-        #                     Input(tbk_data=TypeParams(), tbkdata=self.tbk_data).new_input(
+        #                     StrInput(tbk_data=TypeParams(), tbkdata=self.tbk_data).new_input(
         #                         tag=tag,
         #                         value=value[item],
         #                         type=_type,
