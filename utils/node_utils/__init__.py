@@ -6,5 +6,6 @@ from utils.node_utils.RandomInt import RandomInt
 from utils.node_utils.AGVControl import AGVControl
 from utils.node_utils.Astar import AStarNode
 from utils.node_utils.PID import PositionalPID
+from utils.node_utils.ParseIMU import ParseIMU
 
 from utils.node_utils.TBKNode import *

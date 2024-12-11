@@ -93,8 +93,8 @@ class Subscriber(BaseNode):
         try:
             res = json.dumps(pickle.loads(msg), indent=4, ensure_ascii=False)
         except Exception as e:
-            client_logger.log("ERROR", "Msg decode error", e)
-            return "ERROR"
+            # client_logger.log("ERROR", "Msg decode error", e)
+            return msg
         return res
 
     def extra(self):
@@ -113,12 +113,12 @@ class Publisher(BaseNode):
             "name": {
                 "attribute_type": "INPUT",
                 "data_type": "STRINPUT",
-                "user_data": {"value": "RPM"}
+                "user_data": {"value": "MOTOR_CONTROL"}
             },
             "msg_name": {
                 "attribute_type": "INPUT",
                 "data_type": "STRINPUT",
-                "user_data": {"value": "MOTOR_CONTROL_"}
+                "user_data": {"value": "RPM"}
             },
             "msg_type": {
                 "attribute_type": "INPUT",

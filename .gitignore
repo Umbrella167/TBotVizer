@@ -7,3 +7,4 @@ static/layout/*
 *.lprof
 
 
+!static/layout/boxes_init.json

@@ -10,8 +10,8 @@ class Map(BaseNode):
             "alphax":               {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": 0}},
             "original_upper":       {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": 1}},
             "original_lower":       {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": -1}},
-            "upper":                {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": 5000}},
-            "lower":                {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": -5000}},
+            "upper":                {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": 2000}},
+            "lower":                {"attribute_type": "CONFIG", "data_type": "STRINPUT", "user_data": {"value": -2000}},
             "mapped_value":         {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": []}},
             "pos":                  {"attribute_type": "CONFIG","data_type": "CONFIG","user_data":{"value": None}},
         }
