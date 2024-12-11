@@ -5,7 +5,6 @@ import copy
 import dearpygui.dearpygui as dpg
 
 from ui.boxes.BaseBox import BaseBox
-from utils.ClientLogManager import client_logger
 from utils.Utils import item_auto_resize, get_all_subclasses
 from utils.node_utils import *
 
@@ -93,7 +92,10 @@ class NodeBox(BaseBox):
                 node_layout = json.loads(f.read())
                 for identifier, node_info in node_layout["node"].items():
                     cls_name, data = node_info
-                    self.new_node("system", cls_name, (identifier, data))
+                    try:
+                        self.new_node("system", cls_name, (identifier, data))
+                    except Exception as e:
+                        client_logger.log("WARNING", f"Node {cls_name} init failed", e)
                 self.update()
                 for link in node_layout["link"]:
                     output_id, output_name, input_id, input_name = link
@@ -102,9 +104,12 @@ class NodeBox(BaseBox):
                             output_node = n
                         if n.identifier == input_id:
                             input_node = n
-                    self.new_link("system", (output_node.instanced_item[output_name].tag, input_node.instanced_item[input_name].tag))
+                    try:
+                        self.new_link("system", (output_node.instanced_item[output_name].tag, input_node.instanced_item[input_name].tag))
+                    except Exception as e:
+                        client_logger.log("WARNING", f"Link {output_name}->{input_name} init failed", e)
         except Exception as e:
-            client_logger.log("WARNING", "Node layout init file not found")
+            client_logger.log("WARNING", "Node layout init file failed!")
 
     def key_release_handler(self, sender, app_data, user_data):
         if dpg.is_key_released(dpg.mvKey_Delete):

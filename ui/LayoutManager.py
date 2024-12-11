@@ -18,7 +18,8 @@ class LayoutManager:
         self.set_font(self.font_size)
 
     def save(self):
-        dpg.save_init_file(self.init_file)
+        pass
+        # dpg.save_init_file(self.init_file)
         """
         # 保存当前布局设置到文件
         layout_data = {}
@@ -61,8 +62,8 @@ class LayoutManager:
 
     def load(self):
         # 从文件中加载布局设置
-        # 这句在uimporti.show()里已经被用到了,这里暂时保留两个，但是没啥用
-        dpg.configure_app(init_file=self.init_file)
+        # dpg.configure_app(init_file=self.init_file)
+        pass
         """
         try:
             with open(self.settings_file, "r") as file:

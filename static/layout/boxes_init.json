@@ -1,1 +1,1 @@
-["ConsoleBox", "InputConsoleBox", "MessageBox", "NodeBox"]
+[{"cls_name": "NodeBox", "width": 1284, "height": 1080, "pos": [0, 0]}, {"cls_name": "MessageBox", "width": 634, "height": 1080, "pos": [1286, 0]}]

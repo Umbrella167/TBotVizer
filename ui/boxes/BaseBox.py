@@ -1,4 +1,5 @@
 from dearpygui import dearpygui as dpg
+from scipy.ndimage import label
 
 from utils.ClientLogManager import client_logger
 
@@ -25,13 +26,16 @@ class BaseBox(object):
         if self.is_created:
             client_logger.log("ERROR", "BaseBox has already been created")
             return
+        default_settings = {
+            "width": 800,
+            "height": 800,
+            "pos": (sub_box_x, sub_box_y),
+            "label": self.__class__.__name__,
+        }
+        merged_settings = {**default_settings, **self.window_settings}
         self.tag = dpg.add_window(
-            width=800,
-            height=800,
-            label=self.__class__.__name__,
-            pos=(sub_box_x, sub_box_y),
             on_close=self.destroy,
-            **self.window_settings
+            **merged_settings,
         )
         sub_box_x += pos_offset
         sub_box_y += pos_offset
