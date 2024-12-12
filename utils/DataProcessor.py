@@ -1,7 +1,7 @@
 import tbkpy._core as tbkpy
 
 from api.TBKApi import TBKApi
-from config.SystemConfig import config
+from config.SystemConfig import TBK_NODE_NAME
 from utils.ClientLogManager import client_logger
 
 
@@ -14,8 +14,8 @@ ui_data = UiData()
 
 
 class TBKData:
-    def __init__(self, tbkapi: TBKApi):
-        self.TBKApi = tbkapi
+    def __init__(self):
+        self.tbk_api = TBKApi()
         self._param_data = None
         self._message_data = None
         self._message_node_tree = None
@@ -83,17 +83,17 @@ class TBKData:
     @property
     def param_data(self):
         # self._old_param_data = self._param_data
-        self._param_data = self.TBKApi.get_param()
+        self._param_data = self.tbk_api.get_param()
         return self._param_data
 
     @property
     def message_data(self):
         # self._old_message_data = self._message_data
-        self._message_data = self.TBKApi.get_message()
+        self._message_data = self.tbk_api.get_message()
         return self._message_data
 
     def put_param(self, param, value):
-        self.TBKApi.put_param(param, value)
+        self.tbk_api.put_param(param, value)
 
     @property
     def message_tree(self):
@@ -108,7 +108,7 @@ class TBKData:
                 data = self.message_data[node_type]
                 for uuid in data:
                     node_name = data[uuid].ep_info.node_name
-                    if node_name == config.TBK_NODE_NAME:
+                    if node_name == TBK_NODE_NAME:
                         puuid = node_name
                     else:
                         puuid = f"{node_name}_{data[uuid].puuid}"
@@ -120,9 +120,7 @@ class TBKData:
             message_tree[node_type] = tree
         return message_tree
 
-tbk_api = TBKApi()
-tbk_data = TBKData(tbk_api)
-
+tbk_data = TBKData()
 
 class MsgSubscriberManager:
     def __init__(self):

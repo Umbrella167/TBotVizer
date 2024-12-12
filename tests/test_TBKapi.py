@@ -18,6 +18,6 @@ def test_attr():
 
 def test_answer():
     # create_nodes(5)
-    # api = TBKApi.TBKApi()
+    # api = tbk_api.tbk_api()
     # stop_all_nodes()
     pass

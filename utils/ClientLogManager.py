@@ -4,13 +4,13 @@ import traceback
 
 from loguru import logger
 
-from config.SystemConfig import config
+from config.SystemConfig import LOG_DIR
 
 
 class ClientLogManager:
     def __init__(self, log_file="ui_logs.log"):
         self.logger = logger
-        self.log_dir = config.LOG_DIR
+        self.log_dir = LOG_DIR
         self.log_file = log_file
         self.log_levels = ["trace", "debug", "info", "success", "warning", "error", "critical"]
 

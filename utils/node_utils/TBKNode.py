@@ -4,7 +4,7 @@ import json
 
 import tbkpy._core as tbkpy
 
-from config.SystemConfig import run_time
+from config.SystemConfig import RUN_TIME
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
 from utils.node_utils.BaseNode import BaseNode
@@ -177,6 +177,6 @@ class Publisher(BaseNode):
             self.is_create = False
 
         # 发布消息
-        if (self.parent.now_time - run_time) % frequency < 0.01 and self.is_create:
+        if (self.parent.now_time - RUN_TIME) % frequency < 0.01 and self.is_create:
             if self.puber:
                 self.puber.publish(pickle.dumps(msg))

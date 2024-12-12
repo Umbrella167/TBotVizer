@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 import time
-from config.SystemConfig import run_time
+from config.SystemConfig import RUN_TIME
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
 from utils.DataProcessor import tbk_data
