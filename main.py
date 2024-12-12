@@ -4,10 +4,7 @@ import dearpygui.dearpygui as dpg
 from ui.Ui import UI
 from utils.ClientLogManager import client_logger
 
-
-import dearpygui.demo as demo
-
-from utils.DataProcessor import tbk_api
+# import dearpygui.demo as demo
 
 
 def loop(UI):

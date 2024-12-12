@@ -46,6 +46,9 @@ class FastLioBoxCallback:
         # 保留距离小于等于阈值的点（移除最远的20%点）
         points = points[distances <= distance_threshold]
 
+        # 保留 z 轴在 [0, 200] 范围内的点
+        points = points[(points[:, 2] >= 0) & (points[:, 2] <= 200)]
+
         # 更新 self.points
         self.points = points
 
@@ -280,7 +283,7 @@ class FastLioBox(BaseBox):
         self.canvas3D.add(self.lidar_scene())
         self.canvas3D.add(self.create_path())
         self.is_create_over = True
-        self.map = MapManager(self.canvas3D ,self._callback, step=500, step_max_points=50000)
+        self.map = MapManager(self.canvas3D ,self._callback, step=2000, step_max_points=50000)
 
 
     def create_path(self):

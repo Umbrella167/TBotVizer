@@ -3,7 +3,7 @@ import dearpygui.dearpygui as dpg
 
 import tbkpy._core as tbkpy
 
-from config.SystemConfig import run_time
+from config.SystemConfig import RUN_TIME
 from utils.Utils import convert_to_float
 from utils.node_utils.BaseNode import BaseNode
 
@@ -50,5 +50,5 @@ class Publisher(BaseNode):
             self.puber = None
             self.is_create = False
 
-        if (self.parent.now_time - run_time) % frequency < 0.01 and self.is_create:
+        if (self.parent.now_time - RUN_TIME) % frequency < 0.01 and self.is_create:
             self.puber.publish(pickle.dumps(msg))

@@ -136,5 +136,3 @@ class LanguageParams:
     def __getitem__(self, lang):
         return self._language_settings.get(lang)
 
-
-language = LanguageParams()

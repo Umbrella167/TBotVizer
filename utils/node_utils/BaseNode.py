@@ -35,7 +35,6 @@ class BaseNode:
             }
         }
         """
-        # TODO： 部分user_data并未完全修改完
         self.data = init_data
         self.data["pos"] = self.data.get("pos", None) or {
                 "attribute_type": "CONFIG",
@@ -81,8 +80,6 @@ class BaseNode:
         pass
 
     def calc(self):
-        # TODO:这个func会一直运算，如果要节省计算资源则需要自行在node内判断
-
         if not self.automatic and self.old_data == self.data:
             return
         self.func()

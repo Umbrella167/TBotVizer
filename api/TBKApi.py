@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import os
 
 import etcd3
@@ -7,13 +5,13 @@ import tzcp.tbk.tbk_pb2 as tbkpb
 from tbkpy import _core as tbkpy
 
 import utils.Utils as uitls
-from config.SystemConfig import config
+from config.SystemConfig import TBK_NODE_NAME
 from utils.ClientLogManager import client_logger
 
 
 class TBKApi:
     def __init__(self):
-        tbkpy.init(config.TBK_NODE_NAME)
+        tbkpy.init(TBK_NODE_NAME)
         self.MESSAGE_PREFIX = "/tbk/ps"
         self.PARAM_PREFIX = "/tbk/params"
         self.etcd = self._client()

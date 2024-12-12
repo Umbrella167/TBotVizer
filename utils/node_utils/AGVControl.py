@@ -43,7 +43,7 @@ class AGVControl(BaseNode):
                 alphax = alphax * (abs(alphax) >= 0.1)
 
                 self.data["vx"]["user_data"]["value"] = vx
-                self.data["vy"]["user_data"]["value"] = vy
+                self.data["vy"]["user_data"]["value"] = -vy
                 self.data["alphax"]["user_data"]["value"] = alphax
 
 
