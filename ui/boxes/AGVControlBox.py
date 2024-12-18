@@ -8,8 +8,11 @@ import pickle
 import pylinalg as la
 from math import pi
 from matplotlib import cm
+class AGVConfig:
+    MAP_POINTS = 5000
+    LOCAL_SCALE = 1000
 
-class FastLioBoxCallback:
+class AGVControlCallback:
     def __init__(self, tag):
         self.tag = tag
         self.max_points = 5000
@@ -115,7 +118,7 @@ class FastLioBoxCallback:
 
 
 
-class FastLioBoxUtils:
+class AGVControlUtils:
     @staticmethod
     def get_odometry_position(odometry):
         if odometry == {}:
@@ -193,7 +196,7 @@ class PointManager:
 
 
 class MapManager:
-    def __init__(self,canvas3D:Canvas3D, callback: FastLioBoxCallback,step = 500, step_max_points = 30000):
+    def __init__(self,canvas3D:Canvas3D, callback: AGVControlCallback,step = 500, step_max_points = 30000):
         self.step = step
         self.callback = callback
         self.map = []
@@ -202,7 +205,7 @@ class MapManager:
         self.canvas3D = canvas3D
     def add_points(self, points):
         
-        pos = FastLioBoxUtils.get_odometry_position(self.callback.odometry)
+        pos = AGVControlUtils.get_odometry_position(self.callback.odometry)
         distance = np.linalg.norm(pos)
         group_index = int(distance // self.step)
         while len(self.map) <= group_index:
@@ -262,7 +265,7 @@ class MapManager:
         return gfx_points
     
 
-class FastLioBox(BaseBox):
+class AGVControl(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -271,7 +274,7 @@ class FastLioBox(BaseBox):
         self.count = 0
         self.checkbox_bind = {}
         self.SIZE = (1920, 1080)
-        self._callback = FastLioBoxCallback(self.tag)
+        self._callback = AGVControlCallback(self.tag)
         self.geometry = None
         self.is_create_over = False
         
@@ -296,7 +299,7 @@ class FastLioBox(BaseBox):
     def update_path(self):
         if not self._callback.path:
             return
-        path = FastLioBoxUtils.get_path_pos(self._callback.path)
+        path = AGVControlUtils.get_path_pos(self._callback.path)
         self.line.geometry.positions = gfx.Buffer(np.array(path, dtype=np.float32))
 
     def create_points_could_scene(self):
