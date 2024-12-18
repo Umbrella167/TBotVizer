@@ -8,38 +8,22 @@ import pickle
 import pylinalg as la
 from math import pi
 from matplotlib import cm
-from dataclasses import dataclass
 
-@dataclass(frozen=True)
-class Param:
-    # 一个step内最多的点数
-    MAX_POINTS = 15000
-    
-    # 每隔PATH_STEP保存一次点云
-    PATH_STEP = 50
-    
-    # 点云的单位 * LOCAL_SCALE
-    LOCAL_SCALE = 1000
-    
-    # 保留高度在RANGE内的点
-    HIGH_RANGE = [0, 200]
-    
-    #画布大小
-    CANVAS_SIZE = (1920, 1080)
-    
-class FastLioBoxCallback:
+class FastLioMappingBoxCallback:
     def __init__(self, tag):
         self.tag = tag
+        self.max_points = 5000
+        self.local_scale = 1000
         self.points = np.zeros((1, 3), dtype=np.float32)
         self.subscriber = {}
         self.odometry = {}
         self.path = []
         self.lidar_scan_area = []
-        self.local_scale = Param.LOCAL_SCALE
+        self.step = 100
+
     def drop_callback(self, sender, app_data):
         ep_info, checkbox_tag = app_data
         ep_info["tag"] = self.tag
-        print(ep_info)
         if ep_info["msg_type"] == "sensor_msgs/PointCloud2":
             if ep_info["msg_name"] not in self.subscriber:
                 self.subscriber[ep_info["msg_name"]] = tbk_data.Subscriber(ep_info, self.points_msg)
@@ -63,7 +47,7 @@ class FastLioBoxCallback:
         points = points[distances <= distance_threshold]
 
         # 保留 z 轴在 [0, 200] 范围内的点
-        points = points[(points[:, 2] >= Param.HIGH_RANGE[0]) & (points[:, 2] <= Param.HIGH_RANGE[1])]
+        points = points[(points[:, 2] >= 0) & (points[:, 2] <= 200)]
 
         # 更新 self.points
         self.points = points
@@ -131,7 +115,7 @@ class FastLioBoxCallback:
 
 
 
-class FastLioBoxUtils:
+class FastLioMappingBoxUtils:
     @staticmethod
     def get_odometry_position(odometry):
         if odometry == {}:
@@ -209,7 +193,7 @@ class PointManager:
 
 
 class MapManager:
-    def __init__(self,canvas3D:Canvas3D, callback: FastLioBoxCallback,step, step_max_points ):
+    def __init__(self,canvas3D:Canvas3D, callback: FastLioMappingBoxCallback,step = 500, step_max_points = 30000):
         self.step = step
         self.callback = callback
         self.map = []
@@ -218,7 +202,7 @@ class MapManager:
         self.canvas3D = canvas3D
     def add_points(self, points):
         
-        pos = FastLioBoxUtils.get_odometry_position(self.callback.odometry)
+        pos = FastLioMappingBoxUtils.get_odometry_position(self.callback.odometry)
         distance = np.linalg.norm(pos)
         group_index = int(distance // self.step)
         while len(self.map) <= group_index:
@@ -278,7 +262,7 @@ class MapManager:
         return gfx_points
     
 
-class FastLioBox(BaseBox):
+class FastLioMappingBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -286,21 +270,20 @@ class FastLioBox(BaseBox):
         self.canvas3D = None
         self.count = 0
         self.checkbox_bind = {}
-        self.SIZE = Param.CANVAS_SIZE
+        self.SIZE = (1920, 1080)
+        self._callback = FastLioMappingBoxCallback(self.tag)
         self.geometry = None
         self.is_create_over = False
         
 
-    def create(self):
-        self._callback = FastLioBoxCallback(self.tag)
-        # dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
+    def on_create(self):
+        dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
         self.canvas3D = Canvas3D(self.tag, SIZE=self.SIZE)
-        self.create_plane()
         dpg.set_item_drop_callback(self.canvas3D.tag, self._callback.drop_callback)
         self.canvas3D.add(self.lidar_scene())
         self.canvas3D.add(self.create_path())
-        self.map = MapManager(self.canvas3D ,self._callback, step=Param.PATH_STEP, step_max_points=Param.MAX_POINTS)
         self.is_create_over = True
+        self.map = MapManager(self.canvas3D ,self._callback, step=2000, step_max_points=50000)
 
 
     def create_path(self):
@@ -310,18 +293,10 @@ class FastLioBox(BaseBox):
         self.line = gfx.Line(geometry, material)
         return self.line
 
-    def create_plane(self):
-        self.plane = gfx.Mesh(
-            gfx.plane_geometry(99999, 99999),
-            gfx.MeshBasicMaterial(color=(1,1,1,1), flat_shading=True,pick_write = True),
-        )
-        self.plane.local.position = (0, 0, -10)
-        self.canvas3D.add(self.plane)
-        
     def update_path(self):
         if not self._callback.path:
             return
-        path = FastLioBoxUtils.get_path_pos(self._callback.path)
+        path = FastLioMappingBoxUtils.get_path_pos(self._callback.path)
         self.line.geometry.positions = gfx.Buffer(np.array(path, dtype=np.float32))
 
     def create_points_could_scene(self):
@@ -338,7 +313,7 @@ class FastLioBox(BaseBox):
         self.AxesHelper = gfx.AxesHelper(150, 2)
         self.lidar_group.add(self.lidar_meshes, self.AxesHelper)
         return self.lidar_group
-        
+
     def update_lidar_pose(self):
         if self._callback.odometry == {}:
             return
@@ -361,19 +336,8 @@ class FastLioBox(BaseBox):
         super().destroy()
 
     def update(self):
-        # self.lidar_group.local.position = self.canvas3D.get_world_position()
         if not self.is_create_over:
             return
-        mouse_pos = dpg.get_mouse_pos()
-        pick_info = self.canvas3D.handler.world._renderer.get_pick_info(mouse_pos)
-        if pick_info["world_object"] == self.plane:
-            # print(pick_info["face_coord"])
-            face_index = pick_info["face_index"]
-            coords = pick_info["face_coord"]
-            sub_index = np.argmax(coords)
-            vertex_index = int(self.plane.geometry.indices.data[face_index, sub_index])
-            pos = self.plane.geometry.positions.data[vertex_index]
-            print(pos)
 
         self.create_points_could_scene()
         self.update_path()

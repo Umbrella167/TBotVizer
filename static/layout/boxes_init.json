@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 [{"cls_name": "MessageBox", "width": 524, "height": 1330, "pos": [1901, 0]}, {"cls_name": "RRTBox", "width": 1920, "height": 1080, "pos": [0, 0]}]
+=======
+[{"cls_name": "NodeBox", "width": 800, "height": 800, "pos": [340, 90]}]
+>>>>>>> main
