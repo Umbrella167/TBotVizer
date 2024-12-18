@@ -14,7 +14,7 @@ class ComboBoxDemo(BaseBox):
         self.cbl_tag = None
         self.btn_tag = None
 
-    def on_create(self):
+    def create(self):
         dpg.configure_item(self.tag, label="ComboBoxDemo")
         # 创建按钮
         self.btn_tag = dpg.add_button(label="Options     V", parent=self.tag)

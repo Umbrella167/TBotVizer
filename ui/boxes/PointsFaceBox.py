@@ -6,7 +6,6 @@ import pylinalg as la
 from math import pi
 from utils.DataProcessor import MsgSubscriberManager
 from utils.ClientLogManager import client_logger
-from tzcp.ros.sensor_pb2 import IMU
 from utils.DataProcessor import tbk_data
 import numpy as np
 class PointsFaceBox(BaseBox):
@@ -23,7 +22,7 @@ class PointsFaceBox(BaseBox):
             (1000, 1000, 0),    # 顶点2
             (-1000, 1000, 0),   # 顶点3
         ], dtype=np.float32)
-    def on_create(self):
+    def create(self):
         dpg.configure_item(self.tag, label="PointsFaceBox")
         self.canvas3D = Canvas3D(self.tag,self.SIZE)
         self.canvas3D.add(self.scene())
@@ -51,7 +50,7 @@ class PointsFaceBox(BaseBox):
     def update_face(self):
         
         # Scale the positions by 1.01
-        self.positions = self.positions * 1.01
+        self.positions = self.positions
         self.plane.geometry.positions = gfx.Buffer(self.positions)
         
     def destroy(self):
@@ -61,5 +60,5 @@ class PointsFaceBox(BaseBox):
     def update(self):
         if self.plane is None:
             return
-        self.update_face()
-        self.canvas3D.update()
+        # self.update_face()
+        # self.canvas3D.update()

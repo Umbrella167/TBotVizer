@@ -20,7 +20,7 @@ class BaseBox(object):
         self.window_settings = kwargs
         self.handler = dpg.add_handler_registry()
 
-    def create(self):
+    def create_box(self):
         # 创建
         global sub_box_x, sub_box_y, pos_offset
         if self.is_created:
@@ -43,19 +43,19 @@ class BaseBox(object):
         self.ui.box_count[self.__class__] = self.ui.box_count.setdefault(self.__class__, 0) + 1
         client_logger.log("INFO", f"{self} instance has been added to the boxes list.")
 
-        self.on_create()
+        self.create()
 
         dpg.add_key_press_handler(callback=self.key_press_handler, parent=self.handler)
         dpg.add_key_release_handler(callback=self.key_release_handler, parent=self.handler)
         self.is_created = True
 
-    def on_create(self):
+    def create(self):
         pass
 
     def show(self):
         # 显示盒子
         if not dpg.does_item_exist(self.tag):
-            self.on_create()
+            self.create()
         dpg.show_item(self.tag)
 
     def hide(self):

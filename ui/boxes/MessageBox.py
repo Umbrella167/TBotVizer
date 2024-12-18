@@ -27,7 +27,7 @@ class MessageBox(BaseBox):
         self.tbk_data = tbk_data
         self.data = {}
 
-    def on_create(self):
+    def create(self):
         self.header = dpg.add_collapsing_header(label="Message List", parent=self.tag, default_open=True)
         self.create_time = time.time()
         self.update()

@@ -109,7 +109,7 @@ class UI:
                         # 如果盒子已经创建则不重复创建
                         raise Exception("This box can only be created once")
                     instance = cls(**kwargs)
-                    instance.create()
+                    instance.create_box()
                     return instance
                 except Exception as e:
                     client_logger.log("WARNING", f"Unable to instantiate {cls}", e=e)

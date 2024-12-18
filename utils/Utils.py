@@ -85,13 +85,14 @@ def calculate_center_point(points):
 
 def apply_transform(matrix, point):
     # 将 DearPyGui 矩阵转换为 NumPy 矩阵
-    np_matrix = np.array(matrix).reshape(3, 3)
+    np_matrix = matrix2list(matrix)
+    
     # 确保 point 是 [x, y, 1]
-    point = np.array([point[0], point[1], 1])
+    point = np.array([point[0], point[1], 1, 1])
     # 进行矩阵乘法
     transformed_point = np_matrix @ point
-    return transformed_point[:2]  # 返回 [x, y]
 
+    return transformed_point[:2]  # 返回 [x, y]
 
 def matrix2list_mouse(matrix):
     transform = []
@@ -112,8 +113,8 @@ def matrix2list(matrix):
         transform.append(matrix[i])
     data_array = np.array(transform)
     matrix = data_array.reshape(4, 4)
-    matrix[0, 3] = matrix[-1, 0]
-    matrix[1, 3] = matrix[-1, 1]
+    matrix[0, 3] = -1 * matrix[-1, 0]
+    matrix[1, 3] = -1 * matrix[-1, 1]
     matrix[-1, 0] = 0
     matrix[-1, 1] = 0
     return np.array(matrix)
@@ -124,9 +125,11 @@ def matrix2list(matrix):
 #     image = cv2.flip(image,2)
 #     texture_data = image.ravel().astype('float32') / 255
 #     return texture_data
-def mouse2ssl(x, y, translation_matrix, scale):
-    x1, y1 = (matrix2list_mouse(translation_matrix) @ np.array([x, y, 1, 1]))[:2]
-    return int(x1 / scale), int(-1 * y1 / scale)
+def mouse2ssl(pos,translation_matrix,scale):
+    x, y = pos
+    scale = scale[0]
+    x1,y1 = (matrix2list(translation_matrix) @ np.array([x,y,1,1]))[:2]
+    return int(x1 / scale),int(-1 * y1 / scale)
 
 
 def swap_elements(lst, element1, element2):

@@ -1,6 +1,6 @@
 from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
-from ui.components.Canvas3D import Canvas3D
+from ui.components.Canvas3D import Canvas2D
 import pygfx as gfx
 import numpy as np
 from utils.DataProcessor import tbk_data
@@ -11,31 +11,32 @@ from matplotlib import cm
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
-class Param:
+class AGVParam:
     # 一个step内最多的点数
-    MAX_POINTS = 15000
+    MAX_POINTS = 5000
     
     # 每隔PATH_STEP保存一次点云
     PATH_STEP = 50
     
     # 点云的单位 * LOCAL_SCALE
-    LOCAL_SCALE = 1000
+    LOCAL_SCALE = 100
     
     # 保留高度在RANGE内的点
     HIGH_RANGE = [0, 200]
     
     #画布大小
     CANVAS_SIZE = (1920, 1080)
-    
-class FastLioBoxCallback:
+
+class AGVControlBoxCallback:
     def __init__(self, tag):
         self.tag = tag
+        self.local_scale = AGVParam.LOCAL_SCALE
         self.points = np.zeros((1, 3), dtype=np.float32)
         self.subscriber = {}
         self.odometry = {}
         self.path = []
         self.lidar_scan_area = []
-        self.local_scale = Param.LOCAL_SCALE
+
     def drop_callback(self, sender, app_data):
         ep_info, checkbox_tag = app_data
         ep_info["tag"] = self.tag
@@ -56,14 +57,13 @@ class FastLioBoxCallback:
         # 计算每个点到原点的欧拉距离
         distances = np.linalg.norm(points, axis=1)
 
-        # 找到距离的80%分位点（即20%的最远点的阈值）
         distance_threshold = np.percentile(distances, 85)
 
         # 保留距离小于等于阈值的点（移除最远的20%点）
         points = points[distances <= distance_threshold]
 
-        # 保留 z 轴在 [0, 200] 范围内的点
-        points = points[(points[:, 2] >= Param.HIGH_RANGE[0]) & (points[:, 2] <= Param.HIGH_RANGE[1])]
+        # 保留 z 轴在 HIGH_RANGE 范围内的点
+        points = points[(points[:, 2] >= AGVParam.HIGH_RANGE[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE[1])]
 
         # 更新 self.points
         self.points = points
@@ -74,7 +74,6 @@ class FastLioBoxCallback:
         self.odometry["pose"]["position"]["y"] = self.odometry["pose"]["position"]["y"] * self.local_scale
         self.odometry["pose"]["position"]["z"] = self.odometry["pose"]["position"]["z"] * self.local_scale
         self.odometr2path(self.odometry)
-
     def odometr2path(self, odometry, position_threshold=100, orientation_threshold=0.3):
         if not self.path:
             # 如果路径为空，直接添加第一个点
@@ -131,7 +130,7 @@ class FastLioBoxCallback:
 
 
 
-class FastLioBoxUtils:
+class AGVControlBoxUtils:
     @staticmethod
     def get_odometry_position(odometry):
         if odometry == {}:
@@ -165,9 +164,9 @@ class FastLioBoxUtils:
             ]
             for point in path
         ])
-        
+
 class PointManager:
-    def __init__(self,  max_points = 30000):
+    def __init__(self,  max_points):
         self.max_points = max_points
         self.points = np.zeros((self.max_points, 3), dtype=np.float32)
         self.current_index = 0  # 用于记录下一个插入的位置
@@ -209,173 +208,86 @@ class PointManager:
 
 
 class MapManager:
-    def __init__(self,canvas3D:Canvas3D, callback: FastLioBoxCallback,step, step_max_points ):
+    def __init__(self,canvas:Canvas2D, callback: AGVControlBoxCallback, step, step_max_points):
         self.step = step
         self.callback = callback
         self.map = []
         self.step_max_points = step_max_points
         self.gfx_points_size = 3
-        self.canvas3D = canvas3D
+        self.all_points = np.empty((0, 3), dtype=np.float32)  # 用于实时维护的全局点集合
+        self.canvas = canvas
     def add_points(self, points):
         
-        pos = FastLioBoxUtils.get_odometry_position(self.callback.odometry)
+        pos = AGVControlBoxUtils.get_odometry_position(self.callback.odometry)
         distance = np.linalg.norm(pos)
         group_index = int(distance // self.step)
         while len(self.map) <= group_index:
             now_points = PointManager(self.step_max_points)
             points_data = {
                 "points": now_points,
-                "obj": None,
+                "canvas_tag": None,
             }
             self.map.append(points_data)
 
         self.map[group_index]["points"].add_points(points)
-        if self.map[group_index]["obj"] is None:
-            self.map[group_index]["obj"] = self.create_gfx_points(self.map[group_index]["points"].get_points)
-            self.canvas3D.add(self.map[group_index]["obj"])
+        if self.map[group_index]["canvas_tag"] is None:
+            self.map[group_index]["canvas_tag"] = dpg.add_draw_node(parent=self.canvas.canvas_tag)
+            self.draw_points(points,self.map[group_index]["canvas_tag"])
         else:
-            self.update_gfx_points(self.map[group_index])
+            self.update_points(self.map[group_index])
             # pass/
-        
-    # 调度点云
-    def update_gfx_points(self, points_data):
+    def draw_points(self, points,parent):
+        for point in points:
+            point[1] = -point[1]
+            dpg.draw_circle(parent=parent, center=point[:2], radius=2,fill=(255, 0, 0, 255), color=(255, 0, 0, 255))
+    def update_points(self, points_data):
         points = points_data["points"].get_points
-        points_data["obj"].geometry.positions = gfx.Buffer(points)
-
-        # 提取 z 轴高度并归一化
-        z_values = points[:, 2]  # 提取 z 轴
-        normalized_z = (z_values - z_values.min()) / (z_values.max() - z_values.min() + 1e-5)  # 归一化
-
-        # 使用颜色梯度（例如从蓝到绿再到红）
-        colormap = cm.get_cmap('jet')  # 'jet' 映射从蓝到红
-        colors = colormap(normalized_z)
-        colors = colors[:, :4]  # 提取 RGBA 通道
-
-        points_data["obj"].geometry.colors = gfx.Buffer(colors.astype(np.float32))
-
-    # 创建点云
-    def create_gfx_points(self,points):
-        size = self.step_max_points
-        # 如果 points 的长度小于 size，则补充 [0, 0, 0] 直到长度等于 size
-        if len(points) < size:
-            points = np.vstack([points, np.zeros((size - len(points), 3))])
+        canvas_tag = points_data["canvas_tag"]
+        dpg.delete_item(canvas_tag, children_only=True)
+        self.draw_points(points, canvas_tag)
         
-        points = np.array(points, dtype=np.float32)
-        sizes = np.ones(size, dtype=np.float32) * 3
-        distances = np.linalg.norm(points, axis=1)  # 计算点到原点的欧拉距离
-        normalized_distances = 1 * (distances - distances.min()) / (distances.max() - distances.min() + 1e-5)  # 归一化
-        colors = np.zeros((size, 4), dtype=np.float32)
-        colors[:, 0] = normalized_distances  # 红色分量根据距离变化
-        colors[:, 1] = 1 - normalized_distances  # 绿色分量反向变化
-        colors[:, 3] = 1.0  # Alpha 通道设为 1.0（完全不透明）
-        self.geometry = gfx.Geometry(
-            positions=gfx.Buffer(points),  # 使用 gfx.Buffer 包装 NumPy 数组
-            sizes=gfx.Buffer(sizes),  # 包装点大小
-            colors=gfx.Buffer(colors),  # 包装点颜色
-        )
-        material = gfx.PointsMaterial(color_mode="vertex", size_mode="vertex")
-        gfx_points = gfx.Points(self.geometry, material)
-        return gfx_points
-    
-
-class FastLioBox(BaseBox):
+class AGVControlBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.canvas3D = None
+        self.canvas2D = None
         self.count = 0
         self.checkbox_bind = {}
-        self.SIZE = Param.CANVAS_SIZE
+        self.SIZE = AGVParam.CANVAS_SIZE
         self.geometry = None
         self.is_create_over = False
         
 
     def create(self):
-        self._callback = FastLioBoxCallback(self.tag)
+        self._callback = AGVControlBoxCallback(self.tag)
         # dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
-        self.canvas3D = Canvas3D(self.tag, SIZE=self.SIZE)
-        self.create_plane()
-        dpg.set_item_drop_callback(self.canvas3D.tag, self._callback.drop_callback)
-        self.canvas3D.add(self.lidar_scene())
-        self.canvas3D.add(self.create_path())
-        self.map = MapManager(self.canvas3D ,self._callback, step=Param.PATH_STEP, step_max_points=Param.MAX_POINTS)
+        self.canvas2D = Canvas2D(self.tag,scale_step=0.04)
+        self.canvas_lidar = dpg.add_draw_node(parent=self.canvas2D.canvas_tag)
+        dpg.set_item_drop_callback(self.canvas2D.group_tag, self._callback.drop_callback)
+        self.map = MapManager(self.canvas2D,self._callback, step=AGVParam.PATH_STEP, step_max_points=AGVParam.MAX_POINTS)
+        
         self.is_create_over = True
-
-
-    def create_path(self):
-        path = [[0, 0, 0], [0, 0, 0]]
-        material = gfx.LineMaterial(thickness=10.0, color=(0.8, 0.7, 0.0, 1.0))
-        geometry = gfx.Geometry(positions=path)
-        self.line = gfx.Line(geometry, material)
-        return self.line
-
-    def create_plane(self):
-        self.plane = gfx.Mesh(
-            gfx.plane_geometry(99999, 99999),
-            gfx.MeshBasicMaterial(color=(1,1,1,1), flat_shading=True,pick_write = True),
-        )
-        self.plane.local.position = (0, 0, -10)
-        self.canvas3D.add(self.plane)
+    def draw_lidar(self,pos):
+        if self.canvas_lidar is None:
+            return
+        
+        dpg.delete_item(self.canvas_lidar, children_only=True)
+        dpg.draw_circle(parent=self.canvas_lidar, center=pos[:2], radius=4,fill=(0, 255, 0, 255), color=(0, 255, 0, 255))
         
     def update_path(self):
         if not self._callback.path:
             return
-        path = FastLioBoxUtils.get_path_pos(self._callback.path)
-        self.line.geometry.positions = gfx.Buffer(np.array(path, dtype=np.float32))
-
-    def create_points_could_scene(self):
-        if self._callback.points.size < 10:
-            return
-        self.map.add_points(self._callback.points)
-
-    def lidar_scene(self):
-        self.grid = gfx.GridHelper(5000, 50, color1="#444444", color2="#222222")
-        self.lidar_group = gfx.Group()
-        self.lidar_meshes = gfx.load_mesh("static/model/mid360.STL")[0]
-        rot = la.quat_from_euler([-pi / 2, 0, -pi], order="XYZ")
-        self.lidar_meshes.local.rotation = rot
-        self.AxesHelper = gfx.AxesHelper(150, 2)
-        self.lidar_group.add(self.lidar_meshes, self.AxesHelper)
-        return self.lidar_group
-        
-    def update_lidar_pose(self):
-        if self._callback.odometry == {}:
-            return
-        odometry = self._callback.odometry
-        self.lidar_group.local.position = (
-            odometry["pose"]["position"]["x"],
-            odometry["pose"]["position"]["y"],
-            odometry["pose"]["position"]["z"],
-        )
-        self.lidar_group.local.rotation = la.quat_from_euler(
-            [
-                odometry["pose"]["orientation"]["x"],
-                odometry["pose"]["orientation"]["y"],
-                odometry["pose"]["orientation"]["z"],
-            ],
-            order="XYZ",
-        )
-
+        pos = AGVControlBoxUtils.get_odometry_position(self._callback.odometry)
+        self.draw_lidar(pos)
     def destroy(self):
         super().destroy()
 
     def update(self):
-        # self.lidar_group.local.position = self.canvas3D.get_world_position()
         if not self.is_create_over:
             return
-        mouse_pos = dpg.get_mouse_pos()
-        pick_info = self.canvas3D.handler.world._renderer.get_pick_info(mouse_pos)
-        if pick_info["world_object"] == self.plane:
-            # print(pick_info["face_coord"])
-            face_index = pick_info["face_index"]
-            coords = pick_info["face_coord"]
-            sub_index = np.argmax(coords)
-            vertex_index = int(self.plane.geometry.indices.data[face_index, sub_index])
-            pos = self.plane.geometry.positions.data[vertex_index]
-            print(pos)
+        if self._callback.points.size < 10:
+            return
+        self.map.add_points(self._callback.points)
 
-        self.create_points_could_scene()
         self.update_path()
-        self.update_lidar_pose()
-        self.canvas3D.update()

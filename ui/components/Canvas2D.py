@@ -13,9 +13,9 @@ class Transform:
 
 
 class CanvasCallBack:
-    def __init__(self, tranform: Transform):
+    def __init__(self, tranform: Transform,scale_step):
         self._tranform = tranform
-
+        self.scale_step = scale_step
     def window_resize_callback(self, sender, app_data, user_data):
         width, height, drawlist_tag, drawlist_parent_tag, size_offset = user_data
         parent_width, parent_height = dpg.get_item_rect_size(drawlist_parent_tag)
@@ -51,7 +51,7 @@ class CanvasCallBack:
         scale = self._tranform.scale[0]
         world_mouse_x = (mouse_x - tl0) / scale
         world_mouse_y = (mouse_y - tl1) / scale
-        scale_step = 0.1
+        scale_step = self.scale_step
         scale += scale_step if app_data > 0 else -scale_step
         scale = max(0.03, scale)
         scale = min(3, scale)
@@ -75,11 +75,13 @@ class Canvas2D:
         pos=[],
         auto_mouse_transfrom=True,
         drop_callback=None,
+        scale_step = 0.1
+        
     ):
         super().__init__()
         self.apply_mouse_transfrom = auto_mouse_transfrom
         self._transform = Transform()
-        self._callback = CanvasCallBack(self._transform)
+        self._callback = CanvasCallBack(self._transform,scale_step)
         self.drawlist_tag = None
         self.canvas_tag = None
         self.group_tag = None
@@ -134,7 +136,7 @@ class Canvas2D:
             parent = self.canvas_tag
         if tag is None:
             tag = dpg.generate_uuid()
-        dpg.add_draw_node(parent=self.drawlist_tag, tag=tag)
+        dpg.add_draw_node(parent=parent, tag=tag)
         return tag
 
     def apply_transform(self, tag):

@@ -74,7 +74,7 @@ class IMUBox(BaseBox):
         self._callback = IMUBoxCallback()
         self.checkbox_bind = {}
 
-    def on_create(self):
+    def create(self):
         dpg.configure_item(self.tag, label="IMU3DBox")
         self.canvas3D = Canvas3D(self.tag)
         dpg.set_item_drop_callback(self.canvas3D.canvas.group_tag, callback=self.drop_callback)

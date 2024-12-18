@@ -111,7 +111,7 @@ class PointsCouldBox(BaseBox):
         self.points_manager = PointManager(self.max_points)
         #np.zeros((self.max_points, 3), dtype=np.float32)
         self.geometry = None
-    def on_create(self):
+    def create(self):
         dpg.configure_item(self.tag, label="PointsCouldBox")
         dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
         self.canvas3D = Canvas3D(self.tag, SIZE=self.SIZE)

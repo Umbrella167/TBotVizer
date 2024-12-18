@@ -37,7 +37,7 @@ class NodeBox(BaseBox):
         # 布局文件
         self.layout_file = "static/layout/node_layout.json"
 
-    def on_create(self):
+    def create(self):
         dpg.configure_item(self.tag, label="NodeBox")
         self.group = dpg.add_group(horizontal=True, parent=self.tag)
         # 添加方法列表

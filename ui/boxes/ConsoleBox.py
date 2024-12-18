@@ -16,7 +16,7 @@ class ConsoleBox(BaseBox):
         # self.generate_add_methods()
 
 
-    def on_create(self):
+    def create(self):
         # 初始化设置
         dpg.configure_item(
             self.tag,

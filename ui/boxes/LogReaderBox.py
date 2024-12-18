@@ -18,7 +18,7 @@ class LogReaderBox(BaseBox):
         self.is_play = False
         self.start_button_tag = None
 
-    def on_create(self):
+    def create(self):
         dpg.configure_item(self.tag, label="LogReaderBox", height=250, width=500)
         with dpg.texture_registry():
             image_button_name = ["start", "stop", "next", "last"]

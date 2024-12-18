@@ -19,7 +19,7 @@ class InputConsoleBox(BaseBox):
         self.filter_list = self.all_class_name
         self.selectables = {}
 
-    def on_create(self):
+    def create(self):
         # 初始化设置
         dpg.configure_item(
             self.tag,

@@ -13,14 +13,20 @@ class BaseScene(gfx.Scene):
         self.world.rotation = la.quat_from_euler((-math.pi / 2, 0, -math.pi / 2))
         self.light = gfx.AmbientLight("#ffffff", 3)
         self.add(self.light)
-        self.grid = gfx.GridHelper(10000 * self.scale, 30, color1="#444444", color2="#222222")
+        self.grid = gfx.GridHelper(100000 * self.scale, 300, color1="#444444", color2="#222222")
         self.grid.local.up = (0, 0, 1)
         self.add(self.grid)
         self.direct_light2 = gfx.DirectionalLight("#ffffff", 1)
         self.direct_light2.local.x = -100
         self.direct_light2.local.y = -200
         self.add(self.direct_light2)
-
+        path = [[0, 0, 0], [0, 0, 0]]
+        geometry = gfx.Geometry(positions=path)
+        material = gfx.LineMaterial(thickness=10.0, color=(0.8, 0.7, 0.0, 1.0))
+        self.test_line = gfx.Line(geometry, material)
+        self.add(self.test_line)
+        
+        
 class World:
     def __init__(self, SIZE=(800, 600),scale=1):
         self.scale = scale
@@ -37,9 +43,8 @@ class World:
         self.mouse_world_position = [0,0,0]
         self._camera = gfx.PerspectiveCamera(fov=70, aspect = 16 / 9)
         self._camera.world.z = 400 * self.scale
-
+        self.size = SIZE
         self._controller = gfx.OrbitController(self._camera)
-
         self._canvas.request_draw(lambda: self._renderer.render(self._scene, self._camera))
 
     def update(self):
@@ -49,28 +54,14 @@ class World:
                     "type": "before_render",
                 }
             )
-        )
-        self.sreen_to_world()
-        value = (self.gfx_engine.draw()).ravel().astype(np.float32) / 255.0
-        return value
-    def sreen_to_world(self):
-        pos = ui_data.draw_mouse_pos
-        pos_rel = (
-            pos[0] - self._viewport.rect[0],
-            pos[1] - self._viewport.rect[1],
-        )
-        vs = self._viewport.logical_size
-        x = pos_rel[0] / vs[0] * 2 - 1
-        y = -(pos_rel[1] / vs[1] * 2 - 1)
-        pos_ndc = (x, y, 0)
-        pos_ndc += la.vec_transform(self._camera.world.position, self._camera.camera_matrix)
-        pos_world = la.vec_unproject(pos_ndc[:2], self._camera.camera_matrix)
-        point_data = np.array([[pos_world[0], pos_world[1], 0]], dtype=np.float32)
-        self.mouse_world_position = point_data
+        )                                                                   
+        value = (self.gfx_engine.draw()).ravel().astype(np.float32) / 255.0 
+        return value                                                        
     def handle_event(self, event: gfx.objects.Event):
         self._controller.handle_event(event, self._viewport)
+        # print(self._renderer.get_pick_info([0,0,0]))
 
-
+    
 class Handler:
     def __init__(self,SIZE = (800,600),scale=1):
         self.scale = scale
@@ -82,7 +73,7 @@ class Handler:
             2: 3,  # MOUSE_MIDDLE
         }
         self.WHEEL_RATIO = 500 - (1 - self.scale) * 350
-
+        
     def callback(self, sender, app_data,user_data):
         try:
             if not dpg.is_item_focused(user_data):
@@ -96,8 +87,8 @@ class Handler:
                 gfx.objects.PointerEvent(
                     **{
                         "type": gfx.objects.EventType.POINTER_MOVE,
-                        "x": dpg.get_mouse_pos()[0],
-                        "y": dpg.get_mouse_pos()[1],
+                        "x": dpg.get_drawing_mouse_pos()[0],
+                        "y": dpg.get_drawing_mouse_pos()[1],
                         "button": self.BUTTON_MAP[app_data[0]],
                     }
                 )
@@ -107,8 +98,8 @@ class Handler:
                 gfx.objects.PointerEvent(
                     **{
                         "type": gfx.objects.EventType.POINTER_DOWN,
-                        "x": dpg.get_mouse_pos()[0],
-                        "y": dpg.get_mouse_pos()[1],
+                        "x": dpg.get_drawing_mouse_pos()[0],
+                        "y": dpg.get_drawing_mouse_pos()[1],
                         "button": self.BUTTON_MAP[app_data],
                     }
                 )
@@ -118,8 +109,8 @@ class Handler:
                 gfx.objects.PointerEvent(
                     **{
                         "type": gfx.objects.EventType.POINTER_UP,
-                        "x": dpg.get_mouse_pos()[0],
-                        "y": dpg.get_mouse_pos()[1],
+                        "x": dpg.get_drawing_mouse_pos()[0],
+                        "y": dpg.get_drawing_mouse_pos()[1],
                         "button": self.BUTTON_MAP[app_data],
                     }
                 )
@@ -129,8 +120,8 @@ class Handler:
                 gfx.objects.WheelEvent(
                     **{
                         "type": gfx.objects.EventType.WHEEL,
-                        "x": dpg.get_mouse_pos()[0],
-                        "y": dpg.get_mouse_pos()[1],
+                        "x": dpg.get_drawing_mouse_pos()[0],
+                        "y": dpg.get_drawing_mouse_pos()[1],
                         "dx": -app_data * self.WHEEL_RATIO,
                         "dy": 0,
                     }
@@ -184,6 +175,10 @@ class Canvas3D:
     def draw(self):
         # scence.draw()
         pass
+    def get_world_position(self):
+        return self.handler.world.mouse_world_position
     def update(self):
         value = self.handler.world.update()
+        
+        
         dpg.set_value(self.texture_data,value)
