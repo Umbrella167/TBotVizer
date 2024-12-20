@@ -67,6 +67,8 @@ def calculate_distance(pos1, pos2):
 def middle_pos(pos1, pos2):
     return [(pos1[0] + pos2[0]) / 2, (pos1[1] + pos2[1]) / 2]
 
+def clamp(value, min_value, max_value):
+    return max(min_value, min(value, max_value))
 
 def calculate_center_point(points):
     """

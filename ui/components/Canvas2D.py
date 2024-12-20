@@ -1,7 +1,9 @@
 import dearpygui.dearpygui as dpg
 from contextlib import contextmanager
-from utils.DataProcessor import ui_data
 import numpy as np
+
+from utils.DataProcessor import get_ui_data
+
 
 class Transform:
     def __init__(self):
@@ -11,7 +13,7 @@ class Transform:
         self.translation_matrix = dpg.create_translation_matrix(self.translation)
         self.transform_matrix = self.translation_matrix * self.scale_matrix
 
-    def matrix2list(self,matrix):
+    def matrix2list(self, matrix):
         transform = []
         for i in range(16):
             transform.append(matrix[i])
@@ -23,15 +25,18 @@ class Transform:
         matrix[-1, 1] = 0
         return np.array(matrix)
 
-    def pos_apply_transform(self,pos,translation_matrix,scale):
-        x,y = pos
+    def pos_apply_transform(self, pos, translation_matrix, scale):
+        x, y = pos
         scale = scale[0]
-        x1,y1 = (self.matrix2list(translation_matrix) @ np.array([x,y,1,1]))[:2]
-        return (int(x1 / scale),int(y1 / scale))
+        x1, y1 = (self.matrix2list(translation_matrix) @ np.array([x, y, 1, 1]))[:2]
+        return (int(x1 / scale), int(y1 / scale))
+
+
 class CanvasCallBack:
-    def __init__(self, tranform: Transform,scale_step):
+    def __init__(self, tranform: Transform, scale_step):
         self._tranform = tranform
         self.scale_step = scale_step
+
     def window_resize_callback(self, sender, app_data, user_data):
         width, height, drawlist_tag, drawlist_parent_tag, size_offset = user_data
         parent_width, parent_height = dpg.get_item_rect_size(drawlist_parent_tag)
@@ -46,6 +51,7 @@ class CanvasCallBack:
             return
         if not dpg.is_item_focused(drawlist_tag):
             return
+        ui_data = get_ui_data()
         self._tranform.translation = tuple(
             x + y for x, y in zip(self._tranform.translation, tuple(ui_data.mouse_move_pos) + (0,))
         )
@@ -55,13 +61,13 @@ class CanvasCallBack:
         if auto_apply:
             dpg.apply_transform(canvas_tag, self._tranform.transform_matrix)
 
-
     def wheel_callback(self, sender, app_data, user_data):
         canvas_tag, auto_apply, drawlist_tag = user_data
         if not dpg.does_item_exist(drawlist_tag):
             return
         if not dpg.is_item_focused(drawlist_tag):
             return
+        ui_data = get_ui_data()
         mouse_x, mouse_y = ui_data.draw_mouse_pos
         tl0, tl1, _ = self._tranform.translation
         scale = self._tranform.scale[0]
@@ -84,20 +90,20 @@ class CanvasCallBack:
 
 class Canvas2D:
     def __init__(
-        self,
-        parent,
-        size=(-1, -1),
-        size_offset=(0, -50),
-        pos=[],
-        auto_mouse_transfrom=True,
-        drop_callback=None,
-        scale_step = 0.1
-        
+            self,
+            parent,
+            size=(-1, -1),
+            size_offset=(0, -50),
+            pos=[],
+            auto_mouse_transfrom=True,
+            drop_callback=None,
+            scale_step=0.1
+
     ):
         super().__init__()
         self.apply_mouse_transfrom = auto_mouse_transfrom
         self._transform = Transform()
-        self._callback = CanvasCallBack(self._transform,scale_step)
+        self._callback = CanvasCallBack(self._transform, scale_step)
         self.drawlist_tag = None
         self.canvas_tag = None
         self.group_tag = None
@@ -107,6 +113,7 @@ class Canvas2D:
         self.size_offset = size_offset
         self._create(self.drawlist_parent_tag, self.width, self.height, pos)
         self._create_handler()
+
     def _create(self, parent, width=-1, height=-1, pos=[]):
         with dpg.group(parent=parent) as self.group_tag:
             with dpg.drawlist(width=width, height=height, pos=pos) as self.drawlist_tag:
@@ -131,10 +138,10 @@ class Canvas2D:
                 ),
             )
         dpg.bind_item_handler_registry(self.drawlist_parent_tag, handler)
-        
+
         if not self.apply_mouse_transfrom:
             return
-        
+
         with dpg.handler_registry() as global_handler:
             dpg.add_mouse_drag_handler(
                 button=dpg.mvMouseButton_Middle,
@@ -158,6 +165,7 @@ class Canvas2D:
         self._transform.transform_matrix = self._transform.translation_matrix * self._transform.scale_matrix
         res = self._transform.pos_apply_transform(pos, self._transform.translation_matrix, self._transform.scale)
         return res
+
     @contextmanager
     def draw(self, parent=None):
         draw_tag = dpg.generate_uuid()

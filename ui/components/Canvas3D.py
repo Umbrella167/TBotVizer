@@ -5,7 +5,7 @@ from ui.components.Canvas2D import Canvas2D
 import math
 import numpy as np
 import pylinalg as la
-from utils.DataProcessor import ui_data 
+
 class BaseScene(gfx.Scene):
     def __init__(self,scale=1):
         super().__init__()
