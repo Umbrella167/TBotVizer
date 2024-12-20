@@ -2,7 +2,6 @@ import threading
 import time
 
 import dearpygui.dearpygui as dpg
-import tbkpy._core as tbkpy
 
 from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
@@ -204,7 +203,7 @@ class MessageBoxCallBack:
         if is_checked:
             self.msg_subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[
                 name
-            ] = tbk_data.Subscriber(
+            ] = tbk_manager.subscriber(
                 msg_info,
                 lambda msg: self.subscriber_msg(
                     msg, (puuid, name, msg_name, msg_type, tree_item_tag_dict)
@@ -221,7 +220,7 @@ class MessageBoxCallBack:
                 self.msg_logger.save()
             if puuid in self.msg_subscriber_dict and msg_name in self.msg_subscriber_dict[puuid]:
                 if name in self.msg_subscriber_dict[puuid][msg_name]:
-                    tbk_data.unsubscribe(msg_info, True)
+                    tbk_manager.unsubscribe(msg_info, True)
                     # del self.msg_subscriber_dict[puuid][msg_name][name]
                     # del self.msg_subscriber_dict[puuid][msg_name]
                     # dpg.configure_item(

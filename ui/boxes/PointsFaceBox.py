@@ -4,7 +4,6 @@ from ui.components.Canvas3D import Canvas3D
 import pygfx as gfx
 import pylinalg as la
 from math import pi
-from utils.DataProcessor import MsgSubscriberManager
 from utils.ClientLogManager import client_logger
 from api.NewTBKApi import tbk_manager
 import numpy as np
@@ -54,7 +53,7 @@ class PointsFaceBox(BaseBox):
         self.plane.geometry.positions = gfx.Buffer(self.positions)
         
     def destroy(self):
-        self._callback.msg_subscriber_manager.clear()
+        tbk_manager.clear()
         super().destroy()
 
     def update(self):

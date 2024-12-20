@@ -4,23 +4,20 @@ from ui.components.Canvas3D import Canvas3D
 import pygfx as gfx
 import pylinalg as la
 from math import pi
-from utils.DataProcessor import MsgSubscriberManager
 from utils.ClientLogManager import client_logger
 from tzcp.ros.sensor_pb2 import IMU
 from api.NewTBKApi import tbk_manager
-# from utils.DataProcessor import tbk_data
 
 class IMUBoxCallback:
     def __init__(self):
-        self.msg_subscriber_manager = MsgSubscriberManager()
         pass
 
-    def subscriber_msg(self,msg,update_angle):
+    def subscriber_msg(self, msg, update_angle):
         imu_data = self.parse_from_IMU(msg)
 
         update_angle(imu_data['quat'])
 
-    def parse_from_IMU(self,serialized_imu_msg):
+    def parse_from_IMU(self, serialized_imu_msg):
         """
         将序列化的 IMU 消息反序列化为原始字典形式。
 
@@ -65,6 +62,7 @@ class IMUBoxCallback:
         }
         return imu_data
 
+
 class IMUBox(BaseBox):
     only = False
 
@@ -88,7 +86,7 @@ class IMUBox(BaseBox):
         self.car_meshes = gfx.load_mesh("static/model/car.STL")[0]
         # self.car_meshes = gfx.load_mesh("static/model/mid360.STL")[0]
 
-        rot = la.quat_from_euler([-pi / 2, 0, -pi],order='XYZ')
+        rot = la.quat_from_euler([-pi / 2, 0, -pi], order='XYZ')
         self.car_meshes.local.rotation = rot
         self.car_meshes.local.position = (0, -120, 0)
 
@@ -105,7 +103,14 @@ class IMUBox(BaseBox):
         for tag in self.checkbox_bind:
             puuid, msg_name, name = self.checkbox_bind[tag]
             if not dpg.get_value(tag):
-                self._callback.msg_subscriber_manager.remove_subscriber(puuid, msg_name, name,self.tag)
+                tbk_manager.unsubscribe(
+                    info={
+                        "puuid": puuid,
+                        "name": name,
+                        "msg_name": msg_name,
+                        "tag": self.tag,
+                    }
+                )
 
     def drop_callback(self, sender, app_data):
         msg_info, msg_checkbox_tag = app_data
@@ -123,12 +128,19 @@ class IMUBox(BaseBox):
         puuid = msg_info["puuid"]
         self.checkbox_bind[sub_checkbox] = (puuid, msg_name, name)
         msg_info['tag'] = self.tag
-        sub = tbk_manager.Subscriber(msg_info,lambda msg: self._callback.subscriber_msg(msg,self.update_angel))
-
-        self._callback.msg_subscriber_manager.add_subscriber(puuid,msg_name,name,self.tag,sub)
+        # sub = tbk_manager.Subscriber(msg_info, )
+        tbk_manager.subscriber(
+            info={
+                "puuid": puuid,
+                "name": name,
+                "msg_name": msg_name,
+                "tag": self.tag,
+            },
+            callback=lambda msg: self._callback.subscriber_msg(msg, self.update_angel)
+        )
 
     def destroy(self):
-        self._callback.msg_subscriber_manager.clear()
+        tbk_manager.clear()
         super().destroy()
 
     def update_angel(self, rot):

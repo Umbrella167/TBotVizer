@@ -9,12 +9,14 @@ import functools
 
 def ensure_import(func):
     """装饰器，用于确保调用函数前已经导入相关库"""
+
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         if not self.is_import:
             self.new()
             self.is_import = True
         return func(self, *args, **kwargs)
+
     return wrapper
 
 
@@ -172,6 +174,26 @@ class TBKManager:
             del self.subscriber_dict[puuid][msg_name][name]
             del self.callback_dict[puuid][msg_name][name]
 
+    # def remove_subscriber(self, puuid: str, msg_name: str, name: str, item_tag: str):
+    #     """
+    #     删除嵌套字典中的订阅者。
+    #     """
+    #     # 检查是否存在对应的订阅者
+    #     if puuid in self.subscriber_data and msg_name in self.subscriber_data[puuid]:
+    #         if name in self.subscriber_data[puuid][msg_name] and item_tag in self.subscriber_data[puuid][msg_name][name]:
+    #             del self.subscriber_data[puuid][msg_name][name][item_tag]  # 删除具体的 item_tag
+    #             # 如果 name 下没有任何订阅者，则删除 name
+    #             if not self.subscriber_data[puuid][msg_name][name]:
+    #                 del self.subscriber_data[puuid][msg_name][name]
+    #             # 如果 msg_name 下没有任何订阅者，则删除 msg_name
+    #             if not self.subscriber_data[puuid][msg_name]:
+    #                 del self.subscriber_data[puuid][msg_name]
+    #             # 如果 puuid 下没有任何消息，则删除 puuid
+    #             if not self.subscriber_data[puuid]:
+    #                 del self.subscriber_data[puuid]
+    #             return True
+    #     return False  # 如果订阅者不存在，则返回 False
+
     @ensure_import
     def is_subscribed(self, info: dict) -> bool:
         return info["name"] in self.subscriber_dict.get(info["puuid"], {}).get(info["msg_name"], {})
@@ -215,6 +237,22 @@ class TBKManager:
                 lambda msg: self.callback_manager(msg, info),
             )
         )
+
+    @ensure_import
+    def publisher(self, info: dict):
+        ep_info = self.tbkpy.EPInfo()
+        ep_info.name = info["name"]
+        ep_info.msg_name = info["msg_name"]
+        ep_info.msg_type = info["msg_type"]
+        return self.tbkpy.Publisher(ep_info)
+
+    @ensure_import
+    def clear(self):
+        for puuid, msg_names in self.subscriber_dict.items():
+            for msg_name, names in msg_names.items():
+                for name, item_tags in names.items():
+                    for item_tag, subscriber in item_tags.items():
+                        self.unsubscribe({"puuid": puuid, "msg_name": msg_name, "name": name, "tag": item_tag})
 
 
 tbk_manager = TBKManager()

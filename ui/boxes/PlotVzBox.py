@@ -138,7 +138,7 @@ class PlotVzBox(BaseBox):
         self.message_subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})
         if name not in self.message_subscriber_dict[puuid][msg_name]:
             msg_info["tag"] = self.tag
-            self.message_subscriber_dict[puuid][msg_name][name] = tbk_manager.Subscriber(
+            self.message_subscriber_dict[puuid][msg_name][name] = tbk_manager.subscriber(
                 msg_info,
                 lambda msg: self.subscriber_msg(
                     msg, (puuid, name, msg_name, msg_type, series_tag)

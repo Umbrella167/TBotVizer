@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
-import tbkpy._core as tbkpy
+
+from api.NewTBKApi import tbk_manager
 
 from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
@@ -159,14 +160,16 @@ class LogReaderCallback:
             return
         logs = self.log.get_log_info()
         for (puuid, msg_name, name, msg_type), count in logs.items():
-            node_name = puuid.split("_")[:-1][0]
-            puuid_real = puuid.split("_")[-1]
-            ep_info = tbkpy.EPInfo()
-            ep_info.name = name
-            ep_info.msg_name = f"LOG_{msg_name}"
-            ep_info.msg_type = msg_type
+            # node_name = puuid.split("_")[:-1][0]
+            # puuid_real = puuid.split("_")[-1]
             self.log_publish_dict.setdefault(puuid, {}).setdefault(msg_name, {}).setdefault(name, {})
-            self.log_publish_dict[puuid][msg_name][name] = tbkpy.Publisher(ep_info)
+            self.log_publish_dict[puuid][msg_name][name] = tbk_manager.publisher(
+                info={
+                    "name": name,
+                    "msg_name": f"LOG_{msg_name}",
+                    "msg_type": msg_type,
+                }
+            )
 
     def last_message(self):
         if self.log is None:
