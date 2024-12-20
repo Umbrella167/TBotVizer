@@ -3,7 +3,7 @@ import dearpygui.dearpygui as dpg
 from ui.components.Canvas3D import Canvas3D
 import pygfx as gfx
 import numpy as np
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
 import pickle
 import pylinalg as la
 from math import pi
@@ -26,10 +26,10 @@ class FastLioMappingBoxCallback:
         ep_info["tag"] = self.tag
         if ep_info["msg_type"] == "sensor_msgs/PointCloud2":
             if ep_info["msg_name"] not in self.subscriber:
-                self.subscriber[ep_info["msg_name"]] = tbk_data.Subscriber(ep_info, self.points_msg)
+                self.subscriber[ep_info["msg_name"]] = tbk_manager.Subscriber(ep_info, self.points_msg)
         if ep_info["msg_type"] == "nav_msgs/Odometry":
             if ep_info["msg_name"] not in self.subscriber:
-                self.subscriber[ep_info["msg_name"]] = tbk_data.Subscriber(ep_info, self.odometry_msg)
+                self.subscriber[ep_info["msg_name"]] = tbk_manager.Subscriber(ep_info, self.odometry_msg)
 
     def points_msg(self, msg):
         # 反序列化点云数据

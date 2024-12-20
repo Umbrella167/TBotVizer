@@ -437,3 +437,6 @@ Solver failed. You may use opti.debug.value to investigate the latest values of 
 2024-12-20 09:40:05.628 | ERROR    | utils.ClientLogManager:log:49 - Loop Failed! Error: Error in Opti::solve [OptiNode] at .../casadi/core/optistack.cpp:165:
 .../casadi/core/optistack_internal.cpp:1030: Assertion "return_success(accept_limit)" failed:
 Solver failed. You may use opti.debug.value to investigate the latest values of variables. return_status is 'NonIpopt_Exception_Thrown', occurred on line 48364 in file /home/turingzero/.local/lib/python3.10/site-packages/casadi/casadi.py
+2024-12-20 10:56:56.133 | ERROR    | utils.ClientLogManager:log:49 - Loop Failed! Error: Error in Opti::solve [OptiNode] at .../casadi/core/optistack.cpp:165:
+.../casadi/core/optistack_internal.cpp:1030: Assertion "return_success(accept_limit)" failed:
+Solver failed. You may use opti.debug.value to investigate the latest values of variables. return_status is 'NonIpopt_Exception_Thrown', occurred on line 48364 in file /usr/local/lib/python3.8/dist-packages/casadi/casadi.py

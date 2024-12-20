@@ -7,7 +7,8 @@ from math import pi
 from utils.DataProcessor import MsgSubscriberManager
 from utils.ClientLogManager import client_logger
 from tzcp.ros.sensor_pb2 import IMU
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
+# from utils.DataProcessor import tbk_data
 
 class IMUBoxCallback:
     def __init__(self):
@@ -122,7 +123,7 @@ class IMUBox(BaseBox):
         puuid = msg_info["puuid"]
         self.checkbox_bind[sub_checkbox] = (puuid, msg_name, name)
         msg_info['tag'] = self.tag
-        sub = tbk_data.Subscriber(msg_info,lambda msg: self._callback.subscriber_msg(msg,self.update_angel))
+        sub = tbk_manager.Subscriber(msg_info,lambda msg: self._callback.subscriber_msg(msg,self.update_angel))
 
         self._callback.msg_subscriber_manager.add_subscriber(puuid,msg_name,name,self.tag,sub)
 

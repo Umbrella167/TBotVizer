@@ -7,7 +7,7 @@ import tbkpy._core as tbkpy
 from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
 
 
 class MessageBox(BaseBox):
@@ -24,7 +24,7 @@ class MessageBox(BaseBox):
         self.msg_logger = Logger("logs/msg_log")
         self._callback = MessageBoxCallBack(self.msg_logger)
         self.tree_item_tag_dict = {}
-        self.tbk_data = tbk_data
+        self.tbk_data = tbk_manager
         self.data = {}
 
     def create(self):

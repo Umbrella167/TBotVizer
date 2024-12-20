@@ -120,7 +120,7 @@ class TBKData:
             message_tree[node_type] = tree
         return message_tree
 
-tbk_data = TBKData()
+# tbk_data = TBKData()
 
 class MsgSubscriberManager:
     def __init__(self):

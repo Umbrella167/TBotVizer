@@ -6,7 +6,7 @@ import tbkpy._core as tbkpy
 
 from config.SystemConfig import RUN_TIME
 from utils.ClientLogManager import client_logger
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
 from utils.node_utils.BaseNode import BaseNode
 from utils.Utils import convert_to_float
 
@@ -61,7 +61,7 @@ class Subscriber(BaseNode):
                 self.remove_callback(self.current_subscription)
             # 如果新的订阅信息有效，则创建新的订阅
             if puuid is not None and name is not None and msg_name is not None:
-                self.suber = tbk_data.Subscriber(
+                self.suber = tbk_manager.Subscriber(
                     info={
                         "puuid": puuid,
                         "name": name,

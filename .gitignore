@@ -1,5 +1,6 @@
 .vscode
 .idea
+.run
 __pycache__
 **/__pycache__
 logs/*

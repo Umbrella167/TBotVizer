@@ -6,7 +6,7 @@ import pylinalg as la
 from math import pi
 from utils.DataProcessor import MsgSubscriberManager
 from utils.ClientLogManager import client_logger
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
 import numpy as np
 class PointsFaceBox(BaseBox):
     only = False

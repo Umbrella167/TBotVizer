@@ -3,7 +3,7 @@ import time
 from config.SystemConfig import RUN_TIME
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
 
 
 class ParamBox(BaseBox):
@@ -11,7 +11,7 @@ class ParamBox(BaseBox):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.tbk_data = tbk_data
+        self.tbk_data = tbk_manager
         self.data = {}
         self.table_tag = None
         self.create_time = None
