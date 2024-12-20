@@ -1,7 +1,7 @@
 import dearpygui.dearpygui as dpg
 from contextlib import contextmanager
 from utils.DataProcessor import ui_data
-
+import numpy as np
 
 class Transform:
     def __init__(self):
@@ -11,7 +11,23 @@ class Transform:
         self.translation_matrix = dpg.create_translation_matrix(self.translation)
         self.transform_matrix = self.translation_matrix * self.scale_matrix
 
+    def matrix2list(self,matrix):
+        transform = []
+        for i in range(16):
+            transform.append(matrix[i])
+        data_array = np.array(transform)
+        matrix = data_array.reshape(4, 4)
+        matrix[0, 3] = -1 * matrix[-1, 0]
+        matrix[1, 3] = -1 * matrix[-1, 1]
+        matrix[-1, 0] = 0
+        matrix[-1, 1] = 0
+        return np.array(matrix)
 
+    def pos_apply_transform(self,pos,translation_matrix,scale):
+        x,y = pos
+        scale = scale[0]
+        x1,y1 = (self.matrix2list(translation_matrix) @ np.array([x,y,1,1]))[:2]
+        return (int(x1 / scale),int(y1 / scale))
 class CanvasCallBack:
     def __init__(self, tranform: Transform,scale_step):
         self._tranform = tranform
@@ -35,10 +51,10 @@ class CanvasCallBack:
         )
 
         self._tranform.translation_matrix = dpg.create_translation_matrix(self._tranform.translation)
-        self._tranform.translation_matrix = self._tranform.translation_matrix * self._tranform.scale_matrix
+        self._tranform.transform_matrix = self._tranform.translation_matrix * self._tranform.scale_matrix
         if auto_apply:
-            dpg.apply_transform(canvas_tag, self._tranform.translation_matrix)
-    
+            dpg.apply_transform(canvas_tag, self._tranform.transform_matrix)
+
 
     def wheel_callback(self, sender, app_data, user_data):
         canvas_tag, auto_apply, drawlist_tag = user_data
@@ -54,16 +70,16 @@ class CanvasCallBack:
         scale_step = self.scale_step
         scale += scale_step if app_data > 0 else -scale_step
         scale = max(0.03, scale)
-        scale = min(3, scale)
+        scale = min(10, scale)
         self._tranform.scale = [scale, scale, 1]
         self._tranform.scale_matrix = dpg.create_scale_matrix(self._tranform.scale)
         new_translation_x = mouse_x - world_mouse_x * scale
         new_translation_y = mouse_y - world_mouse_y * scale
         self._tranform.translation = [new_translation_x, new_translation_y, 0]
         self._tranform.translation_matrix = dpg.create_translation_matrix(self._tranform.translation)
-        self._tranform.translation_matrix = self._tranform.translation_matrix * self._tranform.scale_matrix
+        self._tranform.transform_matrix = self._tranform.translation_matrix * self._tranform.scale_matrix
         if auto_apply:
-            dpg.apply_transform(canvas_tag, self._tranform.translation_matrix)
+            dpg.apply_transform(canvas_tag, self._tranform.transform_matrix)
 
 
 class Canvas2D:
@@ -91,7 +107,6 @@ class Canvas2D:
         self.size_offset = size_offset
         self._create(self.drawlist_parent_tag, self.width, self.height, pos)
         self._create_handler()
-
     def _create(self, parent, width=-1, height=-1, pos=[]):
         with dpg.group(parent=parent) as self.group_tag:
             with dpg.drawlist(width=width, height=height, pos=pos) as self.drawlist_tag:
@@ -139,10 +154,10 @@ class Canvas2D:
         dpg.add_draw_node(parent=parent, tag=tag)
         return tag
 
-    def apply_transform(self, tag):
+    def pos_apply_transform(self, pos):
         self._transform.transform_matrix = self._transform.translation_matrix * self._transform.scale_matrix
-        dpg.apply_transform(tag, self._transform.transform_matrix)
-
+        res = self._transform.pos_apply_transform(pos, self._transform.translation_matrix, self._transform.scale)
+        return res
     @contextmanager
     def draw(self, parent=None):
         draw_tag = dpg.generate_uuid()

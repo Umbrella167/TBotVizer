@@ -1,34 +1,19 @@
-# This file is subject to the terms and conditions defined in
-# file 'LICENSE', which is part of this source code package.
-import numpy as np
-from rrt_algorithms.rrt import RRT
-from rrt_algorithms.search_space.search_space import SearchSpace
-from rrt_algorithms.utilities.obstacle_generation import generate_random_obstacles
-from rrt_algorithms.utilities.plotting import Plot
+import python_motion_planning as pmp
+import random
+import time
 
-X_dimensions = np.array([(0, 100), (0, 100), (0, 100)])  # dimensions of Search Space
-x_init = (0, 0, 0)  # starting location
-x_goal = (100, 100, 100)  # goal location
+def generate_random_circle_obstacles(num_obstacles, x_range, y_range, max_radius):
+    obstacles = []
+    for _ in range(num_obstacles):
+        x = random.randint(0, x_range - 1)  # 随机生成圆心的x坐标
+        y = random.randint(0, y_range - 1)  # 随机生成圆心的y坐标
+        r = random.randint(1, max_radius)  # 随机生成半径（确保半径至少为1）
+        obstacles.append([x, y, r])
+    return obstacles
 
-q = 8  # length of tree edges
-r = 1  # length of smallest edge to check for intersection with obstacles
-max_samples = 1024  # max number of samples to take before timing out
-prc = 0.1  # probability of checking for a connection to goal
-
-# create Search Space
-X = SearchSpace(X_dimensions)
-n = 50
-Obstacles = generate_random_obstacles(X, x_init, x_goal, n)
-# create rrt_search
-rrt = RRT(X, q, x_init, x_goal, max_samples, r, prc)
-path = rrt.rrt_search()
-
-# plot
-plot = Plot("rrt_3d_with_random_obstacles")
-plot.plot_tree(X, rrt.trees)
-if path is not None:
-    plot.plot_path(X, path)
-plot.plot_obstacles(X, Obstacles)
-plot.plot_start(X, x_init)
-plot.plot_goal(X, x_goal)
-plot.draw(auto_open=True)
+max_radius = 5
+map = pmp.Map(9000, 9000)
+map.obs_circ = generate_random_circle_obstacles(20000, 9000, 9000, max_radius)
+print(map.obs_circ)
+planner = pmp.RRTStar((5000, 5), (4005, 8000), map,max_dist=500)
+cost, path, expand = planner.plan()

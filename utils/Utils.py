@@ -120,16 +120,12 @@ def matrix2list(matrix):
     return np.array(matrix)
 
 
-# def get_texture_data(image):
-#     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#     image = cv2.flip(image,2)
-#     texture_data = image.ravel().astype('float32') / 255
-#     return texture_data
 def mouse2ssl(pos,translation_matrix,scale):
-    x, y = pos
+    x,y = pos
     scale = scale[0]
+    print(translation_matrix,scale)
     x1,y1 = (matrix2list(translation_matrix) @ np.array([x,y,1,1]))[:2]
-    return int(x1 / scale),int(-1 * y1 / scale)
+    return (int(x1 / scale),int(y1 / scale))
 
 
 def swap_elements(lst, element1, element2):
