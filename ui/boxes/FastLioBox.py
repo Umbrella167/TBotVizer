@@ -9,7 +9,7 @@ import pylinalg as la
 from math import pi
 from matplotlib import cm
 
-class FastLioMappingBoxCallback:
+class FastLioBoxCallback:
     def __init__(self, tag):
         self.tag = tag
         self.max_points = 5000
@@ -115,7 +115,7 @@ class FastLioMappingBoxCallback:
 
 
 
-class FastLioMappingBoxUtils:
+class FastLioBoxUtils:
     @staticmethod
     def get_odometry_position(odometry):
         if odometry == {}:
@@ -193,7 +193,7 @@ class PointManager:
 
 
 class MapManager:
-    def __init__(self,canvas3D:Canvas3D, callback: FastLioMappingBoxCallback,step = 500, step_max_points = 30000):
+    def __init__(self,canvas3D:Canvas3D, callback: FastLioBoxCallback,step = 500, step_max_points = 30000):
         self.step = step
         self.callback = callback
         self.map = []
@@ -202,7 +202,7 @@ class MapManager:
         self.canvas3D = canvas3D
     def add_points(self, points):
         
-        pos = FastLioMappingBoxUtils.get_odometry_position(self.callback.odometry)
+        pos = FastLioBoxUtils.get_odometry_position(self.callback.odometry)
         distance = np.linalg.norm(pos)
         group_index = int(distance // self.step)
         while len(self.map) <= group_index:
@@ -262,7 +262,7 @@ class MapManager:
         return gfx_points
     
 
-class FastLioMappingBox(BaseBox):
+class FastLioBox(BaseBox):
     only = True
 
     def __init__(self, **kwargs):
@@ -271,12 +271,12 @@ class FastLioMappingBox(BaseBox):
         self.count = 0
         self.checkbox_bind = {}
         self.SIZE = (1920, 1080)
-        self._callback = FastLioMappingBoxCallback(self.tag)
+        self._callback = FastLioBoxCallback(self.tag)
         self.geometry = None
         self.is_create_over = False
         
 
-    def on_create(self):
+    def create(self):
         dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
         self.canvas3D = Canvas3D(self.tag, SIZE=self.SIZE)
         dpg.set_item_drop_callback(self.canvas3D.tag, self._callback.drop_callback)
@@ -296,7 +296,7 @@ class FastLioMappingBox(BaseBox):
     def update_path(self):
         if not self._callback.path:
             return
-        path = FastLioMappingBoxUtils.get_path_pos(self._callback.path)
+        path = FastLioBoxUtils.get_path_pos(self._callback.path)
         self.line.geometry.positions = gfx.Buffer(np.array(path, dtype=np.float32))
 
     def create_points_could_scene(self):
@@ -338,7 +338,6 @@ class FastLioMappingBox(BaseBox):
     def update(self):
         if not self.is_create_over:
             return
-
         self.create_points_could_scene()
         self.update_path()
         self.update_lidar_pose()

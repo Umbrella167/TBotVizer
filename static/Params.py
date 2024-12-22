@@ -109,7 +109,6 @@ class TypeParams:
     ]
     PYTHON_TYPES = ['int', 'float', 'list', 'tuple', 'dict']
 
-
 class LanguageParams:
     def __init__(self):
         self._language_settings = {

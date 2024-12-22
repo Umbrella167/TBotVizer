@@ -32,6 +32,8 @@ class UI:
             docking=True,
             docking_space=True,
         )
+        dpg.set_viewport_vsync(False)
+
         dpg.setup_dearpygui()
         dpg.show_viewport()
         self.console_box = self.add_ConsoleBox(ui=self)

@@ -1,4 +1,0 @@
-<<<<<<< HEAD
-{"node": {"e00c03f783feedda9fbd5f105ebb4421": ["AGVControl", {"vx": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": 0.0}}, "vy": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": -0.0}}, "alphax": {"attribute_type": "OUTPUT", "data_type": "STRINPUT", "user_data": {"value": -0.0}}, "pos": {"attribute_type": "CONFIG", "data_type": "CONFIG", "user_data": {"value": [306, 218]}}}]}, "link": []}
-=======
->>>>>>> main

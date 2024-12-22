@@ -3,8 +3,12 @@ from ui.boxes.BaseBox import BaseBox
 from ui.components.Canvas2D import Canvas2D
 import numpy as np
 import utils.python_motion_planning as pmp
-import utils.MPCPlanner as mpc
+from utils.MPCPlanner import MPCController
 import math
+import tbkpy._core as tbkpy
+import time
+import pickle
+
 def add_points_to_map_as_circles(points, max_radius):
     obs_circ = []
     for point in points:
@@ -30,24 +34,32 @@ def draw_car(point, color, parent,radius = 2):
     # 将点转换为列表格式
     points = np.column_stack((x, y)).tolist()
     dpg.draw_polygon(points, color=color, fill=color,thickness=2,parent=parent)
-
 class RRTBox(BaseBox):
     only = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.canvas = None
-        self.start_point = [10,10,0]
-        self.end_point = [10,100,0]
+        self.robot_now_pose = [10,10,0]
+        self.robot_target_pose = [10,100,0]
         self.obs_circ = []
         self.map = pmp.Map(200,200)
         self.play_animation = False
-        self.planned_trajectory = []
-        self.planned_trajectory_index = 0
-        self.path = []
+        self.path = None
+        self.count = 0
+        rpm_info = tbkpy.EPInfo()
+        rpm_info.name = "MOTOR_CONTROL"
+        rpm_info.msg_name = "RPM"
+        rpm_info.msg_type = "list"
+        self.suber_rpm = tbkpy.Subscriber(rpm_info, self.set_speed)
+        self.mpc = MPCController()
+    def set_speed(self,msg):
+        data = pickle.loads(msg)
+        x, y, w = data
+        self.robot_control(x, w)
     def create(self):
         self.points = (np.random.rand(200, 2) * 200).tolist()
-        self.obs_circ = add_points_to_map_as_circles(self.points, 2)
+        self.obs_circ = add_points_to_map_as_circles(self.points, 4)
         self.map.obs_circ = self.obs_circ
         dpg.configure_item(self.tag, label="CANVAS")
         self.canvas = Canvas2D(self.tag)
@@ -62,49 +74,97 @@ class RRTBox(BaseBox):
             dpg.add_mouse_release_handler(button=dpg.mvMouseButton_Left,callback=self.add_point,user_data="END")
             dpg.add_key_release_handler(key=dpg.mvKey_Spacebar,callback=self.path_plan)
             dpg.add_mouse_drag_handler(button=dpg.mvMouseButton_Right,callback=self.set_dir)
+
     def set_dir(self, sender, app_data):
         mouse_pos = dpg.get_drawing_mouse_pos()
         mouse_pos = tuple(self.canvas.pos_apply_transform(mouse_pos))
-        dist_end = np.linalg.norm(np.array(mouse_pos) - np.array(self.end_point[:2]))
+        dist_end = np.linalg.norm(np.array(mouse_pos) - np.array(self.robot_target_pose[:2]))
         if dist_end < 10000:
-            dir = math.atan2(mouse_pos[1] - self.end_point[1], mouse_pos[0] - self.end_point[0])
+            dir = math.atan2(mouse_pos[1] - self.robot_target_pose[1], mouse_pos[0] - self.robot_target_pose[0])
             dpg.delete_item(self.main_layer, children_only=True)
-            self.end_point[2] = dir
+            self.robot_target_pose[2] = dir
             dpg.delete_item(self.main_layer, children_only=True)
-            draw_car(self.start_point,(0, 255, 0, 255), self.main_layer)
-            draw_car(self.end_point,(0, 0, 255, 255), self.main_layer)
+            draw_car(self.robot_now_pose,(0, 255, 0, 255), self.main_layer)
+            draw_car(self.robot_target_pose,(0, 0, 255, 255), self.main_layer)
 
     def add_point(self, sender, app_data, user_data):
+        if not dpg.does_item_exist(self.tag):
+            return
+        if not dpg.is_item_focused(self.tag):
+            return
         mouse_pos = dpg.get_drawing_mouse_pos()
         mouse_pos = tuple(self.canvas.pos_apply_transform(mouse_pos))
         # if user_data == "START":
         #     self.start_point[:2] = mouse_pos
         if user_data == "END":
-            self.end_point[:2] = mouse_pos
-        dpg.delete_item(self.main_layer, children_only=True)
-        draw_car(self.start_point,(0, 255, 0, 255), self.main_layer)
-        draw_car(self.end_point,(0, 0, 255, 255), self.main_layer)
+            self.robot_target_pose[:2] = mouse_pos
+            dpg.delete_item(self.main_layer, children_only=True)
+        draw_car(self.robot_now_pose,(0, 255, 0, 255), self.main_layer)
+        draw_car(self.robot_target_pose,(0, 0, 255, 255), self.main_layer)
 
     def path_plan(self):
-        planner = pmp.RRTConnect(tuple(self.start_point[:2]), tuple(self.end_point[:2]), self.map,max_dist=1)
+        if not dpg.does_item_exist(self.tag):
+            return
+        if not dpg.is_item_focused(self.tag):
+            return
+        planner = pmp.RRTConnect(tuple(self.robot_now_pose[:2]), tuple(self.robot_target_pose[:2]), self.map,max_dist=1)
         cost, path, expand = planner.plan()
         dpg.delete_item(self.path_layer, children_only=True)
         dpg.draw_polyline(parent=self.path_layer,points=path, color=(255, 255, 0, 255), thickness=2)
-        self.path = path
-        self.mpc_planner = mpc.MPCPlanner()
-        self.planned_trajectory = self.mpc_planner.plan(tuple(self.start_point), tuple(self.end_point), self.path)
-        self.planned_trajectory_index = 0
-        self.play_animation = True
+        
+        self.path = self.mpc.generate_path_with_angles(self.robot_now_pose,self.robot_target_pose,path)
         
 
+        self.t0 = 0
+        self.u0 = np.zeros((self.mpc.N, 2))
+        self.next_states = np.zeros((self.mpc.N + 1, 3))
+        self.next_trajectories, self.next_controls = self.mpc.desired_command_and_trajectory(self.t0, self.robot_now_pose, self.path[0])
+        print(self.next_trajectories)
+
+    def robot_control(self, v, omega):
+        # 定义噪声参数
+        v = v * 0.5
+        omega = omega * 0.5
+        noise_std_x = 0
+        noise_std_y = 0
+        noise_std_omega = 0
+        # 生成高斯噪声
+        noise_x = np.random.normal(0, noise_std_x)
+        noise_y = np.random.normal(0, noise_std_y)
+        noise_omega = np.random.normal(0, noise_std_omega)
+
+        # 计算当前方向角（以机器人当前角度为基础）
+        theta = self.robot_now_pose[2]
+
+        # 根据线速度和方向角计算在x和y方向上的速度分量
+        vx = v * np.cos(theta)
+        vy = v * np.sin(theta)
+
+        # 加入噪声和角速度影响
+        self.robot_now_pose[0] += vx + noise_x
+        self.robot_now_pose[1] += vy + noise_y
+        self.robot_now_pose[2] += omega + noise_omega
+
+        dpg.delete_item(self.main_layer, children_only=True)
+        draw_car(self.robot_now_pose, (0, 255, 0, 255), self.main_layer)
+        draw_car(self.robot_target_pose, (0, 0, 255, 255), self.main_layer)
     
     def update(self):
-        
-        if self.play_animation :
-            dpg.delete_item(self.main_layer, children_only=True)
-            self.start_point = self.planned_trajectory[1]
-            draw_car(self.start_point,(0, 255, 0, 255), self.main_layer)
-            draw_car(self.end_point,(0, 0, 255, 255), self.main_layer)
-            self.planned_trajectory = self.mpc_planner.plan(tuple(self.start_point), tuple(self.end_point), self.path)
-            if np.linalg.norm(np.array(self.start_point[:2]) - np.array(self.end_point[:2])) < 10:
-                self.play_animation = False
+        if self.path is None:
+            return 
+        if np.linalg.norm(np.array(self.robot_now_pose[:2]) - np.array(self.robot_target_pose[:2])) < 0.5:
+            return 
+        for point in self.path:
+            while np.linalg.norm(np.array(self.robot_now_pose[:2]) - np.array(point[:2])) > 0.5:
+                # 调用 MPC 进行一步规划
+                self.t0, now_pos, self.u0, self.next_states, u_res, x_m, solve_time = self.mpc.plan(
+                    self.t0, self.robot_now_pose, self.u0, self.next_states, self.next_trajectories, self.next_controls
+                )
+                self.robot_control(u_res[0, 0], u_res[0, 1])
+                self.next_trajectories, self.next_controls = self.mpc.desired_command_and_trajectory(self.t0, self.robot_now_pose, point)
+                print(f"Current state: {self.u0}, Target point: {point}")
+                time.sleep(0.01)
+                dpg.render_dearpygui_frame()
+        self.path = None
+
+
