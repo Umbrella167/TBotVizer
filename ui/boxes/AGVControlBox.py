@@ -1,9 +1,9 @@
 from ui.boxes.BaseBox import BaseBox
 import dearpygui.dearpygui as dpg
-from ui.components.Canvas3D import Canvas2D
+from ui.components.Canvas2D import Canvas2D
 import pygfx as gfx
 import numpy as np
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
 import pickle
 import pylinalg as la
 from math import pi
@@ -43,10 +43,10 @@ class AGVControlBoxCallback:
         print(ep_info)
         if ep_info["msg_type"] == "sensor_msgs/PointCloud2":
             if ep_info["msg_name"] not in self.subscriber:
-                self.subscriber[ep_info["msg_name"]] = tbk_data.Subscriber(ep_info, self.points_msg)
+                self.subscriber[ep_info["msg_name"]] = tbk_manager.Subscriber(ep_info, self.points_msg)
         if ep_info["msg_type"] == "nav_msgs/Odometry":
             if ep_info["msg_name"] not in self.subscriber:
-                self.subscriber[ep_info["msg_name"]] = tbk_data.Subscriber(ep_info, self.odometry_msg)
+                self.subscriber[ep_info["msg_name"]] = tbk_manager.Subscriber(ep_info, self.odometry_msg)
 
     def points_msg(self, msg):
         # 反序列化点云数据
@@ -261,7 +261,6 @@ class AGVControlBox(BaseBox):
 
     def create(self):
         self._callback = AGVControlBoxCallback(self.tag)
-        # dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
         self.canvas2D = Canvas2D(self.tag,scale_step=0.04)
         self.canvas_lidar = dpg.add_draw_node(parent=self.canvas2D.canvas_tag)
         dpg.set_item_drop_callback(self.canvas2D.group_tag, self._callback.drop_callback)

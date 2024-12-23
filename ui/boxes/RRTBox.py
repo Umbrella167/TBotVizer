@@ -5,10 +5,9 @@ import numpy as np
 import utils.python_motion_planning as pmp
 from utils.MPCPlanner import MPCController
 import math
-import tbkpy._core as tbkpy
 import time
+# from api.NewTBKApi import tbk_manager
 import pickle
-
 def add_points_to_map_as_circles(points, max_radius):
     obs_circ = []
     for point in points:
@@ -17,10 +16,11 @@ def add_points_to_map_as_circles(points, max_radius):
         obs_circ.append([x, y, r])
     return obs_circ
 
-def draw_car(point, color, parent,radius = 2):
+
+def draw_car(point, color, parent, radius=2):
     pos = point[:2]
     dir = point[2]
-    angle =  -dir * (180 / math.pi)
+    angle = -dir * (180 / math.pi)
     start_angle = 45 + angle
     end_angle = 315 + angle
     # 将角度转换为弧度
@@ -33,7 +33,9 @@ def draw_car(point, color, parent,radius = 2):
     y = pos[1] - radius * np.sin(angles)
     # 将点转换为列表格式
     points = np.column_stack((x, y)).tolist()
-    dpg.draw_polygon(points, color=color, fill=color,thickness=2,parent=parent)
+    dpg.draw_polygon(points, color=color, fill=color, thickness=2, parent=parent)
+
+
 class RRTBox(BaseBox):
     only = False
 
@@ -43,15 +45,20 @@ class RRTBox(BaseBox):
         self.robot_now_pose = [10,10,0]
         self.robot_target_pose = [10,100,0]
         self.obs_circ = []
-        self.map = pmp.Map(200,200)
+        self.map = pmp.Map(200, 200)
         self.play_animation = False
         self.path = None
         self.count = 0
-        rpm_info = tbkpy.EPInfo()
-        rpm_info.name = "MOTOR_CONTROL"
-        rpm_info.msg_name = "RPM"
-        rpm_info.msg_type = "list"
-        self.suber_rpm = tbkpy.Subscriber(rpm_info, self.set_speed)
+        rpm_info = {
+            "node_name": "MOTOR_CONTROL",
+            "puuid":f"{time.time()}",
+            "name": "RPM",
+            "msg_name": "RPM",
+            "msg_type": "list",
+            "tag": self.tag,
+        }
+
+        # self.suber_rpm = tbk_manager.subscriber(rpm_info, self.set_speed)
         self.mpc = MPCController()
     def set_speed(self,msg):
         data = pickle.loads(msg)
@@ -65,10 +72,10 @@ class RRTBox(BaseBox):
         self.canvas = Canvas2D(self.tag)
         self.main_layer = self.canvas.add_layer()
         self.path_layer = self.canvas.add_layer()
-        
         with self.canvas.draw():
             for point in self.obs_circ:
-                dpg.draw_circle(center=point[:2], radius=point[2], color=(255, 255, 255, 255),fill=(255, 255, 255, 255))
+                dpg.draw_circle(center=point[:2], radius=point[2], color=(255, 255, 255, 255),
+                                fill=(255, 255, 255, 255))
         with dpg.handler_registry():
             # dpg.add_mouse_release_handler(button=dpg.mvMouseButton_Left,callback=self.add_point,user_data="START")
             dpg.add_mouse_release_handler(button=dpg.mvMouseButton_Left,callback=self.add_point,user_data="END")
@@ -114,7 +121,6 @@ class RRTBox(BaseBox):
         
         self.path = self.mpc.generate_path_with_angles(self.robot_now_pose,self.robot_target_pose,path)
         
-
         self.t0 = 0
         self.u0 = np.zeros((self.mpc.N, 2))
         self.next_states = np.zeros((self.mpc.N + 1, 3))

@@ -5,7 +5,6 @@ from config.SystemConfig import PROHIBITED_BOXES
 from config.UiConfig import UI_TITTLE
 from ui.LayoutManager import LayoutManager
 from utils.ClientLogManager import client_logger
-from utils.DataProcessor import ui_data
 from utils.Utils import get_all_subclasses
 from ui.boxes import *
 
@@ -13,6 +12,7 @@ from ui.boxes import *
 class UI:
     def __init__(self):
         self.layout_manager = LayoutManager()
+        self.ui_data = None
         # self.config.instance = self
         self.boxes = []
         self.box_count = {}
@@ -26,7 +26,7 @@ class UI:
 
     def create(self):
         # 创建主窗口
-        self.create_global_handler()
+        self.add_global_handler()
         dpg.create_viewport(title=UI_TITTLE, width=1920, height=1080)
         dpg.configure_app(
             docking=True,
@@ -36,12 +36,27 @@ class UI:
 
         dpg.setup_dearpygui()
         dpg.show_viewport()
+        self.create_viewport_menu()
         self.console_box = self.add_ConsoleBox(ui=self)
         self.input_box = self.add_InputConsoleBox(ui=self)
-        self.init_boxes()
+        self.load_boxes()
         self.is_created = - True
 
-    def init_boxes(self):
+    def create_viewport_menu(self):
+        pass
+        # with dpg.viewport_menu_bar():
+        #     with dpg.menu(label="File", tag="file_menu"):
+        #         dpg.add_menu_item(label="Save Layout")
+        #         dpg.add_menu_item(label="Load Layout")
+        #         dpg.add_menu_item(label="Exit")
+        #     with dpg.menu(label="SSL3D", tag="ssl3d_menu"):
+        #         dpg.add_menu_item(
+        #             label="Camera option  (F2)",
+        #             tag="camera_option_menutiem",
+        #             # callback=self.pop_camera_option_window,
+        #         )
+
+    def load_boxes(self):
         try:
             with open(self.boxes_init_file, "r") as f:
                 boxes_config = json.loads(f.read())
@@ -55,7 +70,7 @@ class UI:
                         pos=box_config["pos"]
                     )
         except Exception as e:
-            client_logger.log("WARNING", "Box init failed", e)
+            client_logger.log("WARNING", "Box load failed", e)
 
     def show(self):
         if not self.is_created:
@@ -75,14 +90,10 @@ class UI:
         for box in self.boxes:
             box.destroy()
 
-    def ui_loop(self):
-        self.on_mouse_move()
-
     def run_loop(self, func=None):
         if func is not None:
             try:
                 while dpg.is_dearpygui_running():
-                    self.ui_loop()
                     func()
                     dpg.render_dearpygui_frame()
             except Exception as e:
@@ -92,18 +103,16 @@ class UI:
         else:
             dpg.start_dearpygui()
 
-    def create_global_handler(self):
+    def add_global_handler(self):
         # 创建全局监听
-        with dpg.handler_registry() as global_hander:
+        with dpg.handler_registry():
+            # 松开按键时监听
             dpg.add_key_release_handler(callback=self.on_key_release)
-        # with dpg.handler_registry():
-        #     dpg.add_mouse_click_handler(button=dpg.mvMouseButton_Right, callback=self.on_right_click)
 
     # 生成添加类方法
     def generate_add_methods(self):
         for cls in self.all_classes:
             method_name = f"add_{cls.__name__}"
-
             # 使用闭包捕获cls
             def add_method(self, cls=cls, **kwargs):
                 try:
@@ -115,7 +124,6 @@ class UI:
                     return instance
                 except Exception as e:
                     client_logger.log("WARNING", f"Unable to instantiate {cls}", e=e)
-
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
 
@@ -136,6 +144,7 @@ class UI:
             f.write(json.dumps(boxes_config))
             f.flush()
 
+    # 监听事件
     def on_key_release(self, sender, app_data, user_data):
         if dpg.is_key_down(dpg.mvKey_LControl) and app_data == dpg.mvKey_S:
             self.save_boxes()
@@ -143,9 +152,3 @@ class UI:
         if dpg.is_key_released(dpg.mvKey_F11):
             dpg.toggle_viewport_fullscreen()
 
-    def on_mouse_move(self):
-        ui_data.draw_mouse_pos_last = ui_data.draw_mouse_pos
-        ui_data.draw_mouse_pos = dpg.get_drawing_mouse_pos()
-        ui_data.mouse_move_pos = tuple(
-            x - y for x, y in zip(ui_data.draw_mouse_pos, ui_data.draw_mouse_pos_last)
-        )

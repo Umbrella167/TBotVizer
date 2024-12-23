@@ -2,11 +2,9 @@ import dearpygui.dearpygui as dpg
 import pickle
 import json
 
-import tbkpy._core as tbkpy
-
 from config.SystemConfig import RUN_TIME
 from utils.ClientLogManager import client_logger
-from utils.DataProcessor import tbk_data
+from api.NewTBKApi import tbk_manager
 from utils.node_utils.BaseNode import BaseNode
 from utils.Utils import convert_to_float
 
@@ -61,7 +59,7 @@ class Subscriber(BaseNode):
                 self.remove_callback(self.current_subscription)
             # 如果新的订阅信息有效，则创建新的订阅
             if puuid is not None and name is not None and msg_name is not None:
-                self.suber = tbk_data.Subscriber(
+                self.suber = tbk_manager.subscriber(
                     info={
                         "puuid": puuid,
                         "name": name,
@@ -91,7 +89,7 @@ class Subscriber(BaseNode):
 
     def decode_msg(self, msg):
         try:
-            res = json.dumps(pickle.loads(msg), indent=4, ensure_ascii=False)
+            res = pickle.loads(msg)
         except Exception as e:
             # client_logger.log("ERROR", "Msg decode error", e)
             return msg
@@ -162,13 +160,17 @@ class Publisher(BaseNode):
 
         if name and msg_name and msg_type:
             # 如果三者不为空则创建 Publisher
-            info = (name, msg_name, msg_type)
-            ep = tbkpy.EPInfo()
-            ep.name = str(name)
-            ep.msg_name = msg_name
-            ep.msg_type = msg_type
+            info = {
+                "name": str(name),
+                "msg_name": msg_name,
+                "msg_type": msg_type,
+            }
+            # ep = tbkpy.EPInfo()
+            # ep.name = str(name)
+            # ep.msg_name = msg_name
+            # ep.msg_type = msg_type
             if self.info != info:
-                self.puber = tbkpy.Publisher(ep)
+                self.puber = tbk_manager.publisher(info)
                 self.info = info
             self.is_create = True
         else:

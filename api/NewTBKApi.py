@@ -1,33 +1,63 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import os
 
-import etcd3
-import tzcp.tbk.tbk_pb2 as tbkpb
-from tbkpy import _core as tbkpy
-
 import utils.Utils as uitls
-from config.SystemConfig import config
+from config.SystemConfig import TBK_NODE_NAME
 from utils.ClientLogManager import client_logger
+
+import functools
+
+
+def ensure_import(func):
+    """装饰器，用于确保调用函数前已经导入相关库"""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        if not self.is_import:
+            self.new()
+            self.is_import = True
+        return func(self, *args, **kwargs)
+
+    return wrapper
 
 
 class TBKManager:
     def __init__(self):
+        # 动态导入库
+        self.etcd3 = None
+        self.tbkpb = None
+        self.tbkpy = None
+
         self.param_tree = None
         self._param_data = None
         self._message_data = None
-        tbkpy.init(config.TBK_NODE_NAME)
+        self.etcd = None
         self.MESSAGE_PREFIX = "/tbk/ps"
         self.PARAM_PREFIX = "/tbk/params"
-        self.etcd = self._client()
 
         self.callback_dict = {}
         self.subscriber_dict = {}
 
-    @staticmethod
-    def _client():
+        self.is_import = False
+
+    def new(self):
+        try:
+            import etcd3
+            import tzcp.tbk.tbk_pb2 as tbkpb
+            from tbkpy import _core as tbkpy
+
+            self.etcd3 = etcd3
+            self.tbkpb = tbkpb
+            self.tbkpy = tbkpy
+
+            tbkpy.init(TBK_NODE_NAME)
+            self.etcd = self._client()
+            self.is_import = True
+        except Exception as e:
+            client_logger.log("ERROR", "Import tbk error!", e)
+
+    def _client(self):
         pki_path = os.path.join(os.path.expanduser("~"), ".tbk/etcdadm/pki")
-        return etcd3.client(
+        return self.etcd3.client(
             host="127.0.0.1",
             port=2379,
             ca_cert=os.path.join(pki_path, "ca.crt"),
@@ -35,7 +65,7 @@ class TBKManager:
             cert_cert=os.path.join(pki_path, "etcdctl-etcd-client.crt"),
         )
 
-    # 获取原始的param信息
+    @ensure_import
     def get_original_param(self, _prefix=None):
         prefix = self.PARAM_PREFIX + (_prefix if _prefix else "")
         raw_data = self.etcd.get_prefix(prefix)
@@ -47,7 +77,7 @@ class TBKManager:
         )
         return data
 
-    # 获取处理后的param
+    @ensure_import
     def get_param(self, _prefix=None):
         data = self.get_original_param(_prefix)
         result = {}
@@ -67,12 +97,12 @@ class TBKManager:
         return result
 
     @property
+    @ensure_import
     def param_data(self):
-        # self._old_param_data = self._param_data
         self._param_data = self.get_param()
         return self._param_data
 
-    # 获取 message 信息
+    @ensure_import
     def get_message(self):
         processes = {}
         publishers = {}
@@ -83,16 +113,16 @@ class TBKManager:
             keys = key[len(self.MESSAGE_PREFIX):].split("/")[1:]
             info = None
             if len(keys) == 1:
-                info = tbkpb.State()
+                info = self.tbkpb.State()
                 info.ParseFromString(value)
                 processes[info.uuid] = info
             elif len(keys) == 3:
                 if keys[1] == "pubs":
-                    info = tbkpb.Publisher()
+                    info = self.tbkpb.Publisher()
                     info.ParseFromString(value)
                     publishers[info.uuid] = info
                 elif keys[1] == "subs":
-                    info = tbkpb.Subscriber()
+                    info = self.tbkpb.Subscriber()
                     info.ParseFromString(value)
                     subscribers[info.uuid] = info
             else:
@@ -101,12 +131,13 @@ class TBKManager:
         return res
 
     @property
+    @ensure_import
     def message_data(self):
-        # self._old_message_data = self._message_data
         self._message_data = self.get_message()
         return self._message_data
 
     @property
+    @ensure_import
     def message_tree(self):
         message_tree = {}
         for node_type in self.message_data:
@@ -119,7 +150,7 @@ class TBKManager:
                 data = self.message_data[node_type]
                 for uuid in data:
                     node_name = data[uuid].ep_info.node_name
-                    if node_name == config.TBK_NODE_NAME:
+                    if node_name == TBK_NODE_NAME:
                         puuid = node_name
                     else:
                         puuid = f"{node_name}_{data[uuid].puuid}"
@@ -131,6 +162,7 @@ class TBKManager:
             message_tree[node_type] = tree
         return message_tree
 
+    @ensure_import
     def unsubscribe(self, info: dict, is_del_msg=False):
         puuid = info["puuid"]
         name = info["name"]
@@ -142,9 +174,31 @@ class TBKManager:
             del self.subscriber_dict[puuid][msg_name][name]
             del self.callback_dict[puuid][msg_name][name]
 
+    # def remove_subscriber(self, puuid: str, msg_name: str, name: str, item_tag: str):
+    #     """
+    #     删除嵌套字典中的订阅者。
+    #     """
+    #     # 检查是否存在对应的订阅者
+    #     if puuid in self.subscriber_data and msg_name in self.subscriber_data[puuid]:
+    #         if name in self.subscriber_data[puuid][msg_name] and item_tag in self.subscriber_data[puuid][msg_name][name]:
+    #             del self.subscriber_data[puuid][msg_name][name][item_tag]  # 删除具体的 item_tag
+    #             # 如果 name 下没有任何订阅者，则删除 name
+    #             if not self.subscriber_data[puuid][msg_name][name]:
+    #                 del self.subscriber_data[puuid][msg_name][name]
+    #             # 如果 msg_name 下没有任何订阅者，则删除 msg_name
+    #             if not self.subscriber_data[puuid][msg_name]:
+    #                 del self.subscriber_data[puuid][msg_name]
+    #             # 如果 puuid 下没有任何消息，则删除 puuid
+    #             if not self.subscriber_data[puuid]:
+    #                 del self.subscriber_data[puuid]
+    #             return True
+    #     return False  # 如果订阅者不存在，则返回 False
+
+    @ensure_import
     def is_subscribed(self, info: dict) -> bool:
         return info["name"] in self.subscriber_dict.get(info["puuid"], {}).get(info["msg_name"], {})
 
+    @ensure_import
     def callback_manager(self, msg, info):
         puuid = info["puuid"]
         name = info["name"]
@@ -159,6 +213,7 @@ class TBKManager:
             if callback:
                 callback(msg)
 
+    @ensure_import
     def subscriber(self, info: dict, callback):
         puuid = info["puuid"]
         name = info["name"]
@@ -175,10 +230,29 @@ class TBKManager:
             return
         client_logger.log("INFO", f"Add new subscriber({puuid}, {msg_name}, {name})")
         self.subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[name] = (
-            tbkpy.Subscriber(
+            self.tbkpy.Subscriber(
                 # puuid, #这个属性tbk内还没开出接口
                 name,
                 msg_name,
                 lambda msg: self.callback_manager(msg, info),
             )
         )
+
+    @ensure_import
+    def publisher(self, info: dict):
+        ep_info = self.tbkpy.EPInfo()
+        ep_info.name = info["name"]
+        ep_info.msg_name = info["msg_name"]
+        ep_info.msg_type = info["msg_type"]
+        return self.tbkpy.Publisher(ep_info)
+
+    @ensure_import
+    def clear(self):
+        for puuid, msg_names in self.subscriber_dict.items():
+            for msg_name, names in msg_names.items():
+                for name, item_tags in names.items():
+                    for item_tag, subscriber in item_tags.items():
+                        self.unsubscribe({"puuid": puuid, "msg_name": msg_name, "name": name, "tag": item_tag})
+
+
+tbk_manager = TBKManager()

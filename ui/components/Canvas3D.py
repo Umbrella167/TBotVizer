@@ -1,18 +1,32 @@
 import dearpygui.dearpygui as dpg
-from api.PygfxApi import GfxEngine
 import pygfx as gfx
 from ui.components.Canvas2D import Canvas2D
-import math
 import numpy as np
 import pylinalg as la
-from utils.DataProcessor import ui_data
+from wgpu.gui.offscreen import WgpuCanvas
 
+
+class GfxEngine:
+    def __init__(self, size=(800, 600), pixel_ratio=1, max_fps=999):
+        self.canvas = WgpuCanvas(
+            size=size,
+            pixel_ratio=pixel_ratio,
+            max_fps=max_fps,
+        )
+        self.renderer = gfx.renderers.WgpuRenderer(self.canvas)
+        self.viewport = gfx.Viewport.from_viewport_or_renderer(self.renderer)
+    def draw(self):
+        image = np.array(self.canvas.draw())
+        return image
+    
+
+_engine = GfxEngine()
 
 class BaseScene(gfx.Scene):
     def __init__(self, scale=1):
         super().__init__()
         self.scale = scale
-        self.world.rotation = la.quat_from_euler((-math.pi / 2, 0, -math.pi / 2))
+        # self.world.rotation = la.quat_from_euler((-math.pi / 2, 0, -math.pi / 2))
         self.light = gfx.AmbientLight("#ffffff", 3)
         self.add(self.light)
         self.grid = gfx.GridHelper(100000 * self.scale, 300, color1="#444444", color2="#222222")
@@ -30,9 +44,9 @@ class BaseScene(gfx.Scene):
 
 class World:
     def __init__(self, SIZE=(800, 600), scale=1):
+
         self.scale = scale
         self.gfx_engine = GfxEngine(size=SIZE)
-        self.world = self.gfx_engine.new_world()
         self._canvas = self.gfx_engine.canvas
         self._renderer = self.gfx_engine.renderer
         self._viewport = self.gfx_engine.viewport
@@ -180,17 +194,6 @@ class Handler:
                     }
                 )
             )
-        
-        # elif type == "mvAppItemType::mvKeyPressHandler":
-        #     if dpg.is_key_down(dpg.mvKey_LControl):
-        #         self.world._scene.world.rotation = la.quat_from_euler((-math.pi / 2, 0, -math.pi / 2))
-        #     else:
-        #         self.world._scene.world.rotation = la.quat_from_euler((0, 0, 0))
-
-            # self.world.handle_event(
-            #     gfx.objects.KeyboardEvent(**{"type": gfx.objects.EventType.KEY_DOWN, "key": self.KEY_MAP[app_data]})
-            # )
-
 
 class Canvas3D:
     def __init__(
@@ -204,8 +207,9 @@ class Canvas3D:
         self.size = SIZE
         self.is_mouse_controller = is_mouse_controller
         self.canvas = Canvas2D(parent=parent, auto_mouse_transfrom=False)
-        self.tag = self.canvas.group_tag
         self.handler = Handler(SIZE, self.scale)
+
+        self.tag = self.canvas.group_tag
         self.handler_registry()
         self.texture_data = self.texture_registry(SIZE)
         self.camera = self.handler.world._camera
@@ -239,7 +243,6 @@ class Canvas3D:
         return texture_tag
 
     def draw(self):
-        # scence.draw()
         pass
 
     def get_world_position(self):
@@ -247,5 +250,68 @@ class Canvas3D:
 
     def update(self):
         value = self.handler.world.update()
-
         dpg.set_value(self.texture_data, value)
+
+
+
+
+
+
+
+
+
+## Fixing the OrbitController Rotation
+def _update_rotate(self, delta):
+    assert isinstance(delta, tuple) and len(delta) == 2
+    delta_azimuth, delta_elevation = delta
+    camera_state = self._get_camera_state()
+
+    # Note: this code does not use la.vec_euclidean_to_spherical and
+    # la.vec_spherical_to_euclidean, because those functions currently
+    # have no way to specify a different up vector.
+
+    position = camera_state["position"]
+    rotation = camera_state["rotation"]
+    up = camera_state["reference_up"]
+
+    # Where is the camera looking at right now
+    forward = la.vec_transform_quat((0, 0, -1), rotation)
+
+    # # Get a reference vector, that is orthogonal to up, in a deterministic way.
+    # # Might need this if we ever want the azimuth
+    # aligned_up = _get_axis_aligned_up_vector(up)
+    # orthogonal_vec = np.cross(up, np.roll(aligned_up, 1))
+
+    # Get current elevation, so we can clip it.
+    # We don't need the azimuth. When we do, it'd need more care to get a proper 0..2pi range
+    elevation = la.vec_angle(forward, up) - 0.5 * np.pi
+
+    # Apply boundaries to the elevation
+    new_elevation = elevation + delta_elevation
+    bounds = -89 * np.pi / 180, 89 * np.pi / 180
+    if new_elevation < bounds[0]:
+        delta_elevation = bounds[0] - elevation
+    elif new_elevation > bounds[1]:
+        delta_elevation = bounds[1] - elevation
+
+    # r_azimuth = la.quat_from_axis_angle(up, -delta_azimuth)
+    r_azimuth = la.quat_from_axis_angle((0, 0,np.pi / 2), -delta_azimuth)
+
+    r_elevation = la.quat_from_axis_angle((1, 0, 0), -delta_elevation)
+
+    # Get rotations
+    rot1 = rotation
+
+
+    rot2 = la.quat_mul(r_azimuth, la.quat_mul(rot1, r_elevation))
+
+    # Calculate new position
+    pos1 = position
+    pos2target1 = self._get_target_vec(camera_state, rotation=rot1)
+    pos2target2 = self._get_target_vec(camera_state, rotation=rot2)
+    pos2 = pos1 + pos2target1 - pos2target2
+
+    # Apply new state
+    new_camera_state = {"position": pos2, "rotation": rot2}
+    self._set_camera_state(new_camera_state)
+gfx.OrbitController._update_rotate = _update_rotate

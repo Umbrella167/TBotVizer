@@ -7,7 +7,7 @@ import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import BaseBox
 from utils.Utils import item_auto_resize, get_all_subclasses
 from utils.node_utils import *
-
+from utils.ClientLogManager import client_logger
 
 class NodeBox(BaseBox):
     only = False

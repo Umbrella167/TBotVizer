@@ -1,5 +1,4 @@
 from dearpygui import dearpygui as dpg
-from scipy.ndimage import label
 
 from utils.ClientLogManager import client_logger
 
