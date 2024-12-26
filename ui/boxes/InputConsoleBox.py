@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-from config.SystemConfig import PROHIBITED_BOXES
+from config import DynamicConfig
 from ui.boxes import BaseBox
 
 class InputConsoleBox(BaseBox):
@@ -10,7 +10,7 @@ class InputConsoleBox(BaseBox):
         self.width = 1000
         self.height = 300
         self.is_sticky = False
-        self.all_class_name = [i.__name__ for i in self.ui.all_classes if i.__name__ not in PROHIBITED_BOXES]
+        self.all_class_name = [i.__name__ for i in self.ui.all_classes if i.__name__ not in DynamicConfig.PROHIBITED_BOXES]
         self.input_text = None
         self.select_index = 0
         self.filter_set = None
@@ -111,5 +111,4 @@ class InputConsoleBox(BaseBox):
         instance_func(ui=self.ui)
 
     def destroy(self):
-        dpg.delete_item(self.handler)
         super().destroy()

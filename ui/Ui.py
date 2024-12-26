@@ -1,18 +1,14 @@
-import json
 import dearpygui.dearpygui as dpg
 
 from ui.LayoutManager import LayoutManager
 from utils.Utils import get_all_subclasses
-# from utils.DataProcessor import get_ui_data
 from ui.boxes import *
-from config.SystemConfig import PROHIBITED_BOXES, UI_TITTLE, UI_WIDTH, UI_HEIGHT, UI_THEME
 
 
 class UI:
     def __init__(self):
         dpg.create_context()
-        self.layout_manager = LayoutManager(UI_THEME)
-        # self.ui_data = None
+        self.layout_manager = LayoutManager(ui=self)
         self.boxes = []
         self.box_count = {}
         self.is_created = False
@@ -20,24 +16,16 @@ class UI:
         self.input_box = None
         self.all_classes = get_all_subclasses(BaseBox)
         self.generate_add_methods()
-        self.boxes_init_file = "static/layout/boxes_init.json"
+        self.layout_init_file = "static/layout/layout_init.json"
 
     def create(self):
-        # 创建主窗口
+        self.layout_manager.load()
+
         self.add_global_handler()
-        dpg.create_viewport(title=UI_TITTLE, width=UI_WIDTH, height=UI_HEIGHT)
-        dpg.configure_app(
-            docking=True,
-            docking_space=True,
-        )
-        dpg.setup_dearpygui()
-        dpg.show_viewport()
         self.create_viewport_menu()
-        # self.ui_data = get_ui_data()
         self.console_box = self.add_ConsoleBox(ui=self)
         self.input_box = self.add_InputConsoleBox(ui=self)
-        self.load_boxes()
-        self.is_created = - True
+        self.is_created = True
 
     def create_viewport_menu(self):
         pass
@@ -52,22 +40,6 @@ class UI:
         #             tag="camera_option_menutiem",
         #             # callback=self.pop_camera_option_window,
         #         )
-
-    def load_boxes(self):
-        try:
-            with open(self.boxes_init_file, "r") as f:
-                boxes_config = json.loads(f.read())
-                for box_config in boxes_config:
-                    if box_config["cls_name"] in PROHIBITED_BOXES:
-                        continue
-                    self.new_box(
-                        box_config["cls_name"],
-                        width=box_config["width"],
-                        height=box_config["height"],
-                        pos=box_config["pos"]
-                    )
-        except Exception as e:
-            client_logger.log("WARNING", "Box load failed", e)
 
     def show(self):
         if not self.is_created:
@@ -130,27 +102,10 @@ class UI:
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
 
-    def save_boxes(self):
-        with open(self.boxes_init_file, "w+") as f:
-            boxes_config = []
-            for box in self.boxes:
-                if box.__class__.__name__ in PROHIBITED_BOXES:
-                    continue
-                boxes_config.append(
-                    {
-                        "cls_name": box.__class__.__name__,
-                        "width": dpg.get_item_width(box.tag),
-                        "height": dpg.get_item_height(box.tag),
-                        "pos": dpg.get_item_pos(box.tag),
-                    }
-                )
-            f.write(json.dumps(boxes_config))
-            f.flush()
-
     # 监听事件
     def on_key_release(self, sender, app_data, user_data):
         if dpg.is_key_down(dpg.mvKey_LControl) and app_data == dpg.mvKey_S:
-            self.save_boxes()
+            self.layout_manager.save()
             client_logger.log("SUCCESS", "Layout saved successfully!")
         if dpg.is_key_released(dpg.mvKey_F11):
             dpg.toggle_viewport_fullscreen()

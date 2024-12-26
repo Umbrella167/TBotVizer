@@ -1,7 +1,8 @@
 import dearpygui.dearpygui as dpg
 
-from config.SystemConfig import PROHIBITED_BOXES
 from ui.boxes import BaseBox
+from config import DynamicConfig
+
 
 class ConsoleBox(BaseBox):
     only = True
@@ -57,7 +58,7 @@ class ConsoleBox(BaseBox):
     # 自动添加按钮
     def generate_add_bottom(self):
         for cls in self.all_classes:
-            if cls.__name__ in PROHIBITED_BOXES:
+            if cls.__name__ in DynamicConfig.PROHIBITED_BOXES:
                 continue
             instance_func_name = f"add_{cls.__name__}"
             self.button_tags.append(

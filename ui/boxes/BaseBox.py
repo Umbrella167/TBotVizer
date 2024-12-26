@@ -1,11 +1,7 @@
 from dearpygui import dearpygui as dpg
 
-from config.SystemConfig import BOX_DEFAULT_POS, BOX_POS_OFFSET, BOX_WIDTH, BOX_HEIGHT
+from config import DynamicConfig
 from utils.ClientLogManager import client_logger
-
-
-box_pos = BOX_DEFAULT_POS
-pos_offset = BOX_POS_OFFSET
 
 
 class BaseBox(object):
@@ -17,19 +13,19 @@ class BaseBox(object):
         self.label = None
         self.is_created = False
         self.only = True
+        self.data = kwargs.pop('data', None)
         self.window_settings = kwargs
         self.handler = dpg.add_handler_registry()
 
     def create_box(self):
         # 创建
-        global box_pos, pos_offset
         if self.is_created:
             client_logger.log("ERROR", "BaseBox has already been created")
             return
         default_settings = {
-            "width": BOX_WIDTH,
-            "height": BOX_HEIGHT,
-            "pos": box_pos,
+            "width": DynamicConfig.BOX_WIDTH,
+            "height": DynamicConfig.BOX_HEIGHT,
+            "pos": DynamicConfig.BOX_DEFAULT_POS,
             "label": self.__class__.__name__,
         }
         merged_settings = {**default_settings, **self.window_settings}
@@ -37,7 +33,7 @@ class BaseBox(object):
             on_close=self.destroy,
             **merged_settings,
         )
-        box_pos = (box_pos[0] + pos_offset, box_pos[1] + pos_offset)
+        DynamicConfig.BOX_DEFAULT_POS = (DynamicConfig.BOX_DEFAULT_POS[0] + DynamicConfig.BOX_POS_OFFSET, DynamicConfig.BOX_DEFAULT_POS[1] + DynamicConfig.BOX_POS_OFFSET)
         self.ui.boxes.append(self)
         self.ui.box_count[self.__class__] = self.ui.box_count.setdefault(self.__class__, 0) + 1
         client_logger.log("INFO", f"{self} instance has been added to the boxes list.")
@@ -71,12 +67,11 @@ class BaseBox(object):
         pass
     def destroy(self):
         # 销毁盒子
-        global box_pos, pos_offset
         self.ui.boxes.remove(self)
         self.ui.box_count[self.__class__] -= 1
         dpg.delete_item(self.tag)
         dpg.delete_item(self.handler)
-        box_pos = (box_pos[0] - pos_offset, box_pos[1] - pos_offset)
+        DynamicConfig.BOX_DEFAULT_POS = (DynamicConfig.BOX_DEFAULT_POS[0] - DynamicConfig.BOX_POS_OFFSET, DynamicConfig.BOX_DEFAULT_POS[1] - DynamicConfig.BOX_POS_OFFSET)
         client_logger.log("INFO", f"{self} has been destroyed.")
 
     @property

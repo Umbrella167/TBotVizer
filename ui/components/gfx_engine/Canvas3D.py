@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 import pygfx as gfx
-from ui.components.Canvas2D import Canvas2D
+from ui.components.gfx_engine.Canvas2D import Canvas2D
 import numpy as np
 import pylinalg as la
 from wgpu.gui.offscreen import WgpuCanvas
