@@ -1,1 +1,141 @@
-{"node": {"9a84f2753ab26969c3be69d9164bc5a2": ["Subscriber", {"puuid": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": null}}, "name": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": null}}, "msg_name": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": null}}, "msg": {"attribute_type": "OUTPUT", "data_type": "MULTILINEINPUT", "user_data": {"value": null}}, "pos": {"attribute_type": "CONFIG", "data_type": "CONFIG", "user_data": {"value": [231, 300]}}}]}, "link": [["fd3cefa17f3c384aee7a81e9dbacecbe", "res", "fb0a7d14eb1173b7a0e59b322f0f88fc", "msg"], ["fd3cefa17f3c384aee7a81e9dbacecbe", "res", "0198f0ac1d6fca7ff60dbc791088b71a", "x"], ["0198f0ac1d6fca7ff60dbc791088b71a", "res", "fd3cefa17f3c384aee7a81e9dbacecbe", "x"]]}
+{
+    "node": {
+        "845960cfb4cf8cb860fb3c0929c4850e": [
+            "Publisher",
+            {
+                "name": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": "MOTOR_CONTROL"
+                    }
+                },
+                "msg_name": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": "RPM"
+                    }
+                },
+                "msg_type": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": "list"
+                    }
+                },
+                "frequency": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": 0.01
+                    }
+                },
+                "msg": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": [
+                            0.0,
+                            -676.94091796875,
+                            5.27838134765625
+                        ]
+                    }
+                },
+                "pos": {
+                    "attribute_type": "CONFIG",
+                    "data_type": "CONFIG",
+                    "user_data": {
+                        "value": [
+                            484,
+                            442
+                        ]
+                    }
+                }
+            }
+        ],
+        "7a6e10c298452c7ac9cd11ab0f57231c": [
+            "Map",
+            {
+                "vx": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": 0.0
+                    }
+                },
+                "vy": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": -0.338470458984375
+                    }
+                },
+                "alphax": {
+                    "attribute_type": "INPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": 0.879730224609375
+                    }
+                },
+                "original_upper": {
+                    "attribute_type": "CONFIG",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": 1
+                    }
+                },
+                "original_lower": {
+                    "attribute_type": "CONFIG",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": -1
+                    }
+                },
+                "upper": {
+                    "attribute_type": "CONFIG",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": 2000
+                    }
+                },
+                "lower": {
+                    "attribute_type": "CONFIG",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": -2000
+                    }
+                },
+                "mapped_value": {
+                    "attribute_type": "OUTPUT",
+                    "data_type": "STRINPUT",
+                    "user_data": {
+                        "value": [
+                            0.0,
+                            -676.94091796875,
+                            5.27838134765625
+                        ]
+                    }
+                },
+                "pos": {
+                    "attribute_type": "CONFIG",
+                    "data_type": "CONFIG",
+                    "user_data": {
+                        "value": [
+                            551,
+                            71
+                        ]
+                    }
+                }
+            }
+        ],
+        
+    "link": [
+        [
+            "7a6e10c298452c7ac9cd11ab0f57231c",
+            "mapped_value",
+            "845960cfb4cf8cb860fb3c0929c4850e",
+            "msg"
+        ]
+    ]
+}

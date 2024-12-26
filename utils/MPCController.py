@@ -8,7 +8,7 @@ import math
 
 
 class MPCController:
-    def __init__(self, T=0.5, N=8, rob_diam=0.3, v_max=11.1, omega_max=np.pi / 2):
+    def __init__(self, T=0.5, N=8, rob_diam=0.3, v_max=6, omega_max=np.pi / 4):
         self.T = T
         self.N = N
         self.rob_diam = rob_diam
@@ -44,8 +44,8 @@ class MPCController:
             self.opti.subject_to(self.opt_states[i + 1, :] == x_next)
 
         # Define the cost function
-        Q = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.5]])
-        R = np.array([[0.5, 0.0], [0.0, 0.05]])
+        Q = np.diag([1, 1, 5])
+        R = np.diag([0.5, 0.05])
         obj = 0
         for i in range(self.N):
             state_error_ = self.opt_states[i, :] - self.opt_x_ref[i + 1, :]
@@ -57,6 +57,7 @@ class MPCController:
         # self.opti.subject_to(self.opti.bounded(-20.0, x, 20.0))
         # self.opti.subject_to(self.opti.bounded(-2.0, y, 2.0))
         # self.opti.subject_to(self.opti.bounded(-np.pi, theta, np.pi))
+        self.opti.subject_to(self.opti.bounded(-np.pi, theta, np.pi))
         self.opti.subject_to(self.opti.bounded(-self.v_max, v, self.v_max))
         self.opti.subject_to(self.opti.bounded(-self.omega_max, omega, self.omega_max))
 
@@ -87,13 +88,9 @@ class MPCController:
             x_ref_ = x
             y_ref_ = y
             theta_ref_ = theta
-            
-
             v_ref_ = 0.5
             omega_ref_ = 0.0
-            # if x_ref_ >= 12.0:
-            #     x_ref_ = 12.0
-            #     v_ref_ = 0.0
+
             x_[i + 1] = np.array([x_ref_, y_ref_, theta_ref_])
             u_[i] = np.array([v_ref_, omega_ref_])
         return x_, u_
@@ -178,10 +175,59 @@ class MPCController:
             x2, y2 = path[i]
             # 计算方向角 (atan2)
             direction = np.arctan2(y2 - y1, x2 - x1)
+            # direction = np.arctan2(y1 - y2, x1 - x2)
             path_with_angles.append((x2, y2, direction))
+
         
         path_with_angles.append(end)
         return path_with_angles
+    def interpolate_path(self,points, step=0.1):
+        """
+        使用 numpy 对路径的点进行插值以提高效率。
+        
+        参数:
+        points: List[Tuple[float, float]]
+            路径点的列表，每个点是一个 (x, y) 元组。
+        step: float
+            插值步长，默认值为 0.1。
+
+        返回:
+        List[Tuple[float, float]]
+            插值后的点列表。
+        """
+        points = np.array(points)  # 转换为 NumPy 数组
+        if len(points) < 2:
+            raise ValueError("点的数量必须至少为2个才能进行插值")
+        
+        # 初始化插值的点列表
+        interpolated_points = []
+        
+        # 遍历每一对相邻点
+        for i in range(len(points) - 1):
+            # 起点和终点
+            p1, p2 = points[i], points[i + 1]
+            
+            # 计算两点之间的欧几里得距离
+            distance = np.linalg.norm(p2 - p1)
+            
+            # 计算插值点的数量
+            num_steps = int(distance // step)
+            
+            # 生成 t 的值 (从 0 到 1，分成 num_steps + 1 段)
+            t = np.linspace(0, 1, num_steps + 1)
+            
+            # 使用线性插值公式生成插值的点
+            interpolated_segment = (1 - t)[:, None] * p1 + t[:, None] * p2
+            interpolated_points.append(interpolated_segment)
+        
+        # 将每段插值的结果合并为一个数组
+        interpolated_points = np.vstack(interpolated_points)
+        
+        # 确保包含最后一个点
+        if not np.array_equal(interpolated_points[-1], points[-1]):
+            interpolated_points = np.vstack([interpolated_points, points[-1]])
+        
+        return interpolated_points.tolist()
 
 # Example of usage
 if __name__ == "__main__":

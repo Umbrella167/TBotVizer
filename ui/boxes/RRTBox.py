@@ -3,10 +3,10 @@ from ui.boxes.BaseBox import BaseBox
 from ui.components.Canvas2D import Canvas2D
 import numpy as np
 import utils.python_motion_planning as pmp
-from utils.MPCPlanner import MPCController
+from utils.MPCController import MPCController
 import math
 import time
-# from api.NewTBKApi import tbk_manager
+from api.NewTBKApi import tbk_manager
 import pickle
 def add_points_to_map_as_circles(points, max_radius):
     obs_circ = []
@@ -58,7 +58,7 @@ class RRTBox(BaseBox):
             "tag": self.tag,
         }
 
-        # self.suber_rpm = tbk_manager.subscriber(rpm_info, self.set_speed)
+        self.suber_rpm = tbk_manager.subscriber(rpm_info, self.set_speed)
         self.mpc = MPCController()
     def set_speed(self,msg):
         data = pickle.loads(msg)
@@ -114,11 +114,11 @@ class RRTBox(BaseBox):
             return
         if not dpg.is_item_focused(self.tag):
             return
-        planner = pmp.RRTConnect(tuple(self.robot_now_pose[:2]), tuple(self.robot_target_pose[:2]), self.map,max_dist=1)
+        planner = pmp.RRTConnect(tuple(self.robot_now_pose[:2]), tuple(self.robot_target_pose[:2]), self.map,max_dist=10)
         cost, path, expand = planner.plan()
         dpg.delete_item(self.path_layer, children_only=True)
         dpg.draw_polyline(parent=self.path_layer,points=path, color=(255, 255, 0, 255), thickness=2)
-        
+        path = self.mpc.interpolate_path(path)
         self.path = self.mpc.generate_path_with_angles(self.robot_now_pose,self.robot_target_pose,path)
         
         self.t0 = 0
@@ -129,8 +129,8 @@ class RRTBox(BaseBox):
 
     def robot_control(self, v, omega):
         # 定义噪声参数
-        v = v * 0.5
-        omega = omega * 0.5
+        v = v * 0.1
+        omega = omega * 0.1
         noise_std_x = 0
         noise_std_y = 0
         noise_std_omega = 0
@@ -154,14 +154,14 @@ class RRTBox(BaseBox):
         dpg.delete_item(self.main_layer, children_only=True)
         draw_car(self.robot_now_pose, (0, 255, 0, 255), self.main_layer)
         draw_car(self.robot_target_pose, (0, 0, 255, 255), self.main_layer)
-    
+
     def update(self):
         if self.path is None:
-            return 
+            return
         if np.linalg.norm(np.array(self.robot_now_pose[:2]) - np.array(self.robot_target_pose[:2])) < 0.5:
-            return 
+            return
         for point in self.path:
-            while np.linalg.norm(np.array(self.robot_now_pose[:2]) - np.array(point[:2])) > 0.5:
+            while np.linalg.norm(np.array(self.robot_now_pose[:2]) - np.array(point[:2])) > 5:
                 # 调用 MPC 进行一步规划
                 self.t0, now_pos, self.u0, self.next_states, u_res, x_m, solve_time = self.mpc.plan(
                     self.t0, self.robot_now_pose, self.u0, self.next_states, self.next_trajectories, self.next_controls
@@ -172,5 +172,3 @@ class RRTBox(BaseBox):
                 time.sleep(0.01)
                 dpg.render_dearpygui_frame()
         self.path = None
-
-

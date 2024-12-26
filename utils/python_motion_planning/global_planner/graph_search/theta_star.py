@@ -57,7 +57,6 @@ class ThetaStar(AStar):
 
         while OPEN:
             node = heapq.heappop(OPEN)
-
             # exists in CLOSED list
             if node.current in CLOSED:
                 continue

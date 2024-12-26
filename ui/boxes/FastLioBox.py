@@ -10,48 +10,73 @@ from math import pi
 from matplotlib import cm
 from dataclasses import dataclass
 import cv2
+import utils.python_motion_planning as pmp
+import time
+from utils.MPCController import MPCController
+from utils.ClientLogManager import client_logger
+
 @dataclass(frozen=True)
 class AGVParam:
     # 一个step内最多的点数
-    MAX_POINTS = 10000
+    MAX_POINTS = 18888
 
     # 每隔PATH_STEP保存一次点云
-    PATH_STEP = 200
+    PATH_STEP = 1000
 
     # 点云的单位 * LOCAL_SCALE
     LOCAL_SCALE = 1000
 
+    # 点云大小
     GFX_POINTS_SIZE = 3
     # 保留高度在RANGE内的点
-    HIGH_RANGE = [0, 500]
+    # HIGH_RANGE_GLOBAL = [-1e9, 1e9]
+    HIGH_RANGE_GLOBAL = [-200, 1000]
+
+    HIGH_RANGE_MAP = [-200, 1000]
 
     # 画布大小
     CANVAS_SIZE = (1920, 1080)
 
-    DISTANCE_THRESHOLD = 85
+    # 距离阈值(保留 DISTANCE_THRESHOLD% 的点)
+    DISTANCE_THRESHOLD = 95
+
+    GRID_SIZE = (-10000, 10000)
+    RESOLUTION = 300
 
 
 class FastLioBoxCallback:
 
     def __init__(self, tag):
         self.tag = tag
+        self.parent = None
         self.points = np.zeros((1, 3), dtype=np.float32)
         self.subscriber = {}
         self.odometry = {}
+        # path 走过的路径
         self.path = []
+        # 规划的路径
+        self.planner_path = []
+        # 带有方向的路径
+        self.planner_path_pose = []
         self.lidar_scan_area = []
         self.world_mouse_pos = np.array([0, 0, 0], dtype=np.float32)
-        self.is_down = False 
-        self.target_publish_info = {
+        self.is_down = False
+        self.vel_publisher_info = {
             "puuid": "FastLioBox",
-            "name": "target",
-            "msg_name": "target",
+            "name": "MOTOR_CONTROL",
+            "msg_name": "RPM",
             "msg_type": "list",
             "tag": self.tag,
         }
-        # self.target_publish = tbk_manager.publisher(self.target_publish_info)
+        self.vel_publisher = tbk_manager.publisher(self.vel_publisher_info)
+
+        self.allow_mpc_start = True
         self.target_angle = 0
-   
+        self.robot_now_pose = [0, 0, 0]
+        self.robot_target_pose = [0, 0, 0]
+        self.allow_planner = None
+        self.mpc = MPCController()
+    
     def drop_callback(self, sender, app_data):
         ep_info, checkbox_tag = app_data
         ep_info["tag"] = self.tag
@@ -78,7 +103,9 @@ class FastLioBoxCallback:
         points = points[distances <= distance_threshold]
 
         # 保留 z 轴在 [0, 200] 范围内的点
-        points = points[(points[:, 2] >= AGVParam.HIGH_RANGE[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE[1])]
+        points = points[
+            (points[:, 2] >= AGVParam.HIGH_RANGE_GLOBAL[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE_GLOBAL[1])
+        ]
 
         # 更新 self.points
         self.points = points
@@ -143,23 +170,25 @@ class FastLioBoxCallback:
         # 如果变化超过阈值，则加入路径
         if position_change > position_threshold or orientation_change > orientation_threshold:
             self.path.append(odometry)
-     
+
     def publish_target(self, sender, app_data, user_data):
-        canvas3D,arrow,map,flag = user_data
-        
+        canvas3D, arrow, map, self.parent, flag, self.arrow_planner = user_data
+        self.robot_now_pose = FastLioBoxUtils.get_pose(self.odometry)
         if dpg.does_item_exist(self.tag):
             return
         if not dpg.is_item_focused(canvas3D.tag):
             return
         if flag == "drag":
             direction = self.world_mouse_pos[:2] - canvas3D.get_world_position()[:2]
+            print(self.world_mouse_pos[:2] ,canvas3D.get_world_position()[:2])
             norm = np.linalg.norm(direction)
             if norm != 0:  # 避免除以零
                 direction = direction / norm
             yaw_angle = np.arctan2(direction[1], direction[0])
             self.target_angle = yaw_angle
-            rot = la.quat_from_euler([np.pi / 2,yaw_angle - np.pi / 2], order="XY")
+            rot = la.quat_from_euler(yaw_angle, order="Z")
             arrow.world.rotation = rot
+# 
         if flag == "down":
             if self.is_down:
                 return
@@ -170,10 +199,91 @@ class FastLioBoxCallback:
             self.is_down = False
             taget_pose = self.world_mouse_pos
             taget_pose[2] = self.target_angle
-            points = map.get_local_grid_points(self.odometry, 1000)
-            grid = FastLioBoxUtils.point_cloud_to_grid(points)
-            cv2.imwrite("grid.jpg", grid)
-            print(grid.shape)
+            self.robot_target_pose = taget_pose
+            self.planner_theta_star()
+            self.mpc_init()
+            
+    def planner_theta_star(self):
+        if self.parent is None:
+            return
+        time.sleep(1)
+        points = self.parent.map.get_local_grid_points(self.odometry, 20000)
+        grid = pmp.Grid(points, AGVParam.GRID_SIZE, AGVParam.RESOLUTION)
+        # grid.inflate_obstacles(1)
+        self.robot_now_pose = FastLioBoxUtils.get_pose(self.odometry)
+        now_grid_pos = FastLioBoxUtils.get_point_grid_position(self.robot_now_pose[:2])
+        target_grid_pos = FastLioBoxUtils.get_point_grid_position(self.robot_target_pose[:2])
+        planner = pmp.ThetaStar(tuple(now_grid_pos), tuple(target_grid_pos), grid)
+        cost, self.planner_path, expand = planner.plan()
+
+        img = FastLioBoxUtils.visualize_grid(grid,robot_position=now_grid_pos,path=self.planner_path)
+        cv2.imwrite("grid.jpg", img)
+
+        self.planner_path = FastLioBoxUtils.get_real_coordinates(self.planner_path)
+        self.planner_path = self.mpc.interpolate_path(self.planner_path, step=5)
+        self.planner_path = self.planner_path[::-1]
+        self.parent.update_planner_path(self.planner_path)
+        return self.planner_path
+    
+    def mpc_init(self):
+        self.allow_mpc_start = True
+        self.t0 = 0
+        self.u0 = np.zeros((self.mpc.N, 2))
+        self.next_states = np.zeros((self.mpc.N + 1, 3))
+        self.planner_path_pose = self.mpc.generate_path_with_angles(
+            self.robot_now_pose, self.robot_target_pose, self.planner_path
+        )
+        self.planner_path_pose_index = 0
+
+    def move_to_target(self, sender, app_data, user_data):
+        flag = user_data
+        if not self.allow_mpc_start:
+            return
+        if not self.planner_path:
+            return
+        if not self.odometry:
+            return
+        if flag == "MOVE":
+            self.robot_now_pose = FastLioBoxUtils.get_pose(self.odometry)
+            point = self.planner_path_pose[self.planner_path_pose_index]
+            point = (point[0], point[1], point[2])
+            self.next_trajectories, self.next_controls = self.mpc.desired_command_and_trajectory(
+                self.t0, self.robot_now_pose, point
+            )
+            self.t0, now_pos, self.u0, self.next_states, u_res, x_m, solve_time = self.mpc.plan(
+                self.t0, self.robot_now_pose, self.u0, self.next_states, self.next_trajectories, self.next_controls
+            )
+
+            self.robot_control(u_res[0, 0], u_res[0, 1])
+            print(f"V:{u_res[0, 0]},W: {u_res[0, 1]},NOW_POSE: {self.robot_now_pose},POINT: {point}")
+
+
+            if np.linalg.norm(np.array(self.robot_now_pose[:2]) - np.array(point[:2])) < 300:
+                self.planner_path_pose_index += 1
+
+            if self.planner_path_pose_index >= len(self.planner_path_pose):
+                self.allow_mpc_start = False
+                self.planner_path = []
+                self.planner_path_pose = []
+                self.planner_path_pose_index = 0
+                self.path = []
+                self.path_pos = []
+                self.robot_control(0, 0)
+
+                client_logger.log("info", "到达目标点")
+            
+            rot = la.quat_from_euler(point[2], order="Z")
+            self.arrow_planner.world.rotation = rot
+            self.arrow_planner.local.position = [point[0], point[1], 0]
+
+        if flag == "STOP":
+            self.robot_control(0, 0)
+
+    def robot_control(self, v, omega):
+        vy = v * 50
+        omega = omega * 0.3
+        self.vel_publisher.publish(pickle.dumps([0, -vy, -omega]))
+
 
 class FastLioBox(BaseBox):
     only = True
@@ -190,57 +300,135 @@ class FastLioBox(BaseBox):
         self.step = AGVParam.PATH_STEP
         self.step_max_points = AGVParam.MAX_POINTS
         self.arrow = None
-        
+        self.arrow_planner = None
+        self.last_map_key = (0,0)
+        self.subscriber = {}
+
     def create(self):
         dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
         self.canvas3D = Canvas3D(self.tag, SIZE=self.SIZE)
         dpg.set_item_drop_callback(self.canvas3D.tag, self._callback.drop_callback)
         self.canvas3D.add(self.lidar_scene())
-        self.canvas3D.add(self.create_path())
+        self.canvas3D.add(self.create_odometry_path())
+        self.canvas3D.add(self.create_planner_path())
         self.canvas3D.add(self.create_arrow())
+        self.canvas3D.add(self.create_arrow_planner())
+
         self.is_create_over = True
         self.map = MapManager(self.canvas3D, self._callback, step=self.step, step_max_points=self.step_max_points)
         self.handler_registry()
+        self.auto_subscribe()
+
+    def auto_subscribe(self):
+        ep_info_odo = {
+            "puuid": time.time(),
+            "name": "default",
+            "msg_name": "/Odometry",
+            "tag": self.tag,
+        }
+        ep_info_points = {
+            "puuid": time.time(),
+            "name": "default",
+            "msg_name": "/cloud_registered",
+            "tag": self.tag,
+        }
+        self.subscriber[ep_info_odo["msg_name"]] = tbk_manager.subscriber(ep_info_odo, self._callback.odometry_msg)
+        self.subscriber[ep_info_points["msg_name"]] = tbk_manager.subscriber(ep_info_points, self._callback.points_msg)
 
     def create_arrow(self):
         arrow = gfx.Group()
-        arrow_data = [((0, 0, -10), (1, 1, 0.75, 1), gfx.cylinder_geometry(1.5, 1.5, height=20)),
-        ((0, 0, 5), (1, 1, 0.75, 1), gfx.cylinder_geometry(4, 0.0, height=10))]
-        for pos, color, geometry in arrow_data:
-            material = gfx.MeshPhongMaterial(color=color)
-            wobject = gfx.Mesh(geometry, material)
-            wobject.local.position = pos
-            arrow.add(wobject)
-
+        head = gfx.Mesh(gfx.cylinder_geometry(1.5, 1.55, height=20), gfx.MeshPhongMaterial(color=(1, 1, 0.75, 1)))
+        body = gfx.Mesh(gfx.cylinder_geometry(4.0, 0.0, height=10), gfx.MeshPhongMaterial(color=(1, 1, 0.75, 1)))
+        head.local.position = (10, 0, 0)
+        head.local.rotation = la.quat_from_euler(-np.pi / 2, order="Y")
+        body.local.rotation = la.quat_from_euler(-np.pi / 2, order="Y")
+        arrow.add(head, body)
         scale = 25
         arrow.local.position = (0, 0, 1000)
         arrow.local.scale = (scale, scale, scale)
-        # arrow.local.rotation = la.quat_from_euler(np.pi/2, order="Z")
         self.arrow = arrow
         return self.arrow
-    
+
+    def create_arrow_planner(self):
+        arrow = gfx.Group()
+        head = gfx.Mesh(gfx.cylinder_geometry(1.5, 1.55, height=20), gfx.MeshPhongMaterial(color=(0, 0, 0.75, 1)))
+        body = gfx.Mesh(gfx.cylinder_geometry(4.0, 0.0, height=10), gfx.MeshPhongMaterial(color=(0, 0, 0.75, 1)))
+        head.local.position = (10, 0, 0)
+        head.local.rotation = la.quat_from_euler(-np.pi / 2, order="Y")
+        body.local.rotation = la.quat_from_euler(-np.pi / 2, order="Y")
+        arrow.add(head, body)
+        scale = 25
+        arrow.local.position = (0, 0, 1000)
+        arrow.local.scale = (scale, scale, scale)
+        self.arrow_planner = arrow
+        return self.arrow_planner
+
     def handler_registry(self):
         with dpg.handler_registry():
-            dpg.add_mouse_drag_handler(button=dpg.mvMouseButton_Middle,callback=self._callback.publish_target,user_data=(self.canvas3D,self.arrow,self.map,"drag"))
-            dpg.add_mouse_down_handler(button=dpg.mvMouseButton_Middle,callback=self._callback.publish_target,user_data=(self.canvas3D,self.arrow,self.map,"down"))
-            dpg.add_mouse_release_handler(button=dpg.mvMouseButton_Middle,callback=self._callback.publish_target,user_data=(self.canvas3D,self.arrow,self.map,"release"))
+            dpg.add_mouse_drag_handler(
+                button=dpg.mvMouseButton_Middle,
+                callback=self._callback.publish_target,
+                user_data=(self.canvas3D, self.arrow, self.map, self, "drag", self.arrow_planner),
+            )
+            dpg.add_mouse_down_handler(
+                button=dpg.mvMouseButton_Middle,
+                callback=self._callback.publish_target,
+                user_data=(self.canvas3D, self.arrow, self.map, self, "down", self.arrow_planner),
+            )
+            dpg.add_mouse_release_handler(
+                button=dpg.mvMouseButton_Middle,
+                callback=self._callback.publish_target,
+                user_data=(
+                    self.canvas3D,
+                    self.arrow,
+                    self.map,
+                    self,
+                    "release",
+                    self.arrow_planner,
+                ),
+            )
+            dpg.add_key_down_handler(key=dpg.mvKey_Spacebar, callback=self._callback.move_to_target, user_data="MOVE")
+            dpg.add_key_release_handler(
+                key=dpg.mvKey_Spacebar, callback=self._callback.move_to_target, user_data="STOP"
+            )
 
-    def create_path(self):
+            # dpg.add_key_release_handler(key=dpg.mvKey_Spacebar,callback=self._callback.move_to_target,user_data="STOP")
+
+    def create_odometry_path(self):
         path = [[0, 0, 0], [0, 0, 0]]
         material = gfx.LineMaterial(thickness=10.0, color=(0.8, 0.7, 0.0, 1.0))
         geometry = gfx.Geometry(positions=path)
         self.line = gfx.Line(geometry, material)
         return self.line
 
-    def update_path(self):
+    def create_planner_path(self):
+        path = [[0, 0, 0], [0, 0, 0]]
+        material = gfx.LineMaterial(thickness=10.0, color=(0, 1, 0.0, 1.0))
+        geometry = gfx.Geometry(positions=path)
+        self.planner_path = gfx.Line(geometry, material)
+        return self.planner_path
+
+    def update_odometry_path(self):
         if not self._callback.path:
             return
         path = FastLioBoxUtils.get_path_pos(self._callback.path)
         self.line.geometry.positions = gfx.Buffer(np.array(path, dtype=np.float32))
+        self._callback.robot_now_pose = FastLioBoxUtils.get_pose(self._callback.odometry)
+
+    def update_planner_path(self, points=None, z=0):
+        if not points:
+            return
+
+        # Add the z coordinate to each point
+        points_with_z = [[x, y, z] for x, y in points]
+
+        # Update the line geometry
+        self.planner_path.geometry.positions = gfx.Buffer(np.array(points_with_z, dtype=np.float32))
 
     def create_points_could_scene(self):
         if self._callback.points.size < 10:
             return
+
         self.map.add_points(self._callback.points)
 
     def lidar_scene(self):
@@ -250,7 +438,9 @@ class FastLioBox(BaseBox):
         rot = la.quat_from_euler([-pi / 2, 0, -pi], order="XYZ")
         self.lidar_meshes.local.rotation = rot
         self.AxesHelper = gfx.AxesHelper(150, 2)
+
         self.lidar_group.add(self.lidar_meshes, self.AxesHelper)
+        self.lidar_group.local.scale = (5, 5, 5)
         return self.lidar_group
 
     def update_lidar_pose(self):
@@ -262,14 +452,20 @@ class FastLioBox(BaseBox):
             odometry["pose"]["position"]["y"],
             odometry["pose"]["position"]["z"],
         )
-        self.lidar_group.local.rotation = la.quat_from_euler(
-            [
-                odometry["pose"]["orientation"]["x"],
-                odometry["pose"]["orientation"]["y"],
-                odometry["pose"]["orientation"]["z"],
-            ],
-            order="XYZ",
-        )
+        self.lidar_group.local.rotation = [
+            odometry["pose"]["orientation"]["x"],
+            odometry["pose"]["orientation"]["y"],
+            odometry["pose"]["orientation"]["z"],
+            odometry["pose"]["orientation"]["w"],
+        ]
+        # self.lidar_group.local.rotation = la.quat_from_euler(
+        #     [
+        #         odometry["pose"]["orientation"]["x"],
+        #         odometry["pose"]["orientation"]["y"],
+        #         odometry["pose"]["orientation"]["z"],
+        #     ],
+        #     order="XYZ",
+        # )
 
     def destroy(self):
         super().destroy()
@@ -277,8 +473,12 @@ class FastLioBox(BaseBox):
     def update(self):
         if not self.is_create_over:
             return
+        # if self.last_map_key != self.map.get_group_key():
+        #     if self._callback.parent is not None:
+        #         self._callback.planner_theta_star()
+        #     self.last_map_key = self.map.get_group_key()
         self.create_points_could_scene()
-        self.update_path()
+        self.update_odometry_path()
         self.update_lidar_pose()
         self.canvas3D.update()
 
@@ -361,7 +561,7 @@ class MapManager:
                 "obj": None,
             }
             self.map[group_key] = points_data
-
+             
         # 添加点云数据
         self.map[group_key]["points"].add_points(points)
 
@@ -371,6 +571,7 @@ class MapManager:
             self.canvas3D.add(self.map[group_key]["obj"])
         else:
             self.update_gfx_points(self.map[group_key])
+
     # 调度点云
     def update_gfx_points(self, points_data):
         points = points_data["points"].get_points
@@ -386,6 +587,7 @@ class MapManager:
         colors = colors[:, :4]  # 提取 RGBA 通道
 
         points_data["obj"].geometry.colors = gfx.Buffer(colors.astype(np.float32))
+
     # 创建点云
     def create_gfx_points(self, points):
         size = self.step_max_points
@@ -410,16 +612,17 @@ class MapManager:
         gfx_points = gfx.Points(self.geometry, material)
         return gfx_points
 
-    def get_local_grid_points(self, odometry, dist):
+    def get_local_grid_points(self, odometry, dist, HIGH_RANGE=AGVParam.HIGH_RANGE_MAP):
         """
-        获取指定距离内的局部点云网格
+        获取指定距离和高度范围内的局部点云网格
 
         参数:
         - odometry: 当前里程计数据
         - dist: 以当前位置为中心的圆形区域半径
+        - HIGH_RANGE: 指定高度范围 [min_z, max_z]
 
         返回:
-        - 局部点云数据
+        - 局部点云数据 (N x 3 的 NumPy 数组)
         """
         # 获取当前位置
         current_pos = FastLioBoxUtils.get_odometry_position(odometry)
@@ -431,7 +634,7 @@ class MapManager:
         min_grid_y = int((y_center - dist) // self.step)
         max_grid_y = int((y_center + dist) // self.step)
 
-        # 收集局部点云数据
+        # 收集所有网格点云
         local_points = []
         for x in range(min_grid_x, max_grid_x + 1):
             for y in range(min_grid_y, max_grid_y + 1):
@@ -440,26 +643,45 @@ class MapManager:
                     # 获取该网格的点云
                     grid_points = self.map[grid_key]["points"].get_points
 
-                    # 计算点云到中心点的距离
-                    point_distances = np.sqrt(
-                        ((grid_points[:, 0] - x_center) ** 2) + 
-                        ((grid_points[:, 1] - y_center) ** 2)
-                    )
+                    # 计算点云到中心点的距离，并筛选高度范围
+                    mask = (
+                        ((grid_points[:, 0] - x_center) ** 2 + (grid_points[:, 1] - y_center) ** 2) <= dist**2
+                    ) & ((grid_points[:, 2] >= HIGH_RANGE[0]) & (grid_points[:, 2] <= HIGH_RANGE[1]))
 
-                    # 过滤在指定距离内的点云
-                    mask = point_distances <= dist
+                    # 筛选符合条件的点
                     filtered_points = grid_points[mask]
-                    
-                    if len(filtered_points) > 0:
-                        local_points.append(filtered_points)
+                    local_points.append(filtered_points)
 
-        # 合并点云
+        # 合并点云并返回
         if local_points:
-            return np.vstack(local_points)
+            return np.vstack(local_points)  # 一次性合并所有点云
         else:
             return np.empty((0, 3))
 
 class FastLioBoxUtils:
+    @staticmethod
+    def get_pose(odometry):
+        pos = FastLioBoxUtils.get_odometry_position(odometry)
+        dir = FastLioBoxUtils.get_odometry_rotation(odometry)
+        pose = [pos[0], pos[1], dir]
+        return pose
+
+    @staticmethod
+    def get_odometry_rotation(odometry):
+        if odometry == {}:
+            return 0.0  # 如果没有odometry数据，航向角默认为0
+        quat = np.array(
+            [
+                odometry["pose"]["orientation"]["x"],
+                odometry["pose"]["orientation"]["y"],
+                odometry["pose"]["orientation"]["z"],
+                odometry["pose"]["orientation"]["w"],
+            ]
+        )
+        rotation = la.quat_to_euler(quat)
+        yaw = rotation[2]  # 提取航向角 (yaw)
+        return yaw
+
     @staticmethod
     def get_odometry_position(odometry):
         if odometry == {}:
@@ -494,10 +716,11 @@ class FastLioBoxUtils:
         )
 
     @staticmethod
-    def point_cloud_to_grid(points, x_range=(-500, 500), y_range=(-500, 500), resolution=1):
+    def point_cloud_to_grid(points, size=AGVParam.GRID_SIZE, resolution=AGVParam.RESOLUTION):
+        # 计算点云的栅格表示
         # 创建栅格
-        x_bins = np.arange(x_range[0], x_range[1], resolution)
-        y_bins = np.arange(y_range[0], y_range[1], resolution)
+        x_bins = np.arange(size[0], size[1], resolution)
+        y_bins = np.arange(size[0], size[1], resolution)
 
         # 将点分配到栅格
         grid = np.zeros((len(y_bins) - 1, len(x_bins) - 1))
@@ -512,12 +735,137 @@ class FastLioBoxUtils:
         y_indices = y_indices[valid_mask]
 
         # 可以根据需要选择不同的聚合方法
-        # 这里使用高度的最大值
-
-        # heights = points[valid_mask, 2]
-        # for x, y, h in zip(x_indices, y_indices, heights):
-        #     grid[y, x] = max(grid[y, x], h)
+        # 这里使用简单的二值标记（例如标记为255）
 
         for x, y in zip(x_indices, y_indices):
             grid[y, x] = 255
         return grid
+
+    @staticmethod
+    def get_point_grid_position(point, size=AGVParam.GRID_SIZE, resolution=AGVParam.RESOLUTION):
+        """
+        计算某个点在网格中的位置
+
+        参数:
+        - point: 点的坐标 (x, y)
+        - size: 网格的范围 (x_min, x_max)，默认 (-5000, 5000)
+        - resolution: 网格分辨率，即每个网格的边长，默认 1
+
+        返回:
+        - 网格坐标索引 (x_index, y_index)，如果点不在范围内返回 None
+        """
+        # 计算网格行列索引
+        x_min, x_max = size
+        y_min, y_max = size
+
+        x_index = int((point[0] - x_min) // resolution)
+        y_index = int((point[1] - y_min) // resolution)
+
+        # 检查点是否在网格范围内
+        if x_min <= point[0] < x_max and y_min <= point[1] < y_max:
+            return (x_index, y_index)  # 返回网格索引
+        else:
+            return None  # 如果点不在范围内，返回 None
+
+    @staticmethod
+    def points_to_obs_circ(points, radius=1):
+        obs_circ = []
+
+        for point in points:
+            # 提取点的 x 和 y 坐标
+            x, y = point[:2]  # 假设点至少有 x 和 y 坐标（忽略 z 坐标）
+            # 添加圆形障碍物 (x, y, radius)
+            obs_circ.append((x, y, radius))
+        return obs_circ
+
+    @staticmethod
+    def get_real_coordinates(grid_positions, size=AGVParam.GRID_SIZE, resolution=AGVParam.RESOLUTION):
+        """
+        根据网格位置批量返回实际坐标
+
+        参数:
+        - grid_positions: 网格坐标索引列表 [(x_index1, y_index1), (x_index2, y_index2), ...]
+        - size: 网格的范围 (x_min, x_max)，默认 (-5000, 5000)
+        - resolution: 网格分辨率，即每个网格的边长，默认 10
+
+        返回:
+        - 实际坐标列表 [(x1, y1), (x2, y2), ...]，对应网格中心的实际坐标
+        """
+        if not grid_positions:  # 检查输入是否为空
+            return []
+
+        x_min, x_max = size
+        y_min, y_max = size
+
+        real_coordinates = []
+        for grid_position in grid_positions:
+            if grid_position is None:
+                real_coordinates.append(None)
+                continue
+
+            x_index, y_index = grid_position
+
+            # 根据网格索引计算实际坐标
+            x = x_min + (x_index + 0.5) * resolution  # 网格中心的 x 坐标
+            y = y_min + (y_index + 0.5) * resolution  # 网格中心的 y 坐标
+
+            # 检查是否超出范围
+            if x_min <= x < x_max and y_min <= y < y_max:
+                real_coordinates.append((x, y))  # 加入实际坐标
+            else:
+                real_coordinates.append(None)  # 如果超出范围，加入 None
+
+        return real_coordinates
+
+    @staticmethod
+    def visualize_grid(grid, cell_size=4, window_name="Grid Map", robot_position=None, path=None):
+        """
+        使用 OpenCV 可视化 Grid 地图。
+
+        参数:
+        - grid: Grid 对象
+        - cell_size: 每个网格单元的像素大小
+        - window_name: 窗口名称
+        - robot_position: (x, y) 形式的元组，表示机器人的当前位置
+        - path: 路径信息，为一系列 (x, y) 坐标点的列表，表示机器人移动的路径
+        """
+        # 获取网格范围
+        x_range, y_range = grid.x_range, grid.y_range
+
+        # 创建空白图像
+        img_height, img_width = y_range * cell_size, x_range * cell_size
+        img = np.ones((img_height, img_width, 3), dtype=np.uint8) * 255  # 白色背景
+
+        # 绘制障碍物
+        if grid.obstacles is not None:
+            for obs in grid.obstacles:
+                x, y = obs
+                top_left = (x * cell_size, y * cell_size)
+                bottom_right = ((x + 1) * cell_size - 1, (y + 1) * cell_size - 1)
+                cv2.rectangle(img, top_left, bottom_right, (0, 0, 0), -1)  # 黑色方块表示障碍物
+
+        # 绘制网格线
+        for x in range(0, img_width, cell_size):
+            cv2.line(img, (x, 0), (x, img_height), (200, 200, 200), 1)  # 垂直线
+        for y in range(0, img_height, cell_size):
+            cv2.line(img, (0, y), (img_width, y), (200, 200, 200), 1)  # 水平线
+
+        # 绘制路径信息
+        if path is not None and len(path) > 1:
+            for i in range(len(path) - 1):
+                x1, y1 = path[i]
+                x2, y2 = path[i + 1]
+                # 转换为图像坐标
+                start_point = (int((x1 + 0.5) * cell_size), int((y1 + 0.5) * cell_size))
+                end_point = (int((x2 + 0.5) * cell_size), int((y2 + 0.5) * cell_size))
+                # 在路径点之间绘制线段
+                cv2.line(img, start_point, end_point, (255, 0, 0), 2)  # 蓝色线表示路径
+
+        # 绘制机器人的当前位置
+        if robot_position is not None:
+            x, y = robot_position
+            center = (int((x + 0.5) * cell_size), int((y + 0.5) * cell_size))  # 圆心坐标
+            radius = cell_size // 2 - 1  # 圆的半径
+            cv2.circle(img, center, radius, (0, 0, 255), -1)  # 红色圆表示机器人
+
+        return img
