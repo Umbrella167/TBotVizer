@@ -2,8 +2,8 @@ import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import BaseBox
 from ui.components.Canvas2D import Canvas2D
 import numpy as np
-import utils.python_motion_planning as pmp
-from utils.MPCController import MPCController
+import utils.planner.python_motion_planning as pmp
+from utils.planner.local_planner.MPCController_onmi import MPCControllerOmni as MPCController
 import math
 import time
 from api.NewTBKApi import tbk_manager
@@ -58,7 +58,7 @@ class RRTBox(BaseBox):
             "tag": self.tag,
         }
 
-        self.suber_rpm = tbk_manager.subscriber(rpm_info, self.set_speed)
+        # self.suber_rpm = tbk_manager.subscriber(rpm_info, self.set_speed)
         self.mpc = MPCController()
     def set_speed(self,msg):
         data = pickle.loads(msg)
@@ -122,39 +122,62 @@ class RRTBox(BaseBox):
         self.path = self.mpc.generate_path_with_angles(self.robot_now_pose,self.robot_target_pose,path)
         
         self.t0 = 0
-        self.u0 = np.zeros((self.mpc.N, 2))
+        self.u0 = np.zeros((self.mpc.N, 3))
         self.next_states = np.zeros((self.mpc.N + 1, 3))
         self.next_trajectories, self.next_controls = self.mpc.desired_command_and_trajectory(self.t0, self.robot_now_pose, self.path[0])
         print(self.next_trajectories)
 
-    def robot_control(self, v, omega):
+    # def robot_control(self, v, omega):
+    #     # 定义噪声参数
+    #     v = v * 0.1
+    #     omega = omega * 0.1
+    #     noise_std_x = 0
+    #     noise_std_y = 0
+    #     noise_std_omega = 0
+    #     # 生成高斯噪声
+    #     noise_x = np.random.normal(0, noise_std_x)
+    #     noise_y = np.random.normal(0, noise_std_y)
+    #     noise_omega = np.random.normal(0, noise_std_omega)
+
+    #     # 计算当前方向角（以机器人当前角度为基础）
+    #     theta = self.robot_now_pose[2]
+
+    #     # 根据线速度和方向角计算在x和y方向上的速度分量
+    #     vx = v * np.cos(theta)
+    #     vy = v * np.sin(theta)
+
+    #     # 加入噪声和角速度影响
+    #     self.robot_now_pose[0] += vx + noise_x
+    #     self.robot_now_pose[1] += vy + noise_y
+    #     self.robot_now_pose[2] += omega + noise_omega
+
+    #     dpg.delete_item(self.main_layer, children_only=True)
+    #     draw_car(self.robot_now_pose, (0, 255, 0, 255), self.main_layer)
+    #     draw_car(self.robot_target_pose, (0, 0, 255, 255), self.main_layer)
+    def robot_control(self, vx, vy, omega):
         # 定义噪声参数
-        v = v * 0.1
+        vx = vx * 0.1
+        vy = vy * 0.1
         omega = omega * 0.1
         noise_std_x = 0
         noise_std_y = 0
         noise_std_omega = 0
+        
         # 生成高斯噪声
         noise_x = np.random.normal(0, noise_std_x)
         noise_y = np.random.normal(0, noise_std_y)
         noise_omega = np.random.normal(0, noise_std_omega)
-
-        # 计算当前方向角（以机器人当前角度为基础）
-        theta = self.robot_now_pose[2]
-
-        # 根据线速度和方向角计算在x和y方向上的速度分量
-        vx = v * np.cos(theta)
-        vy = v * np.sin(theta)
-
-        # 加入噪声和角速度影响
-        self.robot_now_pose[0] += vx + noise_x
-        self.robot_now_pose[1] += vy + noise_y
-        self.robot_now_pose[2] += omega + noise_omega
-
+        
+        # 更新机器人位置
+        self.robot_now_pose[0] += vx + noise_x  # x方向位移
+        self.robot_now_pose[1] += vy + noise_y  # y方向位移
+        self.robot_now_pose[2] += omega + noise_omega  # 角速度更新方向角
+        
+        # 绘制机器人位置
         dpg.delete_item(self.main_layer, children_only=True)
         draw_car(self.robot_now_pose, (0, 255, 0, 255), self.main_layer)
         draw_car(self.robot_target_pose, (0, 0, 255, 255), self.main_layer)
-
+    
     def update(self):
         if self.path is None:
             return
@@ -166,7 +189,7 @@ class RRTBox(BaseBox):
                 self.t0, now_pos, self.u0, self.next_states, u_res, x_m, solve_time = self.mpc.plan(
                     self.t0, self.robot_now_pose, self.u0, self.next_states, self.next_trajectories, self.next_controls
                 )
-                self.robot_control(u_res[0, 0], u_res[0, 1])
+                self.robot_control(u_res[0, 0], u_res[0, 1], u_res[0, 2])
                 self.next_trajectories, self.next_controls = self.mpc.desired_command_and_trajectory(self.t0, self.robot_now_pose, point)
                 print(f"Current state: {self.u0}, Target point: {point}")
                 time.sleep(0.01)

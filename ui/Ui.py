@@ -97,7 +97,7 @@ class UI:
                     func()
                     dpg.render_dearpygui_frame()
             except Exception as e:
-                client_logger.log("ERROR", f"Loop Failed??? {e}")
+                client_logger.log("ERROR", f"Loop Failed {e}")
             finally:
                 self.destroy_all_boxes()
         else:

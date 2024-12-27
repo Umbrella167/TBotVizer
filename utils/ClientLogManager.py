@@ -38,6 +38,9 @@ class ClientLogManager:
         )
 
     def log(self, level, msg, e: Exception = None, no=None):
+        """
+        ["trace", "debug", "info", "success", "warning", "error", "critical"]
+        """
         if e is not None:
             tb = traceback.extract_tb(e.__traceback__)
             last_traceback = tb[-1]

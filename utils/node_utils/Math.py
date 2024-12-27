@@ -33,8 +33,7 @@ class Add(BaseNode):
         super().__init__(**kwargs)
 
     def func(self):
-        self.data["res"]["user_data"]["value"] = convert_to_float(
-            self.data["x"]["user_data"]["value"]) + convert_to_float(self.data["y"]["user_data"]["value"])
+        self.data["res"]["user_data"]["value"] = convert_to_float(self.data["x"]["user_data"]["value"]) + convert_to_float(self.data["y"]["user_data"]["value"])
 
 
 class Mul(BaseNode):

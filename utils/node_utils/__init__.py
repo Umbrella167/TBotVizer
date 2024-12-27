@@ -29,6 +29,8 @@ modules_to_import = [
     ("utils.node_utils.PID", "PositionalPID"),
     ("utils.node_utils.ParseIMU", "ParseIMU"),
     ("utils.node_utils.TBKNode", None),  # 导入整个模块（TBKNode 中的所有内容）
+    ("utils.node_utils.MPCPlannerNode", "MPCPlannerNode"),  # 导入整个模块（TBKNode 中的所有内容）
+    ("utils.node_utils.GlobalPlannerNode", "GlobalPlannerNode"),  
 ]
 
 # 动态导入模块，绑定到全局作用域

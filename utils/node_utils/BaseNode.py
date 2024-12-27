@@ -92,5 +92,8 @@ TYPES = {
     "MULTILINEINPUT": types.MultilineInput,
     "CONFIG": types.CONFIG,
     "SLIDER": types.Slider,
+    "NPINPUT": types.NumpyInput,
+    "ENUM": types.EnumInput,
+
     "DEL": None,
 }
