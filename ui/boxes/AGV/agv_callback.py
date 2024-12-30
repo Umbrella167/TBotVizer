@@ -6,7 +6,7 @@ import pickle
 import pylinalg as la
 import cv2
 import utils.planner.python_motion_planning as pmp
-from utils.planner.local_planner.MPCController import MPCController
+from utils.planner.local_planner.MPCControllerWithObstacles import MPCController
 from utils.ClientLogManager import client_logger
 from ui.boxes.AGV.agv_param import AGVParam
 from ui.boxes.AGV.agv_utils import AGVBoxUtils
@@ -25,6 +25,7 @@ class AGVBoxCallback:
         self.planner_path = []
         # 带有方向的路径
         self.planner_path_pose = []
+        self.path_raw = []
         self.lidar_scan_area = []
         self.world_mouse_pos = np.array([0, 0, 0], dtype=np.float32)
         self.is_down = False
@@ -54,6 +55,29 @@ class AGVBoxCallback:
             if ep_info["msg_name"] not in self.subscriber:
                 self.subscriber[ep_info["msg_name"]] = tbk_manager.subscriber(ep_info, self.odometry_msg)
 
+    # def points_msg(self, msg):
+    #     # 反序列化点云数据
+    #     points = pickle.loads(msg)
+    #     # 对点云进行缩放
+    #     points = points * AGVParam.LOCAL_SCALE
+
+    #     # 计算每个点到原点的欧拉距离
+    #     distances = np.linalg.norm(points, axis=1)
+
+    #     # 找到距离的80%分位点（即20%的最远点的阈值）
+    #     distance_threshold = np.percentile(distances, AGVParam.DISTANCE_THRESHOLD)
+
+    #     # 保留距离小于等于阈值的点（移除最远的20%点）
+    #     points = points[distances <= distance_threshold]
+
+    #     # 保留 z 轴在 [0, 200] 范围内的点
+    #     points = points[
+    #         (points[:, 2] >= AGVParam.HIGH_RANGE_GLOBAL[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE_GLOBAL[1])
+    #     ]
+
+    #     # 更新 self.points
+    #     self.points = points
+
     def points_msg(self, msg):
         # 反序列化点云数据
         points = pickle.loads(msg)
@@ -69,13 +93,45 @@ class AGVBoxCallback:
         # 保留距离小于等于阈值的点（移除最远的20%点）
         points = points[distances <= distance_threshold]
 
-        # 保留 z 轴在 [0, 200] 范围内的点
+        # 保留 z 轴在 HIGH_RANGE_GLOBAL 范围内的点
         points = points[
             (points[:, 2] >= AGVParam.HIGH_RANGE_GLOBAL[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE_GLOBAL[1])
         ]
 
-        # 更新 self.points
+        points = self.sparse_high_z_points(points, z_threshold=AGVParam.RARE_DATA["HIGHT_THRESHOLD"], sparse_ratio=AGVParam.RARE_DATA["RARE_DATA"])
+
         self.points = points
+        
+    def sparse_high_z_points(self,points, z_threshold=2000, sparse_ratio=0.1):
+        """
+        对 z 轴高于给定阈值的点进行稀疏化。
+
+        参数:
+        - points: ndarray, 点云数据，形状为 (N, 3)，每行表示一个点 (x, y, z)。
+        - z_threshold: float, z 轴高度的阈值，高于此值的点将被稀疏化。
+        - sparse_ratio: float, 稀疏化比例，保留的点数量占比。
+
+        返回:
+        - sparse_points: ndarray, 稀疏化后的点云数据。
+        """
+        # 筛选 z 轴高于阈值的点
+        high_z_mask = points[:, 2] > z_threshold
+        high_z_points = points[high_z_mask]
+
+        # 筛选 z 轴低于等于阈值的点
+        low_z_points = points[~high_z_mask]
+
+        # 对高 z 点进行稀疏化（随机采样）
+        if len(high_z_points) > 0:  # 确保有点可以稀疏化
+            num_points_to_keep = int(len(high_z_points) * sparse_ratio)
+            sparse_high_z_points = high_z_points[np.random.choice(len(high_z_points), num_points_to_keep, replace=False)]
+        else:
+            sparse_high_z_points = np.empty((0, points.shape[1]))  # 没有高 z 点
+
+        # 合并稀疏化后的高 z 点和低 z 点
+        sparse_points = np.vstack((low_z_points, sparse_high_z_points))
+
+        return sparse_points
 
     def odometry_msg(self, msg):
         self.odometry = pickle.loads(msg)
@@ -171,13 +227,12 @@ class AGVBoxCallback:
             taget_pose[2] = self.target_angle
             self.robot_target_pose = taget_pose
             self.planner_theta_star()
-            self.mpc_init()
-
+    
     def create_grid(self):
         points = self.parent.map.get_local_grid_points(self.odometry, 20000)
         grid = pmp.Grid(points, AGVParam.GRID_SIZE, AGVParam.RESOLUTION)
         self.robot_now_pose = AGVBoxUtils.get_pose(self.odometry)
-        now_grid_pos = AGVBoxUtils.get_point_grid_position(self.robot_now_pose[:2])
+        now_grid_pos = grid.get_point_grid_position(self.robot_now_pose[:2])
         target_grid_pos = AGVBoxUtils.get_point_grid_position(self.robot_target_pose[:2])
         return grid, now_grid_pos, target_grid_pos
     
@@ -186,25 +241,22 @@ class AGVBoxCallback:
             return
         grid, now_grid_pos, target_grid_pos = self.create_grid()
         planner = pmp.ThetaStar(tuple(now_grid_pos), tuple(target_grid_pos), grid)
-        cost, self.planner_path, expand = planner.plan()
-        cv2.imwrite("grid.jpg", AGVBoxUtils.visualize_grid(grid,robot_position=now_grid_pos,path=self.planner_path))
+        cost, path, expand = planner.plan()
+        self.path_raw = path
+        if not path:
+            client_logger.log("info", "路径规划失败")
+            return
+        cv2.imwrite("grid.jpg", AGVBoxUtils.visualize_grid(grid,robot_position=now_grid_pos,path=path))
 
-        self.planner_path = AGVBoxUtils.get_real_coordinates(self.planner_path)
-        self.planner_path = self.mpc.interpolate_path(self.planner_path, step=5)
+        self.planner_path = AGVBoxUtils.get_real_coordinates(path)
+        # self.planner_path = self.mpc.interpolate_path(self.planner_path, step=100)
         self.planner_path = self.planner_path[::-1]
         self.parent.update_planner_path(self.planner_path)
+        self.planner_path_pose = self.mpc.generate_path_with_angles(self.robot_now_pose, self.robot_target_pose, self.planner_path)
+        self.planner_path_pose_index = 0
+        self.allow_mpc_start = True
         return self.planner_path
     
-    def mpc_init(self):
-        self.allow_mpc_start = True
-        self.t0 = 0
-        self.u0 = np.zeros((self.mpc.N, 2))
-        self.next_states = np.zeros((self.mpc.N + 1, 3))
-        self.planner_path_pose = self.mpc.generate_path_with_angles(
-            self.robot_now_pose, self.robot_target_pose, self.planner_path
-        )
-        self.planner_path_pose_index = 0
-
     def move_to_target(self, sender, app_data, user_data):
         flag = user_data
         if not self.allow_mpc_start:
@@ -216,16 +268,11 @@ class AGVBoxCallback:
         if flag == "MOVE":
             self.robot_now_pose = AGVBoxUtils.get_pose(self.odometry)
             point = self.planner_path_pose[self.planner_path_pose_index]
-            point = (point[0], point[1], point[2])
-            self.next_trajectories, self.next_controls = self.mpc.desired_command_and_trajectory(
-                self.t0, self.robot_now_pose, point
-            )
-            self.t0, now_pos, self.u0, self.next_states, u_res, x_m, solve_time = self.mpc.plan(
-                self.t0, self.robot_now_pose, self.u0, self.next_states, self.next_trajectories, self.next_controls
-            )
+            
+            v,s = self.mpc.compute_control(self.robot_now_pose, point)
 
-            self.robot_control(u_res[0, 0], u_res[0, 1])
-            print(f"V:{u_res[0, 0]},W: {u_res[0, 1]},NOW_POSE: {self.robot_now_pose},POINT: {point}")
+            self.robot_control(-v[0],v[1], -v[2])
+            
 
             if np.linalg.norm(np.array(self.robot_now_pose[:2]) - np.array(point[:2])) < 300:
                 self.planner_path_pose_index += 1
@@ -237,7 +284,7 @@ class AGVBoxCallback:
                 self.planner_path_pose_index = 0
                 self.path = []
                 self.path_pos = []
-                self.robot_control(0, 0)
+                self.robot_control(0, 0,0)
                 client_logger.log("info", "到达目标点")
                         
             rot = la.quat_from_euler(point[2], order="Z")
@@ -245,17 +292,19 @@ class AGVBoxCallback:
             self.arrow_planner.local.position = [point[0], point[1], 0]
             
         if flag == "STOP":
-            self.robot_control(0, 0)
+            self.robot_control(0, 0,0)
 
-    def robot_control(self, v, omega):
-        vy = v * 50
-        omega = omega * 0.3
-        self.vel_publisher.publish(pickle.dumps([0, -vy, -omega]))
+    def robot_control(self, vx,vy, omega):
+        vx = vx * 500
+        vy = vy * 500
+        omega = omega 
 
-    def is_path_reachable(self):
-        grid, now_grid_pos, target_grid_pos = self.create_grid()
-        res = AGVBoxUtils.is_path_reachable(grid, self.planner_path)
-        return res
+        self.vel_publisher.publish(pickle.dumps([vx,vy, omega]))
 
 
-        
+        # F vy+
+        # B vy-
+        # L vx-
+        # R vx+
+        # TL vw-
+        # TR vw+

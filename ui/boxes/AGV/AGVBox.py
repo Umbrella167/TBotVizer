@@ -14,6 +14,7 @@ from utils.ClientLogManager import client_logger
 from ui.boxes.AGV.agv_utils import AGVBoxUtils
 from ui.boxes.AGV.agv_callback import AGVBoxCallback
 from ui.boxes.AGV.agv_param import AGVParam
+import utils.planner.python_motion_planning as pmp
 
 class AGVBox(BaseBox):
     only = True
@@ -179,14 +180,6 @@ class AGVBox(BaseBox):
             odometry["pose"]["orientation"]["z"],
             odometry["pose"]["orientation"]["w"],
         ]
-        # self.lidar_group.local.rotation = la.quat_from_euler(
-        #     [
-        #         odometry["pose"]["orientation"]["x"],
-        #         odometry["pose"]["orientation"]["y"],
-        #         odometry["pose"]["orientation"]["z"],
-        #     ],
-        #     order="XYZ",
-        # )
 
     def destroy(self):
         super().destroy()
@@ -194,15 +187,16 @@ class AGVBox(BaseBox):
     def update(self):
         if not self.is_create_over:
             return
-        if self.last_map_key != self.map.get_group_key():
-            if self._callback.parent is not None:
+
+        if dpg.get_frame_count() % 30 == 0:
+            obs_points = self.map.get_points_within_distance(2000)
+            path = self._callback.planner_path
+            is_collision = AGVBoxUtils.detect_collision(obs_points, path,100)
+            if is_collision:
                 grid, now_grid_pos, target_grid_pos = self._callback.create_grid()
-                res = AGVBoxUtils.is_path_reachable(grid, self.planner_path)
-                if not res:
-                    self._callback.planner_theta_star()
-                
-            client_logger.log("warning","检测到地图变化，重新规划路径")
-            self.last_map_key = self.map.get_group_key()
+                self._callback.planner_theta_star()
+                client_logger.log("warning","检测到障碍物，重新规划路径")
+
         self.create_points_could_scene()
         self.update_odometry_path()
         self.update_lidar_pose()
@@ -382,53 +376,38 @@ class MapManager:
         else:
             return np.empty((0, 3))
 
+    def get_points_within_distance(self, dist):
         """
-        使用 OpenCV 可视化 Grid 地图。
+        获取当前索引下，距离 dist 内的点
 
         参数:
-        - grid: Grid 对象
-        - cell_size: 每个网格单元的像素大小
-        - window_name: 窗口名称
-        - robot_position: (x, y) 形式的元组，表示机器人的当前位置
-        - path: 路径信息，为一系列 (x, y) 坐标点的列表，表示机器人移动的路径
+        - current_index: 当前网格索引 (grid_x, grid_y)
+        - dist: 搜索范围的半径
+
+        返回:
+        - 满足条件的点云 (N x 3 的 NumPy 数组)
         """
-        # 获取网格范围
-        x_range, y_range = grid.x_range, grid.y_range
+        current_index = self.get_group_key()  
+        if current_index not in self.map:
+            # 如果当前索引不存在，返回空数组
+            return np.empty((0, 3))
 
-        # 创建空白图像
-        img_height, img_width = y_range * cell_size, x_range * cell_size
-        img = np.ones((img_height, img_width, 3), dtype=np.uint8) * 255  # 白色背景
+        # 获取当前索引内的点云数据
+        grid_points = self.map[current_index]["points"].get_points
 
-        # 绘制障碍物
-        if grid.obstacles is not None:
-            for obs in grid.obstacles:
-                x, y = obs
-                top_left = (x * cell_size, y * cell_size)
-                bottom_right = ((x + 1) * cell_size - 1, (y + 1) * cell_size - 1)
-                cv2.rectangle(img, top_left, bottom_right, (0, 0, 0), -1)  # 黑色方块表示障碍物
+        # 获取当前网格的中心点
+        grid_center_x = current_index[0] * self.step + self.step / 2
+        grid_center_y = current_index[1] * self.step + self.step / 2
 
-        # 绘制网格线
-        for x in range(0, img_width, cell_size):
-            cv2.line(img, (x, 0), (x, img_height), (200, 200, 200), 1)  # 垂直线
-        for y in range(0, img_height, cell_size):
-            cv2.line(img, (0, y), (img_width, y), (200, 200, 200), 1)  # 水平线
+        # 计算点到中心点的欧几里得距离
+        distances = np.sqrt(
+            (grid_points[:, 0] - grid_center_x) ** 2 +
+            (grid_points[:, 1] - grid_center_y) ** 2 +
+            (grid_points[:, 2]) ** 2
+        )
 
-        # 绘制路径信息
-        if path is not None and len(path) > 1:
-            for i in range(len(path) - 1):
-                x1, y1 = path[i]
-                x2, y2 = path[i + 1]
-                # 转换为图像坐标
-                start_point = (int((x1 + 0.5) * cell_size), int((y1 + 0.5) * cell_size))
-                end_point = (int((x2 + 0.5) * cell_size), int((y2 + 0.5) * cell_size))
-                # 在路径点之间绘制线段
-                cv2.line(img, start_point, end_point, (255, 0, 0), 2)  # 蓝色线表示路径
+        # 筛选出距离小于 dist 的点云
+        mask = distances <= dist
+        filtered_points = grid_points[mask]
 
-        # 绘制机器人的当前位置
-        if robot_position is not None:
-            x, y = robot_position
-            center = (int((x + 0.5) * cell_size), int((y + 0.5) * cell_size))  # 圆心坐标
-            radius = cell_size // 2 - 1  # 圆的半径
-            cv2.circle(img, center, radius, (0, 0, 255), -1)  # 红色圆表示机器人
-
-        return img
+        return filtered_points

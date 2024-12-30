@@ -42,15 +42,17 @@ class MPCControllerOmni:
         for i in range(self.N):
             x_next = self.opt_states[i, :] + self.f(self.opt_states[i, :], self.opt_controls[i, :]).T * self.T
             self.opti.subject_to(self.opt_states[i + 1, :] == x_next)
+            
 
         # Define the cost function
-        Q = np.diag([1, 1, 5])
-        R = np.diag([0.5, 0.5, 0.05])
+        Q = np.diag([10, 10, 0.1])
+        R = np.diag([10, 10, 0.01])
         obj = 0
         for i in range(self.N):
             state_error_ = self.opt_states[i, :] - self.opt_x_ref[i + 1, :]
             control_error_ = self.opt_controls[i, :] - self.opt_u_ref[i, :]
             obj += ca.mtimes([state_error_, Q, state_error_.T]) + ca.mtimes([control_error_, R, control_error_.T])
+            
         self.opti.minimize(obj)
 
         # Boundary and control constraints
@@ -86,7 +88,7 @@ class MPCControllerOmni:
             y_ref_ = y
             theta_ref_ = theta
             vx_ref_ = 0.5
-            vy_ref_ = 0.0
+            vy_ref_ = 0.5
             omega_ref_ = 0.0
 
             x_[i + 1] = np.array([x_ref_, y_ref_, theta_ref_])
@@ -173,7 +175,15 @@ class MPCControllerOmni:
             # 计算方向角 (atan2)
             direction = np.arctan2(y2 - y1, x2 - x1)
             # direction = np.arctan2(y1 - y2, x1 - x2)
-            path_with_angles.append((x2, y2, direction))
+            # path_with_angles.append((x2, y2, direction))
+            path_with_angles.append((x2, y2, 0))
+            # if len(path_with_angles) > 0:
+            #     prev_direction = path_with_angles[-1][2]
+            #     direction = 0.8 * prev_direction + 0.2 * direction  # 平滑方向变化
+            # path_with_angles.append((x2, y2, direction))
+
+
+
 
         
         path_with_angles.append(end)
