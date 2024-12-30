@@ -1,6 +1,6 @@
 ENVIRONMENT = 'development'
 
-
+TBK_NODE_NAME = "TBotVizer"
 THEME_PATH = "static/themes/"
 
 LAYOUT_CONFIG_FILE = "static/layout/layout_config.json"
