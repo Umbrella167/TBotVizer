@@ -86,7 +86,6 @@ class UI:
     def generate_add_methods(self):
         for cls in self.all_classes:
             method_name = f"add_{cls.__name__}"
-
             # 使用闭包捕获cls
             def add_method(self, cls=cls, **kwargs):
                 try:
@@ -98,7 +97,6 @@ class UI:
                     return instance
                 except Exception as e:
                     client_logger.log("WARNING", f"Unable to instantiate {cls}", e=e)
-
             # 将生成的方法绑定到当前实例
             setattr(self, method_name, add_method.__get__(self))
 

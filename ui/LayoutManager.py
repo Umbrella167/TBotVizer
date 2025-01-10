@@ -5,7 +5,6 @@ from config.SystemConfig import LAYOUT_CONFIG_FILE, THEME_PATH
 from config import DynamicConfig
 from utils.ClientLogManager import client_logger
 
-
 class LayoutManager:
     APP_EXCLUSIONS = ["version", "major_version", "minor_version", "platform", "device_name"]
     VIEWPORT_EXCLUSIONS = ["client_width", "client_height", "clear_color"]
@@ -102,11 +101,11 @@ class LayoutManager:
     def load_boxes(self):
         boxes_config = self.config.get("boxes", {})
         self.box_default_layout = boxes_config.get("default", {
-            "prohibited_boxes": ["ConsoleBox", "InputConsoleBox"],  # 排除项
-            "box_width": 1280,
-            "box_height": 720,
-            "box_default_pos": (300, 50),
-            "box_pos_offset": 20,
+            "prohibited_boxes": DynamicConfig.PROHIBITED_BOXES or ["ConsoleBox", "InputConsoleBox"],  # 排除项
+            "box_width": DynamicConfig.BOX_WIDTH or 1280,
+            "box_height": DynamicConfig.BOX_HEIGHT or 720,
+            "box_default_pos": DynamicConfig.BOX_DEFAULT_POS or (300, 50),
+            "box_pos_offset": DynamicConfig.BOX_POS_OFFSET or 20,
         })
 
         for k, v in self.box_default_layout.items():
