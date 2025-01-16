@@ -4,6 +4,7 @@ import json
 from config.SystemConfig import LAYOUT_CONFIG_FILE, THEME_PATH
 from config import DynamicConfig
 from utils.ClientLogManager import client_logger
+from pathlib import Path
 
 class LayoutManager:
     APP_EXCLUSIONS = ["version", "major_version", "minor_version", "platform", "device_name"]
@@ -127,6 +128,10 @@ class LayoutManager:
                 client_logger.log("ERROR", f"Box {ins_config['cls_name']} failed", e)
 
     def save(self):
+        layout_dir = Path(LAYOUT_CONFIG_FILE).parent
+        if not layout_dir.exists():
+            layout_dir.mkdir(parents=True)
+
         with open(LAYOUT_CONFIG_FILE, "w+") as f:
             app_config = {k: v for k, v in dpg.get_app_configuration().items() if k not in self.APP_EXCLUSIONS}
             viewport_config = {k: v for k, v in dpg.get_viewport_configuration(0).items() if k not in self.VIEWPORT_EXCLUSIONS}
