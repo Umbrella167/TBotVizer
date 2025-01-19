@@ -8,7 +8,6 @@ from api.NewTBKApi import tbk_manager
 from utils.node_utils.BaseNode import BaseNode
 from utils.Utils import convert_to_float
 
-
 class Subscriber(BaseNode):
     def __init__(self, **kwargs):
         default_init_data = {
@@ -40,9 +39,7 @@ class Subscriber(BaseNode):
         }
         kwargs["init_data"] = kwargs.get("init_data") or default_init_data
         super().__init__(**kwargs)
-        self.suber = None
-        self.current_subscription = None
-        self.callback_manager = {}
+        self.current_info = None
         self.automatic = True
 
     def func(self):
@@ -51,41 +48,30 @@ class Subscriber(BaseNode):
         name = self.data["name"]["user_data"].get("value")
         msg_name = self.data["msg_name"]["user_data"].get("value")
         # 获取新的订阅信息
-        new_subscription = (puuid, name, msg_name)
+        info = {
+            "puuid": puuid,
+            "name": name,
+            "msg_name": msg_name,
+            "tag": self.tag
+        }
         # 如果订阅信息发生变化，则重新订阅
-        if new_subscription != self.current_subscription:
+        if info != self.current_info:
             # 如果有现有的订阅器，先移除其回调
-            if self.current_subscription in self.callback_manager:
-                self.remove_callback(self.current_subscription)
+            if self.current_info is not None:
+                tbk_manager.unsubscribe(self.current_info)
             # 如果新的订阅信息有效，则创建新的订阅
             if puuid is not None and name is not None and msg_name is not None:
                 self.suber = tbk_manager.subscriber(
-                    info={
-                        "puuid": puuid,
-                        "name": name,
-                        "msg_name": msg_name,
-                        "tag": self.tag
-                    },
-                    callback=self.create_callback(new_subscription),
+                    info=info,
+                    callback=self.callback,
                 )
-                self.current_subscription = new_subscription  # 更新当前订阅信息
+                self.current_info = info  # 更新当前订阅信息
             else:
                 # 如果任何参数为空，则清除订阅
-                self.current_subscription = None
+                self.current_info = None
 
-    def create_callback(self, subscription):
-        def callback(msg):
-            if subscription in self.callback_manager:
-                self.data["msg"]["user_data"]["value"] = self.decode_msg(msg)
-
-        # 将回调函数与订阅信息绑定
-        self.callback_manager[subscription] = callback
-        return callback
-
-    def remove_callback(self, subscription):
-        if subscription in self.callback_manager:
-            # 将回调从管理器中移除
-            self.callback_manager.pop(subscription)
+    def callback(self, msg):
+        self.data["msg"]["user_data"]["value"] = self.decode_msg(msg)
 
     def decode_msg(self, msg):
         try:

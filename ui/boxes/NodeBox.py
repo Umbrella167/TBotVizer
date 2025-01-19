@@ -154,6 +154,11 @@ class NodeBox(BaseBox):
     def delete_node(self, node_tag):
         # 删除node
         client_logger.log("INFO", f"Delete the node {dpg.get_item_label(node_tag)}:{node_tag}")
+        # 删除链接
+        for tag, link in self.links.copy().items():
+            if self.nodes[node_tag].identifier in link:
+                del self.links[tag]
+                dpg.delete_item(tag)
         del self.nodes[node_tag]
         dpg.delete_item(node_tag)
 

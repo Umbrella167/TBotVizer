@@ -14,7 +14,7 @@ def ensure_import(func):
     def wrapper(self, *args, **kwargs):
         if not self.is_import:
             self.new()
-            self.is_import = True
+            # self.is_import = True
         return func(self, *args, **kwargs)
 
     return wrapper
@@ -170,9 +170,12 @@ class TBKManager:
         tag = info["tag"]
         if tag in self.callback_dict.get(puuid, {}).get(msg_name, {}).get(name, {}):
             del self.callback_dict[puuid][msg_name][name][tag]
-        if len(self.callback_dict[puuid][msg_name][name]) < 1 or is_del_msg:
-            del self.subscriber_dict[puuid][msg_name][name]
-            del self.callback_dict[puuid][msg_name][name]
+
+        client_logger.log("INFO", f"Del subscriber({puuid}, {msg_name}, {name})")
+
+        # if len(self.callback_dict[puuid][msg_name][name]) < 1 or is_del_msg:
+        #     del self.subscriber_dict[puuid][msg_name][name]
+        #     del self.callback_dict[puuid][msg_name][name]
 
     # def remove_subscriber(self, puuid: str, msg_name: str, name: str, item_tag: str):
     #     """
