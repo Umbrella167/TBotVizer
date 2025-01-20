@@ -6,6 +6,7 @@ from config import DynamicConfig
 
 class ConsoleBox(BaseBox):
     only = True
+    save = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -58,7 +59,8 @@ class ConsoleBox(BaseBox):
     # 自动添加按钮
     def generate_add_bottom(self):
         for cls in self.all_classes:
-            if cls.__name__ in DynamicConfig.PROHIBITED_BOXES:
+            # TODO: 这里只是暂时这么用，这个逻辑是有问题的
+            if not cls.save:
                 continue
             instance_func_name = f"add_{cls.__name__}"
             self.button_tags.append(

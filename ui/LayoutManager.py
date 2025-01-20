@@ -105,7 +105,6 @@ class LayoutManager:
     def load_boxes(self):
         boxes_config = self.config.get("boxes", {})
         self.box_default_layout = boxes_config.get("default", {
-            "prohibited_boxes": DynamicConfig.PROHIBITED_BOXES or ["ConsoleBox", "InputConsoleBox"],  # 排除项
             "box_width": DynamicConfig.BOX_WIDTH or 1280,
             "box_height": DynamicConfig.BOX_HEIGHT or 720,
             "box_default_pos": DynamicConfig.BOX_DEFAULT_POS or (300, 50),
@@ -117,8 +116,6 @@ class LayoutManager:
 
         instances = boxes_config.get("instances", {})
         for ins_config in instances:
-            if ins_config["cls_name"] in DynamicConfig.PROHIBITED_BOXES:
-                continue
             try:
                 self.ui.new_box(
                     ins_config["cls_name"],
@@ -155,7 +152,7 @@ class LayoutManager:
     def get_boxes_config(self):
         boxes_config = []
         for box in self.ui.boxes:
-            if box.__class__.__name__ in DynamicConfig.PROHIBITED_BOXES:
+            if not box.save:
                 continue
             boxes_config.append(
                 {

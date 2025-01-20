@@ -4,13 +4,15 @@ from ui.boxes import BaseBox
 
 class InputConsoleBox(BaseBox):
     only = True
+    save = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.width = 1000
         self.height = 300
         self.is_sticky = False
-        self.all_class_name = [i.__name__ for i in self.ui.all_classes if i.__name__ not in DynamicConfig.PROHIBITED_BOXES]
+        # TODO: 这里只是暂时这么用，这个逻辑是有问题的
+        self.all_class_name = [i.__name__ for i in self.ui.all_classes if not i.save]
         self.input_text = None
         self.select_index = 0
         self.filter_set = None
