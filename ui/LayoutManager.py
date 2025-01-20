@@ -1,3 +1,6 @@
+import base64
+import pickle
+
 import dearpygui.dearpygui as dpg
 import json
 
@@ -122,7 +125,7 @@ class LayoutManager:
                     width=ins_config["width"],
                     height=ins_config["height"],
                     pos=ins_config["pos"],
-                    data=ins_config["data"]
+                    data=pickle.loads(base64.b64decode(ins_config["data"].encode())),
                 )
             except Exception as e:
                 client_logger.log("ERROR", f"Box {ins_config['cls_name']} failed", e)
@@ -160,7 +163,7 @@ class LayoutManager:
                     "width": dpg.get_item_width(box.tag),
                     "height": dpg.get_item_height(box.tag),
                     "pos": dpg.get_item_pos(box.tag),
-                    "data": box.data,
+                    "data": base64.b64encode(pickle.dumps(box.data)).decode(),
                 }
             )
         return boxes_config
