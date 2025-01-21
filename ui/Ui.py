@@ -17,15 +17,15 @@ class UI:
         self.input_box = None
         self.dl = DynamicLoader()
         self.all_classes = self.dl.boxes
-        self.generate_add_methods()
+        # self.generate_add_methods()
         self.layout_init_file = "static/layout/layout_init.json"
 
     def create(self):
         self.layout_manager.load()
         self.add_global_handler()
         self.create_viewport_menu()
-        self.console_box = self.add_ConsoleBox(ui=self)
-        self.input_box = self.add_InputConsoleBox(ui=self)
+        self.new_box("ConsoleBox")
+        self.new_box("InputConsoleBox")
         self.is_created = True
 
     def create_viewport_menu(self):
@@ -52,9 +52,9 @@ class UI:
                 box.update()
 
     def new_box(self, box_name, **kwargs):
-        method = f"add_{box_name}"
-        func = getattr(self, method)
-        func(ui=self, **kwargs)
+        cls = self.all_classes[box_name]
+        instance = cls(ui=self, **kwargs)
+        instance.create_box()
 
     def destroy_all_boxes(self):
         for box in self.boxes:
@@ -81,23 +81,23 @@ class UI:
             # # 鼠标滚动检测
             # dpg.add_mouse_wheel_handler(callback=self.on_mouse_wheel)
 
-    # 生成添加类方法
-    def generate_add_methods(self):
-        for cls in self.all_classes.values():
-            method_name = f"add_{cls.__name__}"
-            # 使用闭包捕获cls
-            def add_method(self, cls=cls, **kwargs):
-                try:
-                    if cls.only and self.box_count.get(cls, 0) >= 1:
-                        # 如果盒子已经创建则不重复创建
-                        raise Exception("This box can only be created once")
-                    instance = cls(**kwargs)
-                    instance.create_box()
-                    return instance
-                except Exception as e:
-                    client_logger.log("WARNING", f"Unable to instantiate {cls}", e=e)
-            # 将生成的方法绑定到当前实例
-            setattr(self, method_name, add_method.__get__(self))
+    # # 生成添加类方法
+    # def generate_add_methods(self):
+    #     for cls in self.all_classes.values():
+    #         method_name = f"add_{cls.__name__}"
+    #         # 使用闭包捕获cls
+    #         def add_method(self, cls=cls, **kwargs):
+    #             try:
+    #                 if cls.only and self.box_count.get(cls, 0) >= 1:
+    #                     # 如果盒子已经创建则不重复创建
+    #                     raise Exception("This box can only be created once")
+    #                 instance = cls(**kwargs)
+    #                 instance.create_box()
+    #                 return instance
+    #             except Exception as e:
+    #                 client_logger.log("WARNING", f"Unable to instantiate {cls}", e=e)
+    #         # 将生成的方法绑定到当前实例
+    #         setattr(self, method_name, add_method.__get__(self))
 
     # 监听事件
     def on_key_release(self, sender, app_data, user_data):
