@@ -55,29 +55,6 @@ class AGVBoxCallback:
             if ep_info["msg_name"] not in self.subscriber:
                 self.subscriber[ep_info["msg_name"]] = tbk_manager.subscriber(ep_info, self.odometry_msg)
 
-    # def points_msg(self, msg):
-    #     # 反序列化点云数据
-    #     points = pickle.loads(msg)
-    #     # 对点云进行缩放
-    #     points = points * AGVParam.LOCAL_SCALE
-
-    #     # 计算每个点到原点的欧拉距离
-    #     distances = np.linalg.norm(points, axis=1)
-
-    #     # 找到距离的80%分位点（即20%的最远点的阈值）
-    #     distance_threshold = np.percentile(distances, AGVParam.DISTANCE_THRESHOLD)
-
-    #     # 保留距离小于等于阈值的点（移除最远的20%点）
-    #     points = points[distances <= distance_threshold]
-
-    #     # 保留 z 轴在 [0, 200] 范围内的点
-    #     points = points[
-    #         (points[:, 2] >= AGVParam.HIGH_RANGE_GLOBAL[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE_GLOBAL[1])
-    #     ]
-
-    #     # 更新 self.points
-    #     self.points = points
-
     def points_msg(self, msg):
         # 反序列化点云数据
         points = pickle.loads(msg)
@@ -93,15 +70,36 @@ class AGVBoxCallback:
         # 保留距离小于等于阈值的点（移除最远的20%点）
         points = points[distances <= distance_threshold]
 
-        # 保留 z 轴在 HIGH_RANGE_GLOBAL 范围内的点
+        # 保留 z 轴在 [0, 200] 范围内的点
         points = points[
             (points[:, 2] >= AGVParam.HIGH_RANGE_GLOBAL[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE_GLOBAL[1])
         ]
 
-        points = self.sparse_high_z_points(points, z_threshold=AGVParam.RARE_DATA["HIGHT_THRESHOLD"], sparse_ratio=AGVParam.RARE_DATA["RARE_DATA"])
-
+        # 更新 self.points
         self.points = points
-        
+
+    # def points_msg(self, msg):
+    #     # 反序列化点云数据
+    #     points = pickle.loads(msg)
+    #     # 对点云进行缩放
+    #     points = points * AGVParam.LOCAL_SCALE
+    #     # 计算每个点到原点的欧拉距离
+    #     distances = np.linalg.norm(points, axis=1)
+
+    #     # 找到距离的80%分位点（即20%的最远点的阈值）
+    #     distance_threshold = np.percentile(distances, AGVParam.DISTANCE_THRESHOLD)
+
+    #     # 保留距离小于等于阈值的点（移除最远的20%点）
+    #     points = points[distances <= distance_threshold]
+
+    #     # 保留 z 轴在 HIGH_RANGE_GLOBAL 范围内的点
+    #     points = points[
+    #         (points[:, 2] >= AGVParam.HIGH_RANGE_GLOBAL[0]) & (points[:, 2] <= AGVParam.HIGH_RANGE_GLOBAL[1])
+    #     ]
+
+    #     # points = self.sparse_high_z_points(points, z_threshold=AGVParam.RARE_DATA["HIGHT_THRESHOLD"], sparse_ratio=AGVParam.RARE_DATA["RARE_DATA"])
+
+    #     self.points = points
     def sparse_high_z_points(self,points, z_threshold=2000, sparse_ratio=0.1):
         """
         对 z 轴高于给定阈值的点进行稀疏化。

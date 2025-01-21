@@ -15,7 +15,7 @@ class AGVParam:
     # 保留高度在RANGE内的点
     HIGH_RANGE_GLOBAL = [-1e9, 1e9]
     
-    # HIGH_RANGE_GLOBAL = [-10, 1000]
+    # HIGH_RANGE_GLOBAL = [10, 1000]
     
     HIGH_RANGE_MAP = [10, 1000]
 
@@ -26,7 +26,7 @@ class AGVParam:
     DISTANCE_THRESHOLD = 75
 
     GRID_SIZE = (-10000, 10000)
-    RESOLUTION = 500
+    RESOLUTION = 400
 
     RARE_DATA = {
         # 稀疏高度大于HIGHT_THRESHOLD

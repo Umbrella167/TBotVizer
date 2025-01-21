@@ -1,6 +1,7 @@
 import pygame
-from utils.node_utils.BaseNode import BaseNode
+pygame.init()
 
+from utils.node_utils.BaseNode import BaseNode
 
 class AGVControl(BaseNode):
     def __init__(self, **kwargs):
@@ -13,7 +14,6 @@ class AGVControl(BaseNode):
         kwargs["init_data"] = kwargs["init_data"] or default_init_data
         super().__init__(**kwargs)
 
-        pygame.init()
         pygame.joystick.init()
         self.joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
         for joystick in self.joysticks:

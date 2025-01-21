@@ -127,52 +127,6 @@ class MessageBox(BaseBox):
     def destroy(self):
         self.msg_logger.close()
         super().destroy()
-    # def insert_tree(self, data):
-    #     for puuid in data:
-    #         # 添加节点列表
-    #         self.puuid_tags[puuid] = dpg.add_tree_node(label=puuid, parent=self.header)
-    #         with dpg.table(parent=self.puuid_tags[puuid], resizable=True) as table_sel_cols:
-    #             # 创建表标题
-    #             dpg.add_table_column(label="Name", init_width_or_weight=0)
-    #             dpg.add_table_column(label="LOG")
-    #             dpg.add_table_column(label="Value")
-    #
-    #             for uuid in data[puuid]:
-    #                 msg_info = data[puuid][uuid].ep_info
-    #                 name = msg_info.name
-    #                 msg_name = msg_info.msg_name
-    #                 msg_type = msg_info.msg_type
-    #                 msg_info_dict = {
-    #                     "msg_name": msg_name,
-    #                     "name": name,
-    #                     "msg_type": msg_type,
-    #                     "uuid": uuid,
-    #                     "puuid": puuid,
-    #                 }
-    #                 with dpg.table_row():
-    #                     item_dict = (
-    #                         self.tree_item_tag_dict.setdefault(puuid, {})
-    #                         .setdefault(msg_name, {})
-    #                         .setdefault(name, {})
-    #                     )
-    #                     item_dict["sub_checkbox"] = dpg.add_checkbox(
-    #                         label=f"{msg_name}({name})",
-    #                         callback=self._callback.checkbox_record_msg,
-    #                         user_data=(msg_info_dict, item_dict, self.tag),
-    #                     )
-    #                     item_dict["log_checkbox"] = dpg.add_checkbox()
-    #                     item_dict["value_checkbox"] = dpg.add_checkbox(
-    #                         default_value=True
-    #                     )
-    #
-    #                 with dpg.drag_payload(
-    #                         parent=self.tree_item_tag_dict[puuid][msg_name][name][
-    #                             "sub_checkbox"
-    #                         ],
-    #                         payload_type="plot_data",
-    #                         drag_data=(msg_info_dict, item_dict),
-    #                 ):
-    #                     dpg.add_text(f"{msg_name}({name})")
 
 
 class MessageBoxCallBack:

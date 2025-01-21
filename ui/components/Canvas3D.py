@@ -26,7 +26,9 @@ class BaseScene(gfx.Scene):
     def __init__(self, scale=1):
         super().__init__()
         self.scale = scale
-        # self.world.rotation = la.quat_from_euler((-math.pi / 2, 0, -math.pi / 2))
+        # self.world.rotation = la.quat_from_euler((-np.pi / 2, 0, -np.pi / 2))
+        # self.world.rotation = la.quat_from_euler((0, 0, -np.pi / 2))
+
         self.light = gfx.AmbientLight("#ffffff", 3)
         self.add(self.light)
         self.grid = gfx.GridHelper(100000 * self.scale, 300, color1="#444444", color2="#222222")
@@ -85,7 +87,7 @@ class World:
         x = pos[0] / vs[0] * 2 - 1  # 将 x 坐标映射到 [-1, 1]
         y = -(pos[1] / vs[1] * 2 - 1)  # 将 y 坐标映射到 [-1, 1]，并翻转 y 轴
         pos_ndc = (x, y, 0)  # 这里 z 值不再包含在 pos_ndc 中
-        projection_matrix = self._camera.projection_matrix 
+        projection_matrix = self._camera.projection_matrix
         view_matrix = self._camera.view_matrix
         ray_origin, ray_direction = self.ndc_to_ray(pos_ndc, projection_matrix, view_matrix)
         intersection = self.ray_plane_intersection(ray_origin, ray_direction)

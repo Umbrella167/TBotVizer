@@ -79,7 +79,7 @@ class AGVBox(BaseBox):
         arrow.local.scale = (scale, scale, scale)
         self.arrow = arrow
         return self.arrow
-
+    
     def create_arrow_planner(self):
         arrow = gfx.Group()
         head = gfx.Mesh(gfx.cylinder_geometry(1.5, 1.55, height=20), gfx.MeshPhongMaterial(color=(0, 0, 0.75, 1)))
@@ -150,9 +150,7 @@ class AGVBox(BaseBox):
     def create_points_could_scene(self):
         if self._callback.points.size < 10:
             return
-
         self.map.add_points(self._callback.points)
-
     def lidar_scene(self):
         self.grid = gfx.GridHelper(5000, 50, color1="#444444", color2="#222222")
         self.lidar_group = gfx.Group()
@@ -163,6 +161,8 @@ class AGVBox(BaseBox):
 
         self.lidar_group.add(self.lidar_meshes, self.AxesHelper)
         self.lidar_group.local.scale = (5, 5, 5)
+        self.lidar_group.local.position = (999, 999, 5999)
+
         return self.lidar_group
 
     def update_lidar_pose(self):
@@ -196,7 +196,6 @@ class AGVBox(BaseBox):
                 grid, now_grid_pos, target_grid_pos = self._callback.create_grid()
                 self._callback.planner_theta_star()
                 client_logger.log("warning","检测到障碍物，重新规划路径")
-
         self.create_points_could_scene()
         self.update_odometry_path()
         self.update_lidar_pose()
