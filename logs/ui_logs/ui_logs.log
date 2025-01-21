@@ -1,0 +1,1 @@
+2025-01-22 02:17:44.684 | ERROR    | utils.ClientLogManager:log:48 - Box AGVBox failed Error: 'NoneType' object has no attribute 'encode', occurred on line 125 in file /home/mark/TnTeQAQ/workspace/TBotVizer/ui/LayoutManager.py
