@@ -1,6 +1,5 @@
 import pygfx as gfx
 from ui.boxes.LiveEditor.obj.Object import Object
-from static.Params import *
 
 COLORS = {
     "BLUE_BODY_COLOR": (0, 0, 1, 1),
@@ -16,7 +15,7 @@ class Robot(Object):
 
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", "ROBOT")
-        self.team = kwargs.get("team", BLUE)
+        self.team = kwargs.get("team", 0)
         self.length = kwargs.get("length", 130)
         self.width = kwargs.get("width", 130)
         self.height = kwargs.get("height", 130)
@@ -57,13 +56,13 @@ class Robot(Object):
 
     def set_team(self, team):
         self.team = team
-        if team == BLUE:
+        if team == 0:
             self.set_color(
                 COLORS["BLUE_BODY_COLOR"],
                 COLORS["BLUE_EYE_COLOR"],
                 COLORS["BLUE_NAME_COLOR"],
             )
-        elif team == YELLOW:
+        elif team == 1:
             self.set_color(
                 COLORS["YELLOW_BODY_COLOR"],
                 COLORS["YELLOW_EYE_COLOR"],

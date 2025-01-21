@@ -12,11 +12,10 @@ class ConsoleBox(BaseBox):
         super().__init__(**kwargs)
         self.fps_text = None
         self.button_tags = []
-        self.all_classes = self.ui.all_classes
+        self.all_classes = self.ui.all_classes.values()
         self.is_sticky = True
         self.sticky_button = None
         # self.generate_add_methods()
-
 
     def create(self):
         # 初始化设置

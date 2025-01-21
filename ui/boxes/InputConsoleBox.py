@@ -1,5 +1,4 @@
 import dearpygui.dearpygui as dpg
-from config import DynamicConfig
 from ui.boxes import BaseBox
 
 class InputConsoleBox(BaseBox):
@@ -12,7 +11,7 @@ class InputConsoleBox(BaseBox):
         self.height = 300
         self.is_sticky = False
         # TODO: 这里只是暂时这么用，这个逻辑是有问题的
-        self.all_class_name = [i.__name__ for i in self.ui.all_classes if not i.save]
+        self.all_class_name = [i.__name__ for i in self.ui.all_classes.values() if i.save]
         self.input_text = None
         self.select_index = 0
         self.filter_set = None

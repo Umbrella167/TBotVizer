@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
 
+from ui.DynamicLoader import DynamicLoader
 from ui.LayoutManager import LayoutManager
 from utils.Utils import get_all_subclasses
 from ui.boxes import *
@@ -14,13 +15,13 @@ class UI:
         self.is_created = False
         self.console_box = None
         self.input_box = None
-        self.all_classes = get_all_subclasses(BaseBox)
+        self.dl = DynamicLoader()
+        self.all_classes = self.dl.boxes
         self.generate_add_methods()
         self.layout_init_file = "static/layout/layout_init.json"
 
     def create(self):
         self.layout_manager.load()
-
         self.add_global_handler()
         self.create_viewport_menu()
         self.console_box = self.add_ConsoleBox(ui=self)
@@ -59,18 +60,16 @@ class UI:
         for box in self.boxes:
             box.destroy()
 
-    def run_loop(self, func=None):
-        if func is not None:
+    def run(self):
+        while dpg.is_dearpygui_running():
+            dpg.render_dearpygui_frame()
             try:
-                while dpg.is_dearpygui_running():
-                    func()
-                    dpg.render_dearpygui_frame()
+                self.update()
+                self.dl.check_boxes()
             except Exception as e:
-                client_logger.log("ERROR", f"Loop Failed??? {e}")
-            finally:
-                self.destroy_all_boxes()
+                client_logger.log("ERROR", f"Loop Failed!", e)
         else:
-            dpg.start_dearpygui()
+            self.destroy_all_boxes()
 
     def add_global_handler(self):
         # 创建全局监听
@@ -84,7 +83,7 @@ class UI:
 
     # 生成添加类方法
     def generate_add_methods(self):
-        for cls in self.all_classes:
+        for cls in self.all_classes.values():
             method_name = f"add_{cls.__name__}"
             # 使用闭包捕获cls
             def add_method(self, cls=cls, **kwargs):

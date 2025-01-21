@@ -3,12 +3,11 @@ import math
 import pygfx as gfx
 from dearpygui import dearpygui as dpg
 from ui.boxes.BaseBox import BaseBox
-from ui.boxes.LiveEditor.MsgHandler import MsgHandler
+# from ui.boxes.LiveEditor.MsgHandler import MsgHandler
 from ui.boxes.LiveEditor.obj import *
 from ui.boxes.LiveEditor.Utils import load_bg_img
 from ui.components.Canvas3D import Canvas3D
 
-from static.Params import *
 from utils.ClientLogManager import client_logger
 
 
@@ -29,7 +28,7 @@ class LiveBox(BaseBox):
             "is_recording": False,
             "stage_data": None,
         }
-        self.msg_handler = MsgHandler(self.data)
+        # self.msg_handler = MsgHandler(self.data)
         self.bg_img_path = "static/image/bg.jpg"
 
     def create(self):
@@ -54,8 +53,8 @@ class LiveBox(BaseBox):
             self.ball = Ball(scene=self.canvas3D)
         self.ball.set_position((ball.x, ball.y, self.field.get_z()))
 
-        self.update_robots(robots_blue, self.robots["blue"], BLUE)
-        self.update_robots(robots_yellow, self.robots["yellow"], YELLOW)
+        self.update_robots(robots_blue, self.robots["blue"], 0)
+        self.update_robots(robots_yellow, self.robots["yellow"], 1)
 
     def update_robots(self, current_robots, previous_robots, team_constant):
         current_ids = {robot.robot_id for robot in current_robots}
