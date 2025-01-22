@@ -5,7 +5,7 @@ import pygfx as gfx
 import pylinalg as la
 from math import pi
 from utils.ClientLogManager import client_logger
-from api.NewTBKApi import tbk_manager
+from api.TBKManager import tbk_manager
 import numpy as np
 
 class PointsFaceBox(BaseBox):

@@ -1,5 +1,5 @@
 from utils.Utils import convert_to_float
-from utils.node_utils.BaseNode import BaseNode
+from ui.boxes.NodeEditor.node_utils.BaseNode import BaseNode
 
 
 class Add(BaseNode):

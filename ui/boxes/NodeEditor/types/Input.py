@@ -1,7 +1,7 @@
 import dearpygui.dearpygui as dpg
 
 from utils.Utils import convert_to_float
-from utils.node_utils.types.BaseType import BaseType
+from ui.boxes.NodeEditor.types.BaseType import BaseType
 
 
 class BaseInput(BaseType):

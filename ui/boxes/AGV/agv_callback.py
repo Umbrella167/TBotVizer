@@ -1,7 +1,7 @@
 
 import dearpygui.dearpygui as dpg
 import numpy as np
-from api.NewTBKApi import tbk_manager
+from api.TBKManager import tbk_manager
 import pickle
 import pylinalg as la
 import cv2
@@ -50,10 +50,10 @@ class AGVBoxCallback:
         ep_info["tag"] = self.tag
         if ep_info["msg_type"] == "sensor_msgs/PointCloud2":
             if ep_info["msg_name"] not in self.subscriber:
-                self.subscriber[ep_info["msg_name"]] = tbk_manager.subscriber(ep_info, self.points_msg)
+                self.subscriber[ep_info["msg_name"]] = tbk_manager.subscriber()
         if ep_info["msg_type"] == "nav_msgs/Odometry":
             if ep_info["msg_name"] not in self.subscriber:
-                self.subscriber[ep_info["msg_name"]] = tbk_manager.subscriber(ep_info, self.odometry_msg)
+                self.subscriber[ep_info["msg_name"]] = tbk_manager.subscriber()
 
     def points_msg(self, msg):
         # 反序列化点云数据
@@ -295,9 +295,9 @@ class AGVBoxCallback:
     def robot_control(self, vx,vy, omega):
         vx = vx * 500
         vy = vy * 500
-        omega = omega 
+        omega = omega
 
-        self.vel_publisher.publish(pickle.dumps([vx,vy, omega]))
+        self.vel_publisher.publisher()
 
 
         # F vy+

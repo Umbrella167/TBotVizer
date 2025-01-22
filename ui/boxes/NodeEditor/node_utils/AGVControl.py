@@ -1,7 +1,7 @@
 import pygame
 pygame.init()
 
-from utils.node_utils.BaseNode import BaseNode
+from ui.boxes.NodeEditor.node_utils.BaseNode import BaseNode
 
 class AGVControl(BaseNode):
     def __init__(self, **kwargs):

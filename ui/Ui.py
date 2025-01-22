@@ -2,8 +2,7 @@ import dearpygui.dearpygui as dpg
 
 from ui.DynamicLoader import DynamicLoader
 from ui.LayoutManager import LayoutManager
-from utils.Utils import get_all_subclasses
-from ui.boxes import *
+from utils.ClientLogManager import client_logger
 
 
 class UI:

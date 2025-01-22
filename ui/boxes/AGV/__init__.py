@@ -1,1 +1,3 @@
-from ui.boxes.AGV.AGVBox import AGVBox
+from .AGVBox import AGVBox
+
+__all__ = ['AGVBox']

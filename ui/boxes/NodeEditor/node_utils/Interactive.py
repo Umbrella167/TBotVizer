@@ -1,4 +1,4 @@
-from utils.node_utils.BaseNode import BaseNode
+from ui.boxes.NodeEditor.node_utils.BaseNode import BaseNode
 
 
 class Input(BaseNode):

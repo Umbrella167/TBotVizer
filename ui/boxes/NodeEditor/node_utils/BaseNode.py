@@ -5,7 +5,7 @@ import hashlib
 import dearpygui.dearpygui as dpg
 
 from utils.Utils import get_mouse_relative_pos
-from utils.node_utils import types
+from ui.boxes.NodeEditor import types
 
 
 class BaseNode:
