@@ -5,11 +5,10 @@ import time
 import types
 
 from google.protobuf.internal import builder
-from google.protobuf.json_format import MessageToJson
 
 from utils.ClientLogManager import client_logger
 from utils.ModuleLazyLoader import ModuleLazyLoader
-from .EtcdClient import EtcdClient, etcd_client
+from .EtcdClient import etcd_client
 
 
 # def build_param_tree(flat_dict):
@@ -96,6 +95,7 @@ class TBKManager:
             raw_msg.ParseFromString(msg)
         except:
             raw_msg = msg
+            client_logger.log("WARNING", f"name: {name}, msg_name: {msg_name}, Automatic parsing failed!")
 
         for tag, callback_func in self.callback_dict[name][msg_name].items():
             try:
@@ -111,7 +111,7 @@ class TBKManager:
         if self.subscriber_dict.get(name, {}).get(msg_name) is not None:
             # 如果已经订阅则退出
             return
-        client_logger.log("INFO", f"Add new subscriber({(name, msg_name)})")
+        client_logger.log("INFO", f"Add new subscriber({name, msg_name}).")
         self.subscriber_dict.setdefault(name, {})[msg_name] = self.tbkpy.Subscriber(
             name,
             msg_name,

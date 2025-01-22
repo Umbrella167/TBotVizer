@@ -23,7 +23,6 @@ class UI:
         self.layout_manager.load()
         self.add_global_handler()
         self.create_viewport_menu()
-        self.new_box("ConsoleBox")
         self.new_box("InputConsoleBox")
         self.is_created = True
 
@@ -54,6 +53,7 @@ class UI:
         cls = self.all_classes[box_name]
         instance = cls(ui=self, **kwargs)
         instance.create_box()
+        return instance
 
     def destroy_all_boxes(self):
         for box in self.boxes:

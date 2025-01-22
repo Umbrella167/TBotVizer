@@ -29,7 +29,7 @@ class EtcdClient:
         res = self.etcd.get_prefix(self.MESSAGE_PREFIX)
         for r in res:
             key, value = r[1].key.decode(), r[0]
-            keys = key[len(self.MESSAGE_PREFIX) :].split("/")[1:]
+            keys = key[len(self.MESSAGE_PREFIX):].split("/")[1:]
             info = None
             if len(keys) == 1:
                 info = tbk_pb2.State()
@@ -49,14 +49,42 @@ class EtcdClient:
         res = {"ps": processes, "pubs": publishers, "subs": subscribers}
         return res
 
-    def get_param_info(self, _prefix=None):
-        prefix = self.PARAM_PREFIX + (_prefix if _prefix else "")
+    def get_param_info(self):
+        prefix = self.PARAM_PREFIX
         raw_data = self.etcd.get_prefix(prefix)
-        data = dict([(r[1].key.decode("utf-8", errors="ignore")[12:], r[0].decode("utf-8", errors="ignore")) for r in raw_data])
+        data = dict(
+            [(r[1].key.decode("utf-8", errors="ignore")[12:], r[0].decode("utf-8", errors="ignore")) for r in raw_data])
         return data
+
+    def list(self, _prefix=None):
+        prefix = '/tbk/params/' + (_prefix if _prefix else '')
+        res = dict([(r[1].key.decode(), r[0].decode()) for r in self.etcd.get_prefix(prefix)])
+        return res
+
+    def get(self, param):
+        r = self.etcd.get(f"/tbk/params/{param}")
+        if r[0] is None:
+            return False, f"Key \"{param}\" Not found."
+        return (True, r[0].decode())
+
+    def put(self, param, value):
+        r = self.etcd.put(f"/tbk/params/{param}", value)
+        return True, "OK"
+
+    def set(self, param, value):
+        res, v = self.get(param)
+        if res:
+            return self.put(param, value)
+        else:
+            return False, v
+
+    def delete(self, param):
+        r = self.etcd.delete(f"/tbk/params/{param}")
+        return r, f"Key \"{param}\" Not found." if r == False else "OK"
 
     def update_pub_msg_type(self):
         msg_info = self.get_message_info()
+        print(msg_info)
         for k, v in msg_info["pubs"].items():
             info = (v.ep_info.name, v.ep_info.msg_name)
             msg_type = v.ep_info.msg_type
@@ -67,5 +95,6 @@ class EtcdClient:
         if info not in self.pubs:
             self.update_pub_msg_type()
         return self.pubs.get(info, "Unknown")
+
 
 etcd_client = EtcdClient()

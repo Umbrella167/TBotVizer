@@ -14,7 +14,7 @@ class BaseBox(object):
         self.label = None
         self.is_created = False
         self.only = True
-        self.data = kwargs.pop('data', None)
+        self.data = kwargs.pop("data", {})
         self.window_settings = kwargs
         self.handler = dpg.add_handler_registry()
 

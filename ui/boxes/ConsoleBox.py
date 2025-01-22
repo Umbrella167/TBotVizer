@@ -4,7 +4,7 @@ from ui.boxes import BaseBox
 
 class ConsoleBox(BaseBox):
     only = True
-    save = False
+    save = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -12,7 +12,8 @@ class ConsoleBox(BaseBox):
         self.button_tags = []
         self.all_classes = self.ui.all_classes.values()
         self.old_classes = list(self.all_classes)
-        self.is_sticky = True
+        self.data["is_sticky"] = self.data.get("is_sticky", True)
+        print(self.data)
         self.sticky_button = None
 
     def create(self):
@@ -30,7 +31,7 @@ class ConsoleBox(BaseBox):
             no_background=True,
             # no_saved_settings=True,
             no_title_bar=True,
-            popup=not self.is_sticky,
+            popup=not self.data["is_sticky"],
         )
         self.fps_text = dpg.add_text(f"FPS:{dpg.get_frame_rate()}", parent=self.tag)
         # 添加按钮
@@ -50,7 +51,7 @@ class ConsoleBox(BaseBox):
     def key_release_handler(self, sender, app_data, user_data):
         if dpg.is_key_down(dpg.mvKey_LControl) and dpg.is_key_released(dpg.mvKey_Return):
             self.show()
-        if dpg.is_key_released(dpg.mvKey_Escape) and not self.is_sticky:
+        if dpg.is_key_released(dpg.mvKey_Escape) and not self.data["is_sticky"]:
             self.hide()
 
     # 自动添加按钮
@@ -75,8 +76,8 @@ class ConsoleBox(BaseBox):
         self.generate_add_bottom()
 
     def sticky(self):
-        self.is_sticky = not self.is_sticky
-        if self.is_sticky:
+        self.data["is_sticky"] = not self.data["is_sticky"]
+        if self.data["is_sticky"]:
             dpg.configure_item(self.tag, popup=False)
         else:
             dpg.configure_item(self.tag, popup=True)

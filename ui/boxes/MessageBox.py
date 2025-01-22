@@ -157,7 +157,12 @@ class MessageBoxCallBack:
         if is_checked:
             self.msg_subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})[
                 name
-            ] = tbk_manager.subscriber()
+            ] = tbk_manager.subscriber(
+                msg_info,
+                lambda msg: self.subscriber_msg(
+                    msg, (puuid, name, msg_name, msg_type, tree_item_tag_dict)
+                ),
+            )
             # tbk_data.Subscriber(
             #     msg_info,
             #     lambda msg: self.subscriber_msg(
