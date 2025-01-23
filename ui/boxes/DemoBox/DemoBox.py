@@ -39,7 +39,6 @@ class DemoBox(BaseBox):
         dpg.add_button(label="test", parent=self.tag, callback=lambda: self.puber.publish(f"test{time.time()}"))
         # 创建画布
         self.canvas = Canvas2D(self.tag)
-        # wo gai le yi xia
         self.texture_id = self.canvas.texture_register((600, 400), format=dpg.mvFormat_Float_rgb)
         with self.canvas.draw():
             dpg.draw_image(self.texture_id, pmin=(0, 0), pmax=(600, 400))
