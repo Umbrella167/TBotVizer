@@ -135,10 +135,12 @@ class TBKManager:
         return self.etcd.list(**kwargs)
 
     def get(self, **kwargs):
-        return self.etcd.get(**kwargs)[1]
+        r = self.etcd.get(**kwargs)[0]
+        r = r.decode() if isinstance(r, bytes) else r.__str__()
+        return r
 
     def put(self, **kwargs):
-        return self.etcd.put(**kwargs)[1]
+        return self.etcd.put(**kwargs)
 
     def delete(self, **kwargs):
         return self.etcd.delete(**kwargs)[1]

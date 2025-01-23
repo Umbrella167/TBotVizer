@@ -29,12 +29,8 @@ class DemoBox(BaseBox):
         self.tbk_manager.load_module(image_pb2)
         self.img = None
 
-        self.test_param = ParamData(
-            prefix="test_path",
-            name="test_name",
-            type="test_type",
-            tbk_manager=self.tbk_manager
-        )
+        self.test_param = ParamData(prefix="test_path", name="test_name", tbk_manager=self.tbk_manager)
+        self.test_param2 = ParamData(prefix="test_path", name="test_name", tbk_manager=self.tbk_manager)
         self.test_param.value = "10"
 
     def create(self):
@@ -75,3 +71,4 @@ class DemoBox(BaseBox):
 
 
         self.test_param.value = str(int(self.test_param.value) + 1)
+        self.test_param2.value = str(int(self.test_param2.value) - 1)

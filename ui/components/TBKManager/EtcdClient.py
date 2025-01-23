@@ -63,20 +63,19 @@ class EtcdClient:
 
     def get(self, param):
         r = self.etcd.get(f"/tbk/params/{param}")
-        if r[0] is None:
-            return False, f"Key \"{param}\" Not found."
-        return (True, r[0].decode())
+        return r
 
     def put(self, param, value):
         r = self.etcd.put(f"/tbk/params/{param}", value)
-        return True, "OK"
+        # print("r:", r)
+        # return True, "OK"
 
-    def set(self, param, value):
-        res, v = self.get(param)
-        if res:
-            return self.put(param, value)
-        else:
-            return False, v
+    # def set(self, param, value):
+    #     res, v = self.get(param)
+    #     if res:
+    #         return self.put(param, value)
+    #     else:
+    #         return False, v
 
     def delete(self, param):
         r = self.etcd.delete(f"/tbk/params/{param}")
