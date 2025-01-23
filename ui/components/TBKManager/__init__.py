@@ -1,4 +1,5 @@
-from .TBKManager import TBKManager
+from .TBKManager import tbk_manager
+
 # from .EtcdClient import EtcdClient
 
-__all__ = ['TBKManager']
+__all__ = ["tbk_manager"]

@@ -79,12 +79,11 @@ class TBKManager:
         builder.BuildTopDescriptorsAndMessages(descriptor, package_name, self.all_types.__dict__)
         self.all_modules.append(module)
 
-    def unsubscribe(self, name, msg_name, **kwargs):
-        tag = kwargs.get("tag", None)
-        info = (name, msg_name)
-        del self.callback_dict[info][tag]
-        if len(self.callback_dict[info]) < 1:
-            del self.subscriber_dict[info]
+    def unsubscribe(self, name, msg_name, tag, **kwargs):
+        print(self.subscriber_dict)
+        del self.callback_dict[name][msg_name][tag]
+        if len(self.callback_dict[name][msg_name]) < 1:
+            del self.subscriber_dict[name][msg_name]
 
     def is_subscribed(self, name, msg_name, **kwargs) -> bool:
         return self.subscriber_dict.get(name, {}).get(msg_name, None) is not None
@@ -145,7 +144,8 @@ class TBKManager:
     def delete(self, **kwargs):
         return self.etcd.delete(**kwargs)[1]
 
-# tbk_manager = TBKManager("simulator")
+
+tbk_manager = TBKManager("simulator")
 
 if __name__ == "__main__":
     # from Utils.ProtobufManager import ProtobufManager

@@ -2,44 +2,25 @@ import dearpygui.dearpygui as dpg
 import pickle
 
 from config.DynamicConfig import RUN_TIME
-from ui.components.TBKManager import TBKManager
+from ui.components.TBKManager.TBKManager import tbk_manager
 from utils.network.CommunicationManager import CommunicationManager
 
 from ui.boxes.NodeEditor.node_utils.BaseNode import BaseNode
 from utils.Utils import convert_to_float
 
+
 class Subscriber(BaseNode):
     def __init__(self, **kwargs):
         default_init_data = {
-            "puuid": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": None}
-            },
-            "name": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": None}
-            },
-            "msg_name": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": None}
-            },
-            "msg": {
-                "attribute_type": "OUTPUT",
-                "data_type": "MULTILINEINPUT",
-                "user_data": {"value": None}
-            },
-            "pos": {
-                "attribute_type": "CONFIG",
-                "data_type": "CONFIG",
-                "user_data": {"value": None}
-            },
+            "puuid": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
+            "name": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
+            "msg_name": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
+            "msg": {"attribute_type": "OUTPUT", "data_type": "MULTILINEINPUT", "user_data": {"value": None}},
+            "pos": {"attribute_type": "CONFIG", "data_type": "CONFIG", "user_data": {"value": None}},
         }
         kwargs["init_data"] = kwargs.get("init_data") or default_init_data
         super().__init__(**kwargs)
-        self.cm = CommunicationManager(TBKManager(name="Subscriber Node"))
+        self.cm = CommunicationManager(tbk_manager)
         self.current_info = None
         self.automatic = True
 
@@ -49,12 +30,7 @@ class Subscriber(BaseNode):
         name = self.data["name"]["user_data"].get("value")
         msg_name = self.data["msg_name"]["user_data"].get("value")
         # 获取新的订阅信息
-        info = {
-            "puuid": puuid,
-            "name": name,
-            "msg_name": msg_name,
-            "tag": self.tag
-        }
+        info = {"puuid": puuid, "name": name, "msg_name": msg_name, "tag": self.tag}
         # 如果订阅信息发生变化，则重新订阅
         if info != self.current_info:
             # 如果有现有的订阅器，先移除其回调
@@ -62,6 +38,7 @@ class Subscriber(BaseNode):
                 self.cm.unsubscribe(
                     name=name,
                     msg_name=msg_name,
+                    tag=self.tag,
                 )
             # 如果新的订阅信息有效，则创建新的订阅
             if puuid is not None and name is not None and msg_name is not None:
@@ -72,15 +49,15 @@ class Subscriber(BaseNode):
                 self.current_info = None
 
     def callback(self, msg):
-        self.data["msg"]["user_data"]["value"] = self.decode_msg(msg)
+        self.data["msg"]["user_data"]["value"] = msg
 
-    def decode_msg(self, msg):
-        try:
-            res = pickle.loads(msg)
-        except Exception as e:
-            # client_logger.log("ERROR", "Msg decode error", e)
-            return msg
-        return res
+    # def decode_msg(self, msg):
+    #     try:
+    #         res = pickle.loads(msg)
+    #     except Exception as e:
+    #         # client_logger.log("ERROR", "Msg decode error", e)
+    #         return msg
+    #     return res
 
     def extra(self):
         dpg.configure_item(self.tag, drop_callback=self.drop_callback)
@@ -95,40 +72,16 @@ class Subscriber(BaseNode):
 class Publisher(BaseNode):
     def __init__(self, **kwargs):
         default_init_data = {
-            "name": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": "MOTOR_CONTROL"}
-            },
-            "msg_name": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": "RPM"}
-            },
-            "msg_type": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": "list"}
-            },
-            "frequency": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": 0.01}
-            },
-            "msg": {
-                "attribute_type": "INPUT",
-                "data_type": "STRINPUT",
-                "user_data": {"value": None}
-            },
-            "pos": {
-                "attribute_type": "CONFIG",
-                "data_type": "CONFIG",
-                "user_data": {"value": None}
-            }
+            "name": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": "MOTOR_CONTROL"}},
+            "msg_name": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": "RPM"}},
+            "msg_type": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": "list"}},
+            "frequency": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": 0.01}},
+            "msg": {"attribute_type": "INPUT", "data_type": "STRINPUT", "user_data": {"value": None}},
+            "pos": {"attribute_type": "CONFIG", "data_type": "CONFIG", "user_data": {"value": None}},
         }
         kwargs["init_data"] = kwargs.get("init_data") or default_init_data
         super().__init__(**kwargs)
-        self.cm = CommunicationManager(TBKManager(name="Subscriber Node"))
+        self.cm = CommunicationManager(tbk_manager)
         self.puber = None
         self.info = None
         self.automatic = True
