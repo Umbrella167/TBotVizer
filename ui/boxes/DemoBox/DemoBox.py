@@ -28,17 +28,13 @@ class DemoBox(BaseBox):
         tbk_manager.load_module(image_pb2)
         self.img = None
 
-        self.test_param = ParamData(prefix="test_path", name="test_name", tbk_manager=tbk_manager)
+        self.test_param = ParamData(prefix="test_path", name="test_name")
 
-        a = ParamData(prefix="box1/module1", name="pos", tbk_manager=tbk_manager)
-
-        color = ParamData(prefix="module1", name="color", tbk_manager=tbk_manager)
-        a1 = ParamData(prefix="box1/a", name="pos", tbk_manager=tbk_manager)
+        a = ParamData(prefix="box1/module1", name="pos")
 
 
-        a.value = "(0, 0, 0)"
-        print(a1.value)
-        self.test_param2 = ParamData(prefix="test_path", name="test_name", tbk_manager=tbk_manager)
+
+        self.test_param2 = ParamData(prefix="test_path", name="test_name")
         self.test_param.value = "10"
 
     def create(self):
@@ -74,4 +70,4 @@ class DemoBox(BaseBox):
             self.canvas.texture_update(self.texture_id, self.img)
 
         self.test_param.value = str(int(self.test_param.value) + 1)
-        self.test_param2.value = str(int(self.test_param2.value) - 1)
+        # self.test_param2.value = str(int(self.test_param2.value) - 1)
