@@ -32,8 +32,6 @@ class DemoBox(BaseBox):
 
         a = ParamData(prefix="box1/module1", name="pos")
 
-
-
         self.test_param2 = ParamData(prefix="test_path", name="test_name")
         self.test_param.value = "10"
 

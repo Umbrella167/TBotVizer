@@ -110,6 +110,9 @@ class Canvas2D:
         self.size_offset = size_offset
         self._create(self.drawlist_parent_tag, self.width, self.height, pos)
         self._create_handler()
+        if callable(drop_callback):
+            # noinspection PyTypeChecker
+            dpg.configure_item(item=self.group_tag, drop_callback=drop_callback)
 
     def _create(self, parent, width=-1, height=-1, pos=[]):
         with dpg.group(parent=parent) as self.group_tag:
