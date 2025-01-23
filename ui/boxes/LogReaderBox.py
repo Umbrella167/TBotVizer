@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 
-from api.NewTBKApi import tbk_manager
+from api.TBKManager import tbk_manager
 
 from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
@@ -94,7 +94,7 @@ class LogReaderBox(BaseBox):
         puuid = prev_msg["puuid"]
         msg_name = prev_msg["msg_name"]
         name = prev_msg["name"]
-        self._callback.log_publish_dict[puuid][msg_name][name].publish(prev_msg["message"])
+        self._callback.log_publish_dict[puuid][msg_name][name].publisher()
         current_time = (prev_msg["timestamp"] - self._callback.log_start_time) / 1e9
         dpg.set_value(self.slider_tag, current_time)
 
@@ -108,7 +108,7 @@ class LogReaderBox(BaseBox):
         puuid = next_msg["puuid"]
         msg_name = next_msg["msg_name"]
         name = next_msg["name"]
-        self._callback.log_publish_dict[puuid][msg_name][name].publish(next_msg["message"])
+        self._callback.log_publish_dict[puuid][msg_name][name].publisher()
         current_time = (next_msg["timestamp"] - self._callback.log_start_time) / 1e9
         dpg.set_value(self.slider_tag, current_time)
 

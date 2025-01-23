@@ -5,7 +5,7 @@ import numpy as np
 import utils.planner.python_motion_planning as pmp
 import math
 import time
-from api.NewTBKApi import tbk_manager
+from api.TBKManager import tbk_manager
 import pickle
 from utils.planner.local_planner.MPCControllerWithObstacles import MPCController
 
@@ -183,7 +183,7 @@ class RRTBox(BaseBox):
         v, s = self.mpc.compute_control(robot_now_pose, robot_target_pose)
         print("s",s)
         self.robot_control(v[0],v[1], v[2])
-        self.vel_publisher.publish(pickle.dumps([v[0] * 500,v[1] * 500, v[2] * 8]))
+        self.vel_publisher.publisher()
     # def update_path(self):
     #     if self.path is None:
     #         return

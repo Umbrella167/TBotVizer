@@ -7,7 +7,7 @@ from loguru import logger as uilogger
 from static.Params import TypeParams
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
-from api.NewTBKApi import tbk_manager
+from api.TBKManager import tbk_manager
 from utils.Utils import msg_serializer
 
 
@@ -138,12 +138,7 @@ class PlotVzBox(BaseBox):
         self.message_subscriber_dict.setdefault(puuid, {}).setdefault(msg_name, {})
         if name not in self.message_subscriber_dict[puuid][msg_name]:
             msg_info["tag"] = self.tag
-            self.message_subscriber_dict[puuid][msg_name][name] = tbk_manager.subscriber(
-                msg_info,
-                lambda msg: self.subscriber_msg(
-                    msg, (puuid, name, msg_name, msg_type, series_tag)
-                ),
-            )
+            self.message_subscriber_dict[puuid][msg_name][name] = tbk_manager.subscriber()
         else:
             client_logger.log("WARNING", f"{puuid}_{msg_name}:{name} was drawn.")
 

@@ -6,6 +6,7 @@ from utils.ClientLogManager import client_logger
 
 class BaseBox(object):
     only = False
+    save = True
 
     def __init__(self, ui, **kwargs):
         self.ui = ui
@@ -13,7 +14,7 @@ class BaseBox(object):
         self.label = None
         self.is_created = False
         self.only = True
-        self.data = kwargs.pop('data', None)
+        self.data = kwargs.pop("data", {})
         self.window_settings = kwargs
         self.handler = dpg.add_handler_registry()
 

@@ -6,7 +6,7 @@ import dearpygui.dearpygui as dpg
 from logger.logger import Logger
 from ui.boxes.BaseBox import BaseBox
 from utils.ClientLogManager import client_logger
-from api.NewTBKApi import tbk_manager
+from api.TBKManager import tbk_manager
 
 
 class MessageBox(BaseBox):

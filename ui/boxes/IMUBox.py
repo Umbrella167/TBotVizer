@@ -6,7 +6,7 @@ import pylinalg as la
 from math import pi
 from utils.ClientLogManager import client_logger
 from tzcp.ros.sensor_pb2 import IMU
-from api.NewTBKApi import tbk_manager
+from api.TBKManager import tbk_manager
 
 class IMUBoxCallback:
     def __init__(self):
