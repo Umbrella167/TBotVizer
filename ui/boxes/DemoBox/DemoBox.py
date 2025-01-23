@@ -27,6 +27,7 @@ class DemoBox(BaseBox):
         self.tbk_manager.load_module(imu_info_pb2)
         self.tbk_manager.load_module(jointstate_info_pb2)
         self.tbk_manager.load_module(image_pb2)
+        self.img = None
 
         self.test_param = ParamData(
             prefix="test_path",
@@ -47,18 +48,30 @@ class DemoBox(BaseBox):
                                                     callback=self.update_img)
         # 创建按钮
         dpg.add_button(label="test", parent=self.tag, callback=lambda: self.puber.publish(f"test{time.time()}"))
+        # 创建画布
+        self.canvas = Canvas2D(self.tag)
+        # wo gai le yi xia
+        self.texture_id = self.canvas.texture_register((600, 400), format=dpg.mvFormat_Float_rgb)
+        with self.canvas.draw():
+            dpg.draw_image(self.texture_id, pmin=(0, 0), pmax=(600, 400))
 
     def update_img(self, rev_img):
         img_array = np.frombuffer(rev_img.img, dtype=np.uint8)
         img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = np.array(img, dtype=np.float32)
 
-        # TODO: 处理图像，显示在dpg上
-        cv2.imwrite("img.jpg", img)
+        self.img = img
+        # cv2.imwrite("img.jpg", img)
 
     def destroy(self):
         # 销毁之前可以做的事情
         super().destroy()  # 真正销毁Box
 
     def update(self):
+        # 更新图像
+        if self.img is not None:
+            self.canvas.texture_update(self.texture_id, self.img)
+
+
         self.test_param.value = str(int(self.test_param.value) + 1)

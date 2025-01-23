@@ -95,7 +95,7 @@ class CanvasCallBack:
 
 
 class Canvas2D:
-    def __init__(self, parent, size=(-1, -1), size_offset=(0, -50), pos=[], auto_mouse_transfrom=True, drop_callback=None, scale_step=0.1, format=dpg.mvFormat_Float_rgba):
+    def __init__(self, parent, size=(-1, -1), size_offset=(0, -50), pos=[], auto_mouse_transfrom=True, drop_callback=None, scale_step=0.1):
         super().__init__()
         self.size = size
         self.apply_mouse_transfrom = auto_mouse_transfrom
@@ -107,7 +107,6 @@ class Canvas2D:
         self.background_tag = None
         self.drawlist_parent_tag = parent
         self.width, self.height = size
-        self.format = format
         self.size_offset = size_offset
         self._create(self.drawlist_parent_tag, self.width, self.height, pos)
         self._create_handler()
@@ -176,11 +175,11 @@ class Canvas2D:
         with dpg.draw_node(parent=parent) as draw_tag:
             yield draw_tag
 
-    def texture_register(self, size):
+    def texture_register(self, size, format=dpg.mvFormat_Float_rgba):
         width, height = size
         data = np.zeros((height, width, 4)).ravel().astype(np.float32) / 255.0
         with dpg.texture_registry():
-            texture_id = dpg.add_raw_texture(width=width, height=height, default_value=data, format=self.format)
+            texture_id = dpg.add_raw_texture(width=width, height=height, default_value=data, format=format)
         return texture_id
 
     def texture_update(self, texture_id, image):
