@@ -131,6 +131,19 @@ class TBKManager:
         self.publisher_dict.setdefault(name, {})[msg_name] = self.tbkpy.Publisher(ep_info)
         return self.publisher_dict[name][msg_name]
 
+    def list(self, **kwargs):
+        return self.etcd.list(**kwargs)
+
+    def get(self, **kwargs):
+        r = self.etcd.get(**kwargs)[0]
+        r = r.decode() if isinstance(r, bytes) else r.__str__()
+        return r
+
+    def put(self, **kwargs):
+        return self.etcd.put(**kwargs)
+
+    def delete(self, **kwargs):
+        return self.etcd.delete(**kwargs)[1]
 
 # tbk_manager = TBKManager("simulator")
 
