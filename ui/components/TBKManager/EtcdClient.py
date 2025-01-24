@@ -94,7 +94,4 @@ class EtcdClient:
             self.update_pub_msg_type()
         return self.pubs.get(info, "Unknown")
 
-
-
-
 etcd_client = EtcdClient()

@@ -95,7 +95,7 @@ class TBKManager:
             raw_msg.ParseFromString(msg)
         except:
             raw_msg = msg
-            client_logger.log("WARNING", f"name: {name}, msg_name: {msg_name}, Automatic parsing failed!")
+            # client_logger.log("WARNING", f"name: {name}, msg_name: {msg_name}, Automatic parsing failed!")
 
         for tag, callback_func in self.callback_dict[name][msg_name].items():
             try:
