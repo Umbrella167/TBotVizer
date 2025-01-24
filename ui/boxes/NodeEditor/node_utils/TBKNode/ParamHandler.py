@@ -40,8 +40,10 @@ class ParamHandler(BaseNode):
         self._process_param_data(prefix, name, type, info, value)
 
     def _process_param_data(self, prefix, name, type, info, value):
-        if all([prefix, name]):
-            self.param_data = ParamData(prefix=prefix, name=name)
+        if not all([prefix, name]):
+            return
+
+        self.param_data = ParamData(prefix=prefix, name=name)
 
         if self.old_param_data != (self.param_data.type, self.param_data.info, self.param_data.value):
             self.data["type"]["user_data"]["value"] = self.param_data.type
