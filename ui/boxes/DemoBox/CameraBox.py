@@ -5,6 +5,9 @@ import dearpygui.dearpygui as dpg
 from ui.boxes.BaseBox import BaseBox
 from ui.components.TBKManager.TBKManager import tbk_manager
 from .proto.python import image_pb2
+from .proto.python import actor_info_pb2
+from .proto.python import imu_info_pb2
+from .proto.python import jointstate_info_pb2
 from ui.components.Canvas2D import Canvas2D
 
 
@@ -23,6 +26,9 @@ class CameraBox(BaseBox):
         self.tbk_msg_name = None
         self.img_suber = None
         tbk_manager.load_module(image_pb2)
+        tbk_manager.load_module(actor_info_pb2)
+        tbk_manager.load_module(imu_info_pb2)
+        tbk_manager.load_module(jointstate_info_pb2)
 
     def create(self):
         dpg.configure_item(

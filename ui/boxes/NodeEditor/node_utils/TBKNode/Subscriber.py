@@ -32,8 +32,8 @@ class Subscriber(BaseNode):
             # 如果有现有的订阅器，先移除其回调
             if self.current_info is not None:
                 self.cm.unsubscribe(
-                    name=name,
-                    msg_name=msg_name,
+                    name=self.current_info["name"],
+                    msg_name=self.current_info["msg_name"],
                     tag=self.tag,
                 )
             # 如果新的订阅信息有效，则创建新的订阅

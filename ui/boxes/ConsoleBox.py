@@ -13,7 +13,6 @@ class ConsoleBox(BaseBox):
         self.all_classes = self.ui.all_classes.values()
         self.old_classes = list(self.all_classes)
         self.data["is_sticky"] = self.data.get("is_sticky", True)
-        print(self.data)
         self.sticky_button = None
 
     def create(self):

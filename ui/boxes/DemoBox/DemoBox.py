@@ -37,9 +37,9 @@ class DemoBox(BaseBox):
 
     def create(self):
         # create 会自动创建dpg窗口， 窗口拥有tag，获取的方法是 self.tag
-        self.input = dpg.add_input_text(parent=self.tag, default_value=self.data.tolist())
+        # self.input = dpg.add_input_text(parent=self.tag, default_value=self.data.tolist())
         self.puber = tbk_manager.publisher(name="name", msg_name="msg_name", msg_type=tbk_manager.all_types.ByteMultiArray)
-        self.suber = tbk_manager.subscriber(name="name", msg_name="msg_name", tag=self.tag, callback=lambda m: dpg.set_value(item=self.input, value=m))
+        # self.suber = tbk_manager.subscriber(name="name", msg_name="msg_name", tag=self.tag, callback=lambda m: dpg.set_value(item=self.input, value=m))
         self.imgsuber = tbk_manager.subscriber(name="tz_agv", msg_name="tz_agv_free_camera_image", tag=self.tag, callback=self.update_img)
         # 创建按钮
         dpg.add_button(label="test", parent=self.tag, callback=lambda: self.puber.publish(f"test{time.time()}"))

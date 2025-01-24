@@ -10,33 +10,6 @@ from utils.ClientLogManager import client_logger
 from utils.ModuleLazyLoader import ModuleLazyLoader
 from .EtcdClient import etcd_client
 
-
-# def build_param_tree(flat_dict):
-#     tree = {}
-#
-#     for key, value in flat_dict.items():
-#         parts = key.split("/")
-#         current_level = tree
-#
-#         for part in parts[:-1]:  # 遍历层级中的所有部分（除了最后一个）
-#             if part not in current_level:
-#                 current_level[part] = {}
-#             current_level = current_level[part]
-#
-#         # 处理最后一个部分，可能包含冒号
-#         last_part = parts[-1]
-#         sub_parts = last_part.split(":")
-#
-#         for sub_part in sub_parts[:-1]:
-#             if sub_part not in current_level:
-#                 current_level[sub_part] = {}
-#             current_level = current_level[sub_part]
-#
-#         # 最后的部分是叶节点
-#         current_level[sub_parts[-1]] = value
-#     return tree
-
-
 class TBKManager:
     def __init__(self, name="TBKNode"):
         self.name = name

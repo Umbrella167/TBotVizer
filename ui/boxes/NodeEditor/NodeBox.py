@@ -1,4 +1,3 @@
-import json
 import time
 import copy
 
@@ -34,8 +33,6 @@ class NodeBox(BaseBox):
         self.nodes = {}
         # 记录链接
         self.links = {}
-        # 布局文件
-        self.layout_file = "static/layout/node_layout.json"
 
     def create(self):
         dpg.configure_item(self.tag, label="NodeBox")
@@ -88,26 +85,25 @@ class NodeBox(BaseBox):
 
     def init_nodes(self):
         try:
-            with open(self.layout_file, "r") as f:
-                node_layout = json.loads(f.read())
-                for identifier, node_info in node_layout["node"].items():
-                    cls_name, data = node_info
-                    try:
-                        self.new_node("system", cls_name, (identifier, data))
-                    except Exception as e:
-                        client_logger.log("WARNING", f"Node {cls_name} init failed", e)
-                self.update()
-                for link in node_layout["link"]:
-                    output_id, output_name, input_id, input_name = link
-                    for n in self.nodes.values():
-                        if n.identifier == output_id:
-                            output_node = n
-                        if n.identifier == input_id:
-                            input_node = n
-                    try:
-                        self.new_link("system", (output_node.instanced_item[output_name].tag, input_node.instanced_item[input_name].tag))
-                    except Exception as e:
-                        client_logger.log("WARNING", f"Link {output_name}->{input_name} init failed", e)
+            node_layout =self.data
+            for identifier, node_info in node_layout["node"].items():
+                cls_name, data = node_info
+                try:
+                    self.new_node("system", cls_name, (identifier, data))
+                except Exception as e:
+                    client_logger.log("WARNING", f"Node {cls_name} init failed", e)
+            self.update()
+            for link in node_layout["link"]:
+                output_id, output_name, input_id, input_name = link
+                for n in self.nodes.values():
+                    if n.identifier == output_id:
+                        output_node = n
+                    if n.identifier == input_id:
+                        input_node = n
+                try:
+                    self.new_link("system", (output_node.instanced_item[output_name].tag, input_node.instanced_item[input_name].tag))
+                except Exception as e:
+                    client_logger.log("WARNING", f"Link {output_name}->{input_name} init failed", e)
         except Exception as e:
             client_logger.log("WARNING", "Node layout init file failed!")
 
@@ -127,9 +123,10 @@ class NodeBox(BaseBox):
                 node_layout["node"][node.identifier] = (node.__class__.__name__, node.data)
             for link in self.links.values():
                 node_layout["link"].append(link)
-            with open(self.layout_file, "w+") as f:
-                f.write(json.dumps(node_layout))
-                f.flush()
+            self.data = node_layout
+            # with open(self.layout_file, "w+") as f:
+            #     f.write(json.dumps(node_layout))
+            #     f.flush()
 
     def update(self):
         self.now_time = time.time()
