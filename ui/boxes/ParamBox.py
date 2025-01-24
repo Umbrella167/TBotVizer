@@ -11,7 +11,7 @@ class ParamBox(BaseBox):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tbk_data = tbk_manager
-        self.data = {}
+        self.table_data = {}
         self.table_tag = None
         self.create_time = None
 
@@ -50,10 +50,10 @@ class ParamBox(BaseBox):
             return
         new_data = self.tbk_data.param_data
         # 如果数据没有变化，则不更新
-        if self.data == new_data:
+        if self.table_data == new_data:
             return
         # 将现有数据和新数据转换为集合，便于比较
-        current_params = set(self.data.keys())
+        current_params = set(self.table_data.keys())
         new_params = set(new_data.keys())
         # 找到需要删除的行（即在current而不在new中的参数）
         params_to_delete = current_params - new_params
@@ -74,7 +74,7 @@ class ParamBox(BaseBox):
                 cell_tag = dpg.add_text(default_value=value[item], parent=row_tag)
         # 更新现有的行
         for param in current_params.intersection(new_params):
-            if self.data.get(param) == new_data[param]:
+            if self.table_data.get(param) == new_data[param]:
                 # 如果值相同则不更新
                 continue
             row_tag = self.row_tags[param]
@@ -85,7 +85,7 @@ class ParamBox(BaseBox):
                 dpg.set_value(cell_tag, cell_value)
         # 更新完后将当前数据保存
         client_logger.log("INFO", "ParamBox updated!")
-        self.data = new_data.copy()
+        self.table_data = new_data.copy()
 
         # _info = value["info"]
         # _type = value["type"]
