@@ -10,7 +10,7 @@ import cv2
 import time
 from utils.ClientLogManager import client_logger
 
-from ui.components.TBKManager import TBKManager
+from ui.components.TBKManager import tbk_manager
 
 from ui.boxes.AGV.agv_utils import AGVBoxUtils
 from ui.boxes.AGV.agv_callback import AGVBoxCallback
@@ -35,7 +35,6 @@ class AGVBox(BaseBox):
         self.arrow_planner = None
         self.last_map_key = (0,0)
         self.subscriber = {}
-        self.tbk_manager = TBKManager("AGVBox")
 
     def create(self):
         dpg.configure_item(self.tag, height=self.SIZE[1], width=self.SIZE[0])
@@ -65,9 +64,9 @@ class AGVBox(BaseBox):
             "msg_name": "/cloud_registered",
             "tag": self.tag,
         }
-        self.subscriber[ep_info_odo["msg_name"]] = self.tbk_manager.subscriber(callback=self._callback.odometry_msg,
+        self.subscriber[ep_info_odo["msg_name"]] = tbk_manager.subscriber(callback=self._callback.odometry_msg,
                                                                                **ep_info_points)
-        self.subscriber[ep_info_points["msg_name"]] = self.tbk_manager.subscriber(callback=self._callback.points_msg,
+        self.subscriber[ep_info_points["msg_name"]] = tbk_manager.subscriber(callback=self._callback.points_msg,
                                                                                   **ep_info_points)
 
     def create_arrow(self):

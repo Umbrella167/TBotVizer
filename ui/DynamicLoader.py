@@ -3,8 +3,10 @@ import importlib
 import inspect
 
 from ui.boxes import BaseBox
+from utils.ClientLogManager import client_logger
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+
 
 class DynamicLoader:
     def __init__(self):
@@ -44,14 +46,13 @@ class DynamicLoader:
                             # 存储 Box 类型
                             self.boxes[name] = obj
                 except ImportError as e:
-                    print(f"Error importing module {module_name}: {e}")
+                    client_logger.log("Error", f"Failed to import module {module_name}", e)
 
     def reload_boxes(self):
         # 清空 boxes 字典
         self.boxes.clear()
         # 重新加载 boxes
         self.load_boxes()
-
 
 
 if __name__ == '__main__':
